@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Excel 97 Egg — Charting Credits</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+		<link rel="stylesheet" type="text/css" title="main" href="./assets/main.css" />
+		<script src="lib/three/three.min.js"></script>
+		<script src="lib/stats.min.js"></script>
+	</head>
+	<script type="module">
+		import Controls from "./js/controls.js";
+
+		const renderScale = 0.25;
+		let windowWidth, windowHeight;
+
+		const maxDrawDistance = 1000;
+		let stats;
+		let camera, airplane, controls, scene, renderer;
+		let horizon;
+		let mesh;
+
+		const framesToSkip = 4;
+		let frameSkip = 0;
+
+		const worldWidth = (64 + 0) * 4;
+		const clock = new THREE.Clock();
+
+		const init = async () => {
+			const { heights } = await fetch("assets/data.json").then(response => response.json());
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x0);
+			scene.fog = new THREE.FogExp2(0x0, 0.002);
+
+			windowWidth = window.innerWidth * renderScale;
+			windowHeight = window.innerHeight * renderScale;
+
+			airplane = new THREE.Group();
+			scene.add(airplane);
+
+			camera = new THREE.PerspectiveCamera(26, windowWidth / windowHeight, 0.1, maxDrawDistance);
+			airplane.add(camera);
+
+			const horizonTexture = new THREE.TextureLoader().load("assets/horizon.png");
+			horizonTexture.repeat.set(1, 1);
+			horizonTexture.minFilter = THREE.NearestFilter;
+			horizonTexture.magFilter = THREE.NearestFilter;
+
+			const horizonGeometry = new THREE.CylinderGeometry(maxDrawDistance - 5, maxDrawDistance - 5, 100, 100, 1, true);
+
+			horizon = new THREE.Mesh(horizonGeometry, new THREE.MeshBasicMaterial({ map: horizonTexture, side: THREE.BackSide }));
+			horizon.material.fog = false;
+			horizon.position.copy(airplane.position);
+			scene.add(horizon);
+
+			airplane.position.set(7, 37, 0);
+			airplane.lookAt(-37, 32, 37);
+
+			const geometry = new THREE.PlaneGeometry(8000, 8000, worldWidth, worldWidth);
+			geometry.rotateX(-Math.PI / 2);
+
+			const positions = geometry.attributes.position.array;
+			const numVertices = positions.length;
+			for (let i = 0; i < numVertices; i++) {
+				positions[i * 3 + 1] = 500;
+			}
+			for (let y = 0; y <= worldWidth; y++) {
+				for (let x = 0; x <= worldWidth; x++) {
+					const index = y * (worldWidth + 1) + x;
+					positions[index * 3 + 1] = heights[y % 64][x % 64];
+				}
+			}
+			geometry.computeVertexNormals();
+
+			const moonscapeTexture = new THREE.TextureLoader().load("assets/moonscape.png");
+			moonscapeTexture.wrapS = moonscapeTexture.wrapT = THREE.RepeatWrapping;
+			moonscapeTexture.repeat.set(256, 256);
+			moonscapeTexture.minFilter = THREE.NearestFilter;
+			moonscapeTexture.magFilter = THREE.NearestFilter;
+
+			const regolithTexture = new THREE.TextureLoader().load("assets/regolith.png");
+			regolithTexture.wrapS = regolithTexture.wrapT = THREE.RepeatWrapping;
+			regolithTexture.repeat.set(256, 256);
+			regolithTexture.minFilter = THREE.NearestFilter;
+			regolithTexture.magFilter = THREE.NearestFilter;
+
+			const creditsTexture = new THREE.TextureLoader().load("assets/credits.png");
+			// creditsTexture.repeat.set(256, 256);
+			creditsTexture.minFilter = THREE.NearestFilter;
+			creditsTexture.magFilter = THREE.NearestFilter;
+
+			mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: moonscapeTexture, side: THREE.DoubleSide }));
+			scene.add(mesh);
+
+			renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(windowWidth, windowHeight);
+			renderer.domElement.style.width = "100%";
+			renderer.domElement.style.height = "100%";
+			document.body.appendChild(renderer.domElement);
+
+			controls = new Controls(airplane);
+
+			stats = new Stats();
+			document.body.appendChild(stats.dom);
+
+			window.addEventListener("resize", () => {
+				windowWidth = window.innerWidth * renderScale;
+				windowHeight = window.innerHeight * renderScale;
+
+				camera.aspect = windowWidth / windowHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize(windowWidth, windowHeight);
+				renderer.domElement.style.width = "100%";
+				renderer.domElement.style.height = "100%";
+
+				controls.handleResize();
+			});
+
+			animate();
+		};
+
+		const animate = () => {
+			requestAnimationFrame(animate);
+
+			frameSkip = (frameSkip + 1) % framesToSkip;
+			if (frameSkip != 1) {
+				return;
+			}
+
+			const deltaTime = clock.getDelta();
+			controls.update(deltaTime);
+
+			airplane.position.y = THREE.MathUtils.clamp(airplane.position.y, 0, 200); // TODO: "collision"
+
+			if (airplane.position.x > 2000) {
+				airplane.position.x -= 2000;
+			} else if (airplane.position.x < -2000) {
+				airplane.position.x += 2000;
+			}
+
+			if (airplane.position.z > 2000) {
+				airplane.position.z -= 2000;
+			} else if (airplane.position.z < -2000) {
+				airplane.position.z += 2000;
+			}
+
+			camera.rotation.z = controls.roll * 0.7;
+
+			horizon.position.copy(airplane.position);
+
+			renderer.render(scene, camera);
+			stats.update();
+		};
+
+		init();
+	</script>
+</html>

@@ -1,0 +1,15 @@
+html, body {
+	margin: 0;
+	overscroll-behavior: none;
+}
+
+body {
+	background: black;
+	color: white;
+	overflow: hidden;
+}
+
+canvas#renderer {
+	display: block;
+	image-rendering: pixelated;
+}

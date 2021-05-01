@@ -1,0 +1,30 @@
+Now
+
+	Find a way to assign a brightness to each vertex
+		Base it on some sort of vertex normal dot product
+
+	Create separate static meshes
+		horizon (done)
+		monolith platform
+		scrolling text surface
+		pool
+		ground
+
+	Scrolling text material
+		Vertex shader adjusts UVs by mod of time, offset by vertex attribute
+		Fragment shader colors the text based on UV and palette uniforms
+
+	Pool material
+		Vertex shader adjusts marked vertices by sine of time
+
+	"Collision"
+		Limit y position to the height of the ground where the camera is and maybe right in front of it
+			Interpolate between points
+			Remember to take the looping position into account
+				modulo all positions to be as close to the player as possible
+
+Later
+	Shadows?
+		https://threejs.org/docs/index.html?q=directionall#api/en/lights/shadows/DirectionalLightShadow
+	Replace pool with ocean or water
+		https://threejs.org/examples/?q=water#webgl_water
