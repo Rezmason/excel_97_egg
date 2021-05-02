@@ -16,6 +16,9 @@ export default class Controls {
 		this.verticalMin = Math.PI * (0.5 - 0.05);
 		this.verticalMax = Math.PI * (0.5 + 0.05);
 
+		// this.verticalMin = Math.PI * 0;
+		// this.verticalMax = Math.PI * 2;
+
 		this.mouseButtonDown = null;
 		this.mouseX = 0;
 		this.mouseY = 0;

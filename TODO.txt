@@ -1,28 +1,11 @@
-Custom material
-	Custom vertex attributes, loaded from JSON
-		int textureToUse
-		float water phase
-	Text color 1 and 2 uniforms
-	Time uniform (threejs might already have one)
-	water frequency and amplitude
+Interview and technical explanation
 
-	Scrolling text
-		Vertex shader adjusts UVs by mod of time
-		Fragment shader colors the text based on UV and palette uniforms
-
-"Collision"
-	Limit y position to the height of the ground where the camera is and maybe right in front of it
-		Interpolate between points
-		Remember to take the looping position into account
-			modulo all positions to be as close to the player as possible
+Improve baked vertex colors
 
 Mobile
 	alternative controls
 		pan by clicking and dragging
 		change speed by pressing and holding above or below midline
 
-
-
-Later
-	Improve baked vertex colors
-	Is the pool geometry correct?
+Is the pool geometry correct?
+Fix the pool lighting?
