@@ -119,6 +119,7 @@
 				controls.handleResize();
 			});
 
+			controls.update(0);
 			animate();
 		};
 
@@ -133,8 +134,6 @@
 			const deltaTime = clock.getDelta();
 			controls.update(deltaTime);
 
-			airplane.position.y = THREE.MathUtils.clamp(airplane.position.y, 0, 200); // TODO: "collision"
-
 			if (airplane.position.x > 2000) {
 				airplane.position.x -= 2000;
 			} else if (airplane.position.x < -2000) {
@@ -147,9 +146,11 @@
 				airplane.position.z += 2000;
 			}
 
+			airplane.position.y = THREE.MathUtils.clamp(airplane.position.y, 0, 200); // TODO: "collision"
+
 			camera.rotation.z = controls.roll * 0.7;
 
-			horizon.position.copy(airplane.position);
+			horizon.position.set(airplane.position.x, airplane.position.y + 50, airplane.position.z);
 
 			renderer.render(scene, camera);
 			stats.update();

@@ -7,11 +7,11 @@ export default class Controls {
 		this.object = object;
 
 		this.enabled = true;
-		this.movementAcceleration = 200;
+		this.movementAcceleration = 300;
 		this.maxMovementSpeed = 2000;
 		this.lookSpeed = 0.001;
 
-		this.verticalMin = Math.PI * (0.5 - 0.0625);
+		this.verticalMin = Math.PI * (0.5 - 0.05);
 		this.verticalMax = Math.PI * (0.5 + 0.05);
 
 		this.mouseButtonDown = null;

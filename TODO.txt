@@ -1,30 +1,26 @@
-Now
+Custom material
+	Custom vertex attributes, loaded from JSON
+		float brightness (zero for now)
+		int textureToUse
+		bool isWater
+	Text color 1 and 2 uniforms
+	Time uniform (threejs might already have one)
+
+	Scrolling text
+		Vertex shader adjusts UVs by mod of time
+		Fragment shader colors the text based on UV and palette uniforms
 
 	Find a way to assign a brightness to each vertex
 		Base it on some sort of vertex normal dot product
+		Bake it into the vertex attributes
 
-	Create separate static meshes
-		horizon (done)
-		monolith platform
-		scrolling text surface
-		pool
-		ground
+"Collision"
+	Limit y position to the height of the ground where the camera is and maybe right in front of it
+		Interpolate between points
+		Remember to take the looping position into account
+			modulo all positions to be as close to the player as possible
 
-	Scrolling text material
-		Vertex shader adjusts UVs by mod of time, offset by vertex attribute
-		Fragment shader colors the text based on UV and palette uniforms
-
-	Pool material
-		Vertex shader adjusts marked vertices by sine of time
-
-	"Collision"
-		Limit y position to the height of the ground where the camera is and maybe right in front of it
-			Interpolate between points
-			Remember to take the looping position into account
-				modulo all positions to be as close to the player as possible
-
-Later
-	Shadows?
-		https://threejs.org/docs/index.html?q=directionall#api/en/lights/shadows/DirectionalLightShadow
-	Replace pool with ocean or water
-		https://threejs.org/examples/?q=water#webgl_water
+Mobile
+	alternative controls
+		pan by clicking and dragging
+		change speed by pressing and holding above or below midline
