@@ -2,12 +2,14 @@ const _lookDirection = new THREE.Vector3();
 const _spherical = new THREE.Spherical();
 const _targetPosition = new THREE.Vector3();
 
+const coarse = (value, granularity = 1000) => Math.round(value * granularity) / granularity;
+
 export default class Controls {
 	constructor(object) {
 		this.object = object;
 
 		this.enabled = true;
-		this.movementAcceleration = 300;
+		this.movementAcceleration = 500;
 		this.maxMovementSpeed = 2000;
 		this.lookSpeed = 0.001;
 
@@ -54,16 +56,17 @@ export default class Controls {
 		if (this.mouseButtonDown != null) {
 			this.movementSpeed += delta * this.movementAcceleration * (this.mouseButtonDown === "primary" ? -1 : 1);
 			this.movementSpeed = THREE.MathUtils.clamp(this.movementSpeed, -this.maxMovementSpeed, this.maxMovementSpeed);
+			this.movementSpeed = coarse(this.movementSpeed);
 		}
 
 		this.object.translateZ(delta * this.movementSpeed);
 
-		this.roll = this.lookSpeed * -this.mouseX;
+		this.roll = coarse(this.lookSpeed * -this.mouseX);
 		this.theta += delta * this.lookSpeed * -this.mouseX;
-		this.phi += delta * this.lookSpeed * -this.mouseY;
+		this.phi += delta * this.lookSpeed * this.mouseY;
 		this.phi = THREE.MathUtils.clamp(this.phi, this.verticalMin, this.verticalMax);
 
-		_targetPosition.setFromSphericalCoords(1, this.phi, this.theta).add(this.object.position);
+		_targetPosition.setFromSphericalCoords(1, coarse(this.phi), coarse(this.theta)).add(this.object.position);
 		this.object.lookAt(_targetPosition);
 	}
 

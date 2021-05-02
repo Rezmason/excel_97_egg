@@ -23,15 +23,32 @@
 		const framesToSkip = 4;
 		let frameSkip = 0;
 
-		const worldWidth = (64 + 0) * 4;
+		const worldWidth = 256;
 		const clock = new THREE.Clock();
+
+		const getSlope = (heights, x, y) => {
+			const height = heights[y % 64][x % 64];
+
+			const verticalSlopes =
+				(Math.abs(heights[(y + 64 - 1) % 64][x % 64] - height) + // N
+					Math.abs(heights[(y + 64 + 1) % 64][x % 64] - height)) / // S
+				2;
+
+			const horizontalSlopes =
+				(Math.abs(heights[y % 64][(x + 64 + 1) % 64] - height) + // E
+					Math.abs(heights[y % 64][(x + 64 - 1) % 64] - height)) / // W
+				2;
+
+			return Math.min(horizontalSlopes, verticalSlopes);
+		};
 
 		const init = async () => {
 			const { heights } = await fetch("assets/data.json").then(response => response.json());
 
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color(0x0);
-			scene.fog = new THREE.FogExp2(0x0, 0.002);
+			// scene.fog = new THREE.Fog(0x0, 1, maxDrawDistance * 1.25);
+			scene.fog = new THREE.FogExp2(0x0, 0.00125);
 
 			windowWidth = window.innerWidth * renderScale;
 			windowHeight = window.innerHeight * renderScale;
@@ -47,21 +64,28 @@
 			horizonTexture.minFilter = THREE.NearestFilter;
 			horizonTexture.magFilter = THREE.NearestFilter;
 
-			const horizonGeometry = new THREE.CylinderGeometry(maxDrawDistance - 5, maxDrawDistance - 5, 100, 100, 1, true);
+			const horizonGeometry = new THREE.CylinderGeometry(maxDrawDistance - 5, maxDrawDistance - 5, 64, 100, 1, true);
 
 			horizon = new THREE.Mesh(horizonGeometry, new THREE.MeshBasicMaterial({ map: horizonTexture, side: THREE.BackSide }));
 			horizon.material.fog = false;
 			horizon.position.copy(airplane.position);
 			scene.add(horizon);
 
-			airplane.position.set(7, 37, 0);
-			airplane.lookAt(-37, 32, 37);
+			// Spawn
+			airplane.position.set(0, 45, 0);
+			airplane.rotation.set(0, Math.PI * 1.55, 0);
+
+			// Pool
+			// airplane.position.set(-300, 85, -595);
+			// airplane.rotation.set(Math.PI * -0.25, Math.PI * 1.25, 0);
 
 			const geometry = new THREE.PlaneGeometry(8000, 8000, worldWidth, worldWidth);
 			geometry.rotateX(-Math.PI / 2);
 
 			const positions = geometry.attributes.position.array;
 			const numVertices = positions.length;
+			geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(numVertices), 3));
+			const colors = geometry.attributes.color.array;
 			for (let i = 0; i < numVertices; i++) {
 				positions[i * 3 + 1] = 500;
 			}
@@ -69,6 +93,10 @@
 				for (let x = 0; x <= worldWidth; x++) {
 					const index = y * (worldWidth + 1) + x;
 					positions[index * 3 + 1] = heights[y % 64][x % 64];
+					const brightness = 1.5 - (getSlope(heights, x, y) * 0.1) ** 0.5;
+					colors[index * 3 + 0] = brightness;
+					colors[index * 3 + 1] = brightness;
+					colors[index * 3 + 2] = brightness;
 				}
 			}
 			geometry.computeVertexNormals();
@@ -90,7 +118,7 @@
 			creditsTexture.minFilter = THREE.NearestFilter;
 			creditsTexture.magFilter = THREE.NearestFilter;
 
-			mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: moonscapeTexture, side: THREE.DoubleSide }));
+			mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: moonscapeTexture, side: THREE.DoubleSide, vertexColors: true }));
 			scene.add(mesh);
 
 			renderer = new THREE.WebGLRenderer();
@@ -150,7 +178,7 @@
 
 			camera.rotation.z = controls.roll * 0.7;
 
-			horizon.position.set(airplane.position.x, airplane.position.y + 50, airplane.position.z);
+			horizon.position.set(airplane.position.x, airplane.position.y + 25, airplane.position.z);
 
 			renderer.render(scene, camera);
 			stats.update();

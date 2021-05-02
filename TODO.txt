@@ -1,18 +1,14 @@
 Custom material
 	Custom vertex attributes, loaded from JSON
-		float brightness (zero for now)
 		int textureToUse
-		bool isWater
+		float water phase
 	Text color 1 and 2 uniforms
 	Time uniform (threejs might already have one)
+	water frequency and amplitude
 
 	Scrolling text
 		Vertex shader adjusts UVs by mod of time
 		Fragment shader colors the text based on UV and palette uniforms
-
-	Find a way to assign a brightness to each vertex
-		Base it on some sort of vertex normal dot product
-		Bake it into the vertex attributes
 
 "Collision"
 	Limit y position to the height of the ground where the camera is and maybe right in front of it
@@ -24,3 +20,9 @@ Mobile
 	alternative controls
 		pan by clicking and dragging
 		change speed by pressing and holding above or below midline
+
+
+
+Later
+	Improve baked vertex colors
+	Is the pool geometry correct?
