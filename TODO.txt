@@ -2,6 +2,8 @@ Isolate JS from index.html
 	Maybe chop it up
 	I dunno, make it a little easier to read
 
+Hoist magic numbers into data JSON
+
 Handbrake
 	Holding down space stops all motion and sets the roll to zero
 

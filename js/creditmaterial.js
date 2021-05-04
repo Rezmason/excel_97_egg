@@ -59,7 +59,15 @@ const fragmentShader = `
 	}
 `;
 
+const fogUniforms = {
+	fogDensity: { value: 0.00025 },
+	fogNear: { value: 1 },
+	fogFar: { value: 2000 },
+	fogColor: { value: new THREE.Color(0xffffff) }
+};
+
 const uniforms = {
+	...fogUniforms,
 	creditColor1: { value: new THREE.Color(0x000000) },
 	creditColor2: { value: new THREE.Color(0xdfdfdf) },
 	creditColor3: { value: new THREE.Color(0x30182c /*0x100810*/) },
@@ -69,6 +77,7 @@ const uniforms = {
 const params = {
 	side: THREE.DoubleSide,
 	vertexColors: true,
+	fog: true,
 	vertexShader,
 	fragmentShader
 };

@@ -1,13 +1,15 @@
 import { coarse } from "./utils.js";
 
 export default class Controls {
-	constructor(object, domElement) {
+	constructor(object, camera, domElement) {
 		this.object = object;
+		this.camera = camera;
 
 		this.enabled = true;
 		this.movementAcceleration = 500;
 		this.maxMovementSpeed = 2000;
 		this.turnSpeed = 0.0025;
+		this.maxCameraRoll = 0.2375;
 
 		this.verticalMin = Math.PI * (0.5 - 0.05);
 		this.verticalMax = Math.PI * (0.5 + 0.05);
@@ -109,5 +111,7 @@ export default class Controls {
 
 		this.targetPosition.setFromSphericalCoords(1, coarse(this.phi), coarse(this.theta)).add(this.object.position);
 		this.object.lookAt(this.targetPosition);
+
+		this.camera.rotation.z = this.roll * this.maxCameraRoll;
 	}
 }

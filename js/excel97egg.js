@@ -1,5 +1,6 @@
 import Controls from "./controls.js";
 import CreditMaterial from "./creditmaterial.js";
+import { heightmapSize, terrainSize, isInZone, getHeight, createTerrainGeometry } from "./terrain.js";
 
 const renderScale = 0.25;
 let windowWidth, windowHeight;
@@ -12,88 +13,32 @@ let horizon;
 let poolGeometry;
 let crawlGeometry;
 
-const targetFrameDuration = 1 / 15;
-let frameDuration = 0;
+let accumulatedDelta = 0;
 
-const worldWidth = 256;
 const clock = new THREE.Clock();
-
-const isInZone = (x, y, offset, zone) => {
-	x = x % 64;
-	y = y % 64;
-	return x > zone.x - offset && x < zone.x + zone.width - 1 + offset && y > zone.y - offset && y < zone.y + zone.height - 1 + offset;
-};
-
-const isInZones = (x, y, offset, zones) => {
-	return zones.some(zone => isInZone(x, y, offset, zone));
-};
-
-const createTerrainGeometry = ({ heights, zones }, zoneName, exclusive, lightingMagnifier, useBakedLighting) => {
-	const geometry = new THREE.PlaneGeometry(8000, 8000, worldWidth, worldWidth);
-	geometry.rotateX(-Math.PI / 2);
-
-	const zone = zones[zoneName];
-	const badZones = exclusive
-		? Object.entries(zones)
-				.filter(entry => entry[0] !== zoneName)
-				.map(entry => entry[1])
-		: [];
-
-	const positions = geometry.attributes.position.array;
-	const indices = geometry.index.array;
-	const unwantedVertexIndices = new Set();
-	geometry.setAttribute("color", new THREE.BufferAttribute(new Float32Array(positions.length), 3));
-	const colors = geometry.attributes.color.array;
-	for (let y = 0; y <= worldWidth; y++) {
-		for (let x = 0; x <= worldWidth; x++) {
-			const index = y * (worldWidth + 1) + x;
-			positions[index * 3 + 1] = heights[y % 64][x % 64];
-			let lighting;
-
-			if (zone != null && isInZone(x, y, 1, zones[zoneName]) && useBakedLighting) {
-				lighting = zone.lighting[(y % 64) - zone.y][(x % 64) - zone.x];
-			} else {
-				const height = heights[y % 64][x % 64];
-
-				const northSlope = heights[(y + 64 - 1) % 64][x % 64] - height;
-				const southSlope = heights[(y + 64 + 1) % 64][x % 64] - height;
-				const verticalSlopeDifference = southSlope + northSlope;
-
-				const westSlope = heights[y % 64][(x + 64 - 1) % 64] - height;
-				const eastSlope = heights[y % 64][(x + 64 + 1) % 64] - height;
-				const horizontalSlopeDifference = eastSlope + westSlope;
-
-				lighting = (horizontalSlopeDifference + verticalSlopeDifference) / 2;
-				lighting = (lighting - 1) * lightingMagnifier + 1;
-				lighting = THREE.MathUtils.clamp(lighting, 0, 1);
-			}
-
-			colors[index * 3 + 0] = lighting;
-			colors[index * 3 + 1] = lighting;
-			colors[index * 3 + 2] = lighting;
-
-			if (zoneName != null && !isInZone(x, y, 1, zones[zoneName])) {
-				unwantedVertexIndices.add(index);
-			} else if (isInZones(x, y, 0, badZones)) {
-				unwantedVertexIndices.add(index);
-			}
-		}
-	}
-	const numQuads = indices.length / 6;
-	for (let i = 0; i < numQuads; i++) {
-		if (indices.slice(i * 6, (i + 1) * 6).some(i => unwantedVertexIndices.has(i))) {
-			indices[i * 6 + 2] = indices[i * 6 + 1] = indices[i * 6 + 0];
-			indices[i * 6 + 5] = indices[i * 6 + 4] = indices[i * 6 + 3];
-		}
-	}
-	return geometry;
-};
 
 const init = async () => {
 	data = await fetch("assets/data.json").then(response => response.json());
 
 	const loader = new THREE.TextureLoader();
 	// await all the textures
+
+	const horizonTexture = loader.load("assets/textures/horizon_screenshot.png");
+	horizonTexture.repeat.set(1, 1);
+	horizonTexture.minFilter = THREE.NearestFilter;
+	horizonTexture.magFilter = THREE.NearestFilter;
+
+	const moonscapeTexture = loader.load("assets/textures/moonscape_brighter.png");
+	moonscapeTexture.wrapS = moonscapeTexture.wrapT = THREE.RepeatWrapping;
+	moonscapeTexture.repeat.set(256, 256);
+	moonscapeTexture.minFilter = THREE.NearestFilter;
+	moonscapeTexture.magFilter = THREE.NearestFilter;
+
+	const platformTexture = loader.load("assets/textures/platform_screenshot.png");
+	platformTexture.wrapS = platformTexture.wrapT = THREE.RepeatWrapping;
+	platformTexture.repeat.set(256, 256);
+	platformTexture.minFilter = THREE.NearestFilter;
+	platformTexture.magFilter = THREE.NearestFilter;
 
 	// construct the scene/camera/renderer
 	// construct the controls
@@ -116,11 +61,6 @@ const init = async () => {
 	camera = new THREE.PerspectiveCamera(26, windowWidth / windowHeight, 0.1, maxDrawDistance);
 	airplane.add(camera);
 
-	const horizonTexture = loader.load("assets/horizon_screenshot.png");
-	horizonTexture.repeat.set(1, 1);
-	horizonTexture.minFilter = THREE.NearestFilter;
-	horizonTexture.magFilter = THREE.NearestFilter;
-
 	const horizonGeometry = new THREE.CylinderGeometry(maxDrawDistance - 5, maxDrawDistance - 5, 64, 100, 1, true);
 
 	horizon = new THREE.Mesh(horizonGeometry, new THREE.MeshBasicMaterial({ map: horizonTexture, side: THREE.BackSide }));
@@ -131,7 +71,7 @@ const init = async () => {
 	// Spawn
 	airplane.position.set(0, 45, 0);
 	airplane.rotation.set(0, Math.PI * 1.55, 0);
-	airplane.rotation.set(0, Math.PI * 1.725, 0);
+	// airplane.rotation.set(0, Math.PI * 1.725, 0);
 
 	// Over monolith
 	// airplane.position.set(-470, 300, 375);
@@ -149,25 +89,20 @@ const init = async () => {
 	// airplane.position.set(0, 20000, 0);
 	// airplane.rotation.set(Math.PI * 0.5, 0, 0);
 
-	const moonscapeTexture = loader.load("assets/moonscape_brighter.png");
-	moonscapeTexture.wrapS = moonscapeTexture.wrapT = THREE.RepeatWrapping;
-	moonscapeTexture.repeat.set(256, 256);
-	moonscapeTexture.minFilter = THREE.NearestFilter;
-	moonscapeTexture.magFilter = THREE.NearestFilter;
-	const moonscapeGeometry = createTerrainGeometry(data, null, true, 0.06, false);
+	const moonscapeGeometry = createTerrainGeometry(data, { lightingMagnifier: 0.06 });
 	const moonscape = new THREE.Mesh(moonscapeGeometry, new THREE.MeshBasicMaterial({ map: moonscapeTexture, side: THREE.DoubleSide, vertexColors: true }));
 	scene.add(moonscape);
 
-	poolGeometry = createTerrainGeometry(data, "pool", true, 0.06, false);
+	poolGeometry = createTerrainGeometry(data, { zoneName: "pool", lightingMagnifier: 0.06 });
 	poolGeometry.attributes.position.usage = THREE.DynamicDrawUsage;
 	poolGeometry.attributes.color.usage = THREE.DynamicDrawUsage;
 	poolAVertexIndices = [];
 	poolBVertexIndices = [];
 	const poolZone = data.zones.pool;
-	for (let y = 0; y <= worldWidth; y++) {
-		for (let x = 0; x <= worldWidth; x++) {
+	for (let y = 0; y <= terrainSize; y++) {
+		for (let x = 0; x <= terrainSize; x++) {
 			if (isInZone(x, y, 0, poolZone)) {
-				const index = y * (worldWidth + 1) + x;
+				const index = y * (terrainSize + 1) + x;
 				if (x % 2 == 0 || y % 2 == 0) {
 					poolAVertexIndices.push(index);
 				} else {
@@ -179,21 +114,15 @@ const init = async () => {
 	const pool = new THREE.Mesh(poolGeometry, new THREE.MeshBasicMaterial({ map: moonscapeTexture, side: THREE.DoubleSide, vertexColors: true }));
 	scene.add(pool);
 
-	const regolithTexture = loader.load("assets/regolith_screenshot.png");
-	regolithTexture.wrapS = regolithTexture.wrapT = THREE.RepeatWrapping;
-	regolithTexture.repeat.set(256, 256);
-	regolithTexture.minFilter = THREE.NearestFilter;
-	regolithTexture.magFilter = THREE.NearestFilter;
-
-	const platformGeometry = createTerrainGeometry(data, "platform", true, 0.05, true);
-	const platform = new THREE.Mesh(platformGeometry, new THREE.MeshBasicMaterial({ map: regolithTexture, side: THREE.DoubleSide, vertexColors: true }));
+	const platformGeometry = createTerrainGeometry(data, { zoneName: "platform", lightingMagnifier: 0.05, useBakedLighting: true });
+	const platform = new THREE.Mesh(platformGeometry, new THREE.MeshBasicMaterial({ map: platformTexture, side: THREE.DoubleSide, vertexColors: true }));
 	scene.add(platform);
 
-	const creditsTexture = loader.load("assets/credits.png");
+	const creditsTexture = loader.load("assets/textures/credits_rm.png");
 	creditsTexture.minFilter = THREE.NearestFilter;
 	creditsTexture.magFilter = THREE.NearestFilter;
 
-	crawlGeometry = createTerrainGeometry(data, "crawl", false, 0, false);
+	crawlGeometry = createTerrainGeometry(data, { zoneName: "crawl", lightingMagnifier: 0, exclusiveToZone: false });
 	crawlGeometry.attributes.uv.usage = THREE.DynamicDrawUsage;
 	const crawlUVs = crawlGeometry.attributes.uv.array;
 	const crawlColors = crawlGeometry.attributes.color.array;
@@ -201,13 +130,13 @@ const init = async () => {
 	crawlBVertexIndices = [];
 	crawlCVertexIndices = [];
 	const crawlZone = data.zones.crawl;
-	for (let y = 0; y <= worldWidth; y++) {
-		for (let x = 0; x <= worldWidth; x++) {
+	for (let y = 0; y <= terrainSize; y++) {
+		for (let x = 0; x <= terrainSize; x++) {
 			if (isInZone(x, y, 1, crawlZone)) {
-				const index = y * (worldWidth + 1) + x;
-				const u = 1 - ((x % 64) - data.zones.crawl.x) / 2;
+				const index = y * (terrainSize + 1) + x;
+				const u = 1 - ((x % heightmapSize) - data.zones.crawl.x) / 2;
 				crawlUVs[index * 2 + 0] = u;
-				const v = (y % 64) - data.zones.crawl.y;
+				const v = (y % heightmapSize) - data.zones.crawl.y;
 				crawlColors[index * 3 + 0] = v;
 				crawlColors[index * 3 + 1] = v;
 				crawlColors[index * 3 + 2] = v;
@@ -238,7 +167,7 @@ const init = async () => {
 	renderer.domElement.style.height = "100%";
 	document.body.appendChild(renderer.domElement);
 
-	controls = new Controls(airplane, renderer.domElement);
+	controls = new Controls(airplane, camera, renderer.domElement);
 
 	window.addEventListener("resize", () => {
 		windowWidth = window.innerWidth * renderScale;
@@ -264,11 +193,11 @@ const updatePoolGeometry = time => {
 
 	const waveA = Math.sin(time * 10) * 2;
 	const posA = waveA - 25;
-	const lightingA = 1 - waveA * 0.1;
+	const lightingA = 1 - waveA * 0.15;
 
 	const waveB = -waveA;
 	const posB = waveB - 25;
-	const lightingB = 1 - waveB * 0.1;
+	const lightingB = 1 - waveB * 0.15;
 
 	for (const index of poolAVertexIndices) {
 		positions[index * 3 + 1] = posA;
@@ -288,10 +217,11 @@ const updatePoolGeometry = time => {
 
 const updateCrawlGeometry = time => {
 	const uvs = crawlGeometry.attributes.uv.array;
-	time = 1 - ((time * 0.005 + 0.02) % 1);
+	const offset = 0.01;
+	time = 1 - ((offset * (time * 0.4 + 2)) % 1);
 	const crawlA = time;
-	const crawlB = time + 0.01;
-	const crawlC = time + 0.01 * 2;
+	const crawlB = time + offset;
+	const crawlC = time + offset * 2;
 	for (const index of crawlAVertexIndices) {
 		uvs[index * 2 + 1] = crawlA;
 	}
@@ -304,41 +234,45 @@ const updateCrawlGeometry = time => {
 	crawlGeometry.attributes.uv.needsUpdate = true;
 };
 
-const animate = () => {
-	requestAnimationFrame(animate);
+const updateAirplane = delta => {
+	controls.update(delta);
 
-	frameDuration += clock.getDelta();
-	if (frameDuration < targetFrameDuration) {
-		return;
+	if (airplane.position.x > data.width) {
+		airplane.position.x -= data.width;
+	} else if (airplane.position.x < -data.width) {
+		airplane.position.x += data.width;
 	}
 
-	updatePoolGeometry(clock.elapsedTime);
-	updateCrawlGeometry(clock.elapsedTime);
-	controls.update(frameDuration);
-	frameDuration %= targetFrameDuration;
-
-	if (airplane.position.x > 2000) {
-		airplane.position.x -= 2000;
-	} else if (airplane.position.x < -2000) {
-		airplane.position.x += 2000;
+	if (airplane.position.z > data.width) {
+		airplane.position.z -= data.width;
+	} else if (airplane.position.z < -data.width) {
+		airplane.position.z += data.width;
 	}
 
-	if (airplane.position.z > 2000) {
-		airplane.position.z -= 2000;
-	} else if (airplane.position.z < -2000) {
-		airplane.position.z += 2000;
-	}
+	const x = Math.round((airplane.position.x / data.width) * heightmapSize) + heightmapSize;
+	const y = Math.round((airplane.position.z / data.width) * heightmapSize) + heightmapSize;
+	airplane.position.y = THREE.MathUtils.clamp(airplane.position.y, getHeight(data.heights, x, y) + data.minHeightOffGround, data.maxAltitude);
 
-	const x = Math.round((airplane.position.x / 8000 + 1) * worldWidth) % 64;
-	const y = Math.round((airplane.position.z / 8000 + 1) * worldWidth) % 64;
-	airplane.position.y = THREE.MathUtils.clamp(airplane.position.y, data.heights[y][x] + 5, 100);
-
-	camera.rotation.z = controls.roll * 0.2375;
 	// camera.rotation.z = Math.PI;
 
 	// console.log(Math.round(airplane.position.x), Math.round(airplane.position.z));
 
 	horizon.position.set(airplane.position.x, airplane.position.y + 25, airplane.position.z);
+};
+
+const animate = () => {
+	requestAnimationFrame(animate);
+
+	accumulatedDelta += clock.getDelta();
+	if (accumulatedDelta < 1 / data.targetFPS) {
+		return;
+	}
+	const delta = accumulatedDelta;
+	accumulatedDelta %= 1 / data.targetFPS;
+
+	updatePoolGeometry(clock.elapsedTime);
+	updateCrawlGeometry(clock.elapsedTime);
+	updateAirplane(delta);
 
 	renderer.render(scene, camera);
 };
