@@ -1,17 +1,13 @@
-const _lookDirection = new THREE.Vector3();
-const _spherical = new THREE.Spherical();
-const _targetPosition = new THREE.Vector3();
-
-const coarse = (value, granularity = 1000) => Math.round(value * granularity) / granularity;
+import { coarse } from "./utils.js";
 
 export default class Controls {
-	constructor(object) {
+	constructor(object, domElement) {
 		this.object = object;
 
 		this.enabled = true;
 		this.movementAcceleration = 500;
 		this.maxMovementSpeed = 2000;
-		this.lookSpeed = 0.001;
+		this.turnSpeed = 0.0025;
 
 		this.verticalMin = Math.PI * (0.5 - 0.05);
 		this.verticalMax = Math.PI * (0.5 + 0.05);
@@ -26,26 +22,70 @@ export default class Controls {
 		this.viewWidth = 0;
 		this.viewHeight = 0;
 
+		this.targetPosition = new THREE.Vector3();
+		this.touchStartPhi = 0;
+		this.touchStartTheta = 0;
+		this.touchStartX = 0;
+		this.touchStartY = 0;
+
 		this.theta = 0;
 		this.phi = 0;
 		this.roll = 0;
 
-		document.addEventListener("contextmenu", event => event.preventDefault());
-		document.addEventListener("mousemove", event => {
+		domElement.addEventListener("contextmenu", event => event.preventDefault());
+		domElement.addEventListener("dblclick", event => event.preventDefault());
+		domElement.addEventListener("mousemove", event => {
+			event.preventDefault();
 			this.mouseX = event.pageX - this.viewWidth / 2;
 			this.mouseY = event.pageY - this.viewHeight / 2;
+
+			this.phi = Math.PI * 0.5 + this.mouseY * 0.0005;
+			this.phi = THREE.MathUtils.clamp(this.phi, this.verticalMin, this.verticalMax);
 		});
-		document.addEventListener("mousedown", event => {
+		domElement.addEventListener("mousedown", event => {
 			event.preventDefault();
 			this.mouseButtonDown = event.button === 0 ? "primary" : "secondary";
 		});
-		document.addEventListener("mouseup", event => {
+		domElement.addEventListener("mouseup", event => {
 			event.preventDefault();
 			this.mouseButtonDown = null;
 		});
 
+		domElement.addEventListener("touchstart", event => {
+			event.preventDefault();
+			const { pageX, pageY } = event.touches.item(0);
+			this.touchStartX = pageX;
+			this.touchStartY = pageY;
+			this.touchStartPhi = this.phi;
+			this.touchStartTheta = this.theta;
+			const isAboveMiddle = this.touchStartY - this.viewHeight / 2 < 0;
+			this.mouseButtonDown = isAboveMiddle ? "primary" : "secondary";
+		});
+		domElement.addEventListener("touchmove", event => {
+			event.preventDefault();
+			const { pageX, pageY } = event.touches.item(0);
+			if (Math.sqrt((pageX - this.touchStartX) ** 2 + (pageY - this.touchStartY) ** 2) > 10) {
+				this.mouseButtonDown = null;
+			}
+			this.theta = this.touchStartTheta + (pageX - this.touchStartX) * 0.001;
+			this.phi = this.touchStartPhi + (pageY - this.touchStartY) * 0.0005;
+			this.phi = THREE.MathUtils.clamp(this.phi, this.verticalMin, this.verticalMax);
+		});
+		domElement.addEventListener("touchend", event => {
+			event.preventDefault();
+			if (event.touches.length === 0) {
+				this.mouseButtonDown = null;
+			}
+		});
+
 		this.handleResize();
-		this.setOrientation();
+
+		const lookDirection = new THREE.Vector3(0, 0, -1);
+		lookDirection.applyQuaternion(this.object.quaternion);
+		const spherical = new THREE.Spherical();
+		spherical.setFromVector3(lookDirection);
+		this.phi = spherical.phi;
+		this.theta = spherical.theta;
 	}
 
 	handleResize() {
@@ -64,19 +104,10 @@ export default class Controls {
 
 		this.object.translateZ(delta * this.movementSpeed);
 
-		this.roll = coarse(this.lookSpeed * -this.mouseX);
-		this.theta += delta * this.lookSpeed * -this.mouseX;
-		this.phi += delta * this.lookSpeed * this.mouseY;
-		this.phi = THREE.MathUtils.clamp(this.phi, this.verticalMin, this.verticalMax);
+		this.roll = coarse(this.turnSpeed * -this.mouseX);
+		this.theta += delta * this.turnSpeed * -this.mouseX;
 
-		_targetPosition.setFromSphericalCoords(1, coarse(this.phi), coarse(this.theta)).add(this.object.position);
-		this.object.lookAt(_targetPosition);
-	}
-
-	setOrientation() {
-		_lookDirection.set(0, 0, -1).applyQuaternion(this.object.quaternion);
-		_spherical.setFromVector3(_lookDirection);
-		this.phi = _spherical.phi;
-		this.theta = _spherical.theta;
+		this.targetPosition.setFromSphericalCoords(1, coarse(this.phi), coarse(this.theta)).add(this.object.position);
+		this.object.lookAt(this.targetPosition);
 	}
 }
