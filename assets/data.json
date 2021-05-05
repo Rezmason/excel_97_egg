@@ -95,11 +95,29 @@
 				[ 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5 ]
 			]
 		},
-		"crawl": {
+		"credits": {
 			"x": 48,
 			"y": 11,
 			"width": 3,
 			"height": 3
+		}
+	},
+	"locations": {
+		"spawn": {
+			"position": [0, 45, 0],
+			"rotation": [0, 1.55, 0]
+		},
+		"looking_at_monolith": {
+			"position": [0, 45, 0],
+			"rotation": [0, 1.725, 0]
+		},
+		"poolside": {
+			"position": [-300, 85, -595],
+			"rotation": [-0.05, 1.25, 0]
+		},
+		"spikes": {
+			"position": [-336, 85, 724],
+			"rotation": [0.05, 1.75, 0]
 		}
 	}
 }

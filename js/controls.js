@@ -7,7 +7,7 @@ export default class Controls {
 
 		this.enabled = true;
 		this.movementAcceleration = 500;
-		this.maxMovementSpeed = 2000;
+		this.maxMovementSpeed = 1000;
 		this.turnSpeed = 0.0025;
 		this.maxCameraRoll = 0.2375;
 
@@ -99,9 +99,16 @@ export default class Controls {
 		if (!this.enabled) return;
 
 		if (this.mouseButtonDown != null) {
+			const lastMovementSpeed = this.movementSpeed;
 			this.movementSpeed += delta * this.movementAcceleration * (this.mouseButtonDown === "primary" ? -1 : 1);
 			this.movementSpeed = THREE.MathUtils.clamp(this.movementSpeed, -this.maxMovementSpeed, this.maxMovementSpeed);
-			this.movementSpeed = coarse(this.movementSpeed);
+			this.movementSpeed = coarse(this.movementSpeed, 10);
+			if (lastMovementSpeed != 0 && lastMovementSpeed < 0 != this.movementSpeed < 0) {
+				this.movementSpeed = 0;
+			}
+			if (Math.abs(this.movementSpeed) < 5) {
+				this.movementSpeed = 0;
+			}
 		}
 
 		this.object.translateZ(delta * this.movementSpeed);

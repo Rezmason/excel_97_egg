@@ -1,12 +1,3 @@
-Isolate JS from index.html
-	Maybe chop it up
-	I dunno, make it a little easier to read
-
-Hoist magic numbers into data JSON
-
-Handbrake
-	Holding down space stops all motion and sets the roll to zero
-
 Readme
 	"faithful reproduction"
 	Running the egg in virtualization
@@ -18,6 +9,9 @@ Readme
 
 Interview and technical explanation
 
+Find a way to merge airplane into camera
+Handbrake
+	Holding down space stops all motion and sets the roll to zero
 Improve mobile controls
 	Integrate turn speed somehow
 Improve platform lighting
