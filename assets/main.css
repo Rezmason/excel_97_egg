@@ -12,6 +12,6 @@ body {
 }
 
 canvas#renderer {
-	display: block;
+	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 }

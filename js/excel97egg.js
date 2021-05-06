@@ -40,11 +40,33 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	const renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(windowWidth, windowHeight);
+	renderer.domElement.id = "renderer";
 	renderer.domElement.style.width = "100%";
 	renderer.domElement.style.height = "100%";
 	document.body.appendChild(renderer.domElement);
 
 	const controls = new Controls(airplane, camera, renderer.domElement);
+
+	document.addEventListener("keydown", event => {
+		if (event.repeat) {
+			return;
+		}
+		if (event.code === "KeyF") {
+			if (document.fullscreenEnabled) {
+				if (document.fullscreenElement == null) {
+					renderer.domElement.requestFullscreen();
+				} else {
+					document.exitFullscreen();
+				}
+			} else if (document.webkitFullscreenEnabled) {
+				if (document.webkitFullscreenElement == null) {
+					renderer.domElement.webkitRequestFullscreen();
+				} else {
+					document.webkitExitFullscreen();
+				}
+			}
+		}
+	});
 
 	window.addEventListener("resize", () => {
 		windowWidth = window.innerWidth * renderScale;
