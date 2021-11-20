@@ -111,6 +111,10 @@
 			"position": [0, 45, 0],
 			"rotation": [0, 1.725, 0]
 		},
+		"credits": {
+			"position": [-470, 45, 200],
+			"rotation": [0.025, 1, 0]
+		},
 		"poolside": {
 			"position": [-300, 85, -595],
 			"rotation": [-0.05, 1.25, 0]

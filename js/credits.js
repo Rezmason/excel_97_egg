@@ -132,7 +132,7 @@ const setupCredits = (geometry, zone) => {
 const updateCredits = (geometry, points, time) => {
 	const uvs = geometry.attributes.uv.array;
 	const offset = 0.015;
-	time = 1 - ((offset * (time * 0.4 + 2)) % 1);
+	time = 1 - ((offset * (time * 0.4 + 2)) % (1 + 0.02));
 	const rowA = time;
 	const rowB = time + offset;
 	const rowC = time + offset * 2;
