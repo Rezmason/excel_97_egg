@@ -24,18 +24,27 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	scene.background = new THREE.Color(0x0);
 	scene.fog = new THREE.Fog(0x0, 1, maxDrawDistance);
 
+	let debugMode = false;
+
 	const airplane = new THREE.Group();
 	scene.add(airplane);
 
 	let windowWidth = window.innerWidth * renderScale;
 	let windowHeight = window.innerHeight * renderScale;
 
-	const camera = new THREE.PerspectiveCamera(26, windowWidth / windowHeight, 0.1, maxDrawDistance);
-	airplane.add(camera);
+	const airplaneCamera = new THREE.PerspectiveCamera(26, windowWidth / windowHeight, 0.1, maxDrawDistance);
+	airplane.add(airplaneCamera);
+
+	let camera = airplaneCamera;
 
 	const location = data.locations.spawn;
 	airplane.position.set(...location.position);
 	airplane.rotation.set(...location.rotation.map(x => Math.PI * x));
+
+	const debugCamera = new THREE.PerspectiveCamera(26, windowWidth / windowHeight, 0.1, 100000);
+	debugCamera.position.set(0, 5000, 0);
+	debugCamera.rotation.set(-Math.PI * 0.5, 0, 0);
+	scene.add(debugCamera);
 
 	const renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio(window.devicePixelRatio);
@@ -45,7 +54,7 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	renderer.domElement.style.height = "100%";
 	document.body.appendChild(renderer.domElement);
 
-	const controls = new Controls(airplane, camera, renderer.domElement);
+	const controls = new Controls(airplane, airplaneCamera, renderer.domElement);
 
 	document.addEventListener("keydown", event => {
 		if (event.repeat) {
@@ -66,14 +75,29 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 				}
 			}
 		}
+		if (event.code === "KeyD") {
+			debugMode = !debugMode;
+			horizonMesh.visible = !debugMode;
+			cameraHelper.visible = debugMode;
+			if (debugMode) {
+				scene.fog = null;
+				camera = debugCamera;
+			} else {
+				scene.fog = new THREE.Fog(0x0, 1, maxDrawDistance);
+				camera = airplaneCamera;
+			}
+		}
 	});
 
 	window.addEventListener("resize", () => {
 		windowWidth = window.innerWidth * renderScale;
 		windowHeight = window.innerHeight * renderScale;
 
-		camera.aspect = windowWidth / windowHeight;
-		camera.updateProjectionMatrix();
+		airplaneCamera.aspect = windowWidth / windowHeight;
+		airplaneCamera.updateProjectionMatrix();
+
+		debugCamera.aspect = windowWidth / windowHeight;
+		debugCamera.updateProjectionMatrix();
 
 		renderer.setSize(windowWidth, windowHeight);
 		renderer.domElement.style.width = "100%";
@@ -90,6 +114,10 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	const horizonMesh = new THREE.Mesh(horizonGeometry, new THREE.MeshBasicMaterial({ map: textures.horizon, side: THREE.BackSide, fog: false }));
 	horizonMesh.position.copy(airplane.position);
 	scene.add(horizonMesh);
+
+	const cameraHelper = new THREE.CameraHelper( airplaneCamera );
+	cameraHelper.visible = false;
+	scene.add( cameraHelper );
 
 	scene.add(
 		new THREE.Mesh(
@@ -132,7 +160,7 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 		const y = Math.round((airplane.position.z / data.width) * heightmapSize) + heightmapSize;
 		airplane.position.y = THREE.MathUtils.clamp(airplane.position.y, getHeight(data.heights, x, y) + data.minHeightOffGround, data.maxAltitude);
 
-		// camera.rotation.z = Math.PI;
+		// airplaneCamera.rotation.z = Math.PI;
 		// console.log(Math.round(airplane.position.x), Math.round(airplane.position.z));
 
 		horizonMesh.position.copy(airplane.position);
