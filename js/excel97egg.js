@@ -1,5 +1,5 @@
 import Controls from "./controls.js";
-import { heightmapSize, terrainSize, isInZone, getHeight, createTerrainGeometry } from "./terrain.js";
+import { heightmapSize, terrainSize, isInZone, getHeight, createTerrain } from "./terrain.js";
 import { loadTexture } from "./utils.js";
 import { setupPool, updatePool } from "./pool.js";
 import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
@@ -22,7 +22,8 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color(0x0);
-	scene.fog = new THREE.Fog(0x0, 1, maxDrawDistance);
+	const fog = new THREE.Fog(0x0, 1, maxDrawDistance);
+	scene.fog = fog;
 
 	let debugMode = false;
 
@@ -42,7 +43,7 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	airplane.rotation.set(...location.rotation.map(x => Math.PI * x));
 
 	const debugCamera = new THREE.PerspectiveCamera(26, windowWidth / windowHeight, 0.1, 100000);
-	debugCamera.position.set(0, 5000, 0);
+	debugCamera.position.set(0, 20000, 0);
 	debugCamera.rotation.set(-Math.PI * 0.5, 0, 0);
 	scene.add(debugCamera);
 
@@ -113,33 +114,23 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	}
 	const horizonMesh = new THREE.Mesh(horizonGeometry, new THREE.MeshBasicMaterial({ map: textures.horizon, side: THREE.BackSide, fog: false }));
 	horizonMesh.position.copy(airplane.position);
+	debugCamera.position.set(airplane.position.x, 20000, airplane.position.z);
 	scene.add(horizonMesh);
 
 	const cameraHelper = new THREE.CameraHelper( airplaneCamera );
 	cameraHelper.visible = false;
 	scene.add( cameraHelper );
 
-	scene.add(
-		new THREE.Mesh(
-			createTerrainGeometry(data, { lightingMagnifier: 0.06 }),
-			new THREE.MeshBasicMaterial({ map: textures.moonscape, side: THREE.DoubleSide, vertexColors: true })
-		)
-	);
+	scene.add(createTerrain(data, { lightingMagnifier: 0.06 }, textures.moonscape, fog));
+	// scene.add(createTerrain(data, { zoneName: "platform", lightingMagnifier: 0.05, useBakedLighting: true }, textures.platform, fog));
 
-	scene.add(
-		new THREE.Mesh(
-			createTerrainGeometry(data, { zoneName: "platform", lightingMagnifier: 0.05, useBakedLighting: true }),
-			new THREE.MeshBasicMaterial({ map: textures.platform, side: THREE.DoubleSide, vertexColors: true })
-		)
-	);
+	// const poolGeometry = createTerrainGeometry(data, { zoneName: "pool", lightingMagnifier: 0.06 });
+	// const poolPoints = setupPool(poolGeometry, data.zones.pool);
+	// scene.add(new THREE.Mesh(poolGeometry, new THREE.MeshBasicMaterial({ map: textures.moonscape, side: THREE.DoubleSide, vertexColors: true })));
 
-	const poolGeometry = createTerrainGeometry(data, { zoneName: "pool", lightingMagnifier: 0.06 });
-	const poolPoints = setupPool(poolGeometry, data.zones.pool);
-	scene.add(new THREE.Mesh(poolGeometry, new THREE.MeshBasicMaterial({ map: textures.moonscape, side: THREE.DoubleSide, vertexColors: true })));
-
-	const creditsGeometry = createTerrainGeometry(data, { zoneName: "credits", lightingMagnifier: 0, exclusiveToZone: false });
-	const creditsPoints = setupCredits(creditsGeometry, data.zones.credits);
-	scene.add(new THREE.Mesh(creditsGeometry, new CreditsMaterial(textures.credits)));
+	// const creditsGeometry = createTerrainGeometry(data, { zoneName: "credits", lightingMagnifier: 0, exclusiveToZone: false });
+	// const creditsPoints = setupCredits(creditsGeometry, data.zones.credits);
+	// scene.add(new THREE.Mesh(creditsGeometry, new CreditsMaterial(textures.credits)));
 
 	const updateAirplane = delta => {
 		controls.update(delta);
@@ -164,6 +155,7 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 		// console.log(Math.round(airplane.position.x), Math.round(airplane.position.z));
 
 		horizonMesh.position.copy(airplane.position);
+		debugCamera.position.set(airplane.position.x, 20000, airplane.position.z);
 	};
 
 	const animate = () => {
@@ -176,8 +168,8 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 		const delta = accumulatedDelta;
 		accumulatedDelta %= 1 / data.targetFPS;
 
-		updatePool(poolGeometry, poolPoints, clock.elapsedTime);
-		updateCredits(creditsGeometry, creditsPoints, clock.elapsedTime);
+		// updatePool(poolGeometry, poolPoints, clock.elapsedTime);
+		// updateCredits(creditsGeometry, creditsPoints, clock.elapsedTime);
 		updateAirplane(delta);
 
 		renderer.render(scene, camera);

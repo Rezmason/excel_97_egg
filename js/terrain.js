@@ -79,4 +79,65 @@ const createTerrainGeometry = (data, params) => {
 	return geometry;
 };
 
-export { heightmapSize, terrainSize, getHeight, isInZone, isInZones, createTerrainGeometry };
+const createTerrain = (data, params, texture, fog) => {
+	const geometry = createTerrainGeometry(data, params);
+	const material = new THREE.ShaderMaterial({
+		side: THREE.DoubleSide,
+		uniforms: {
+			tex: { value: texture },
+			uvRepeat: { value: new THREE.Vector2(terrainSize, terrainSize) },
+
+			fogColor: { value: fog.color },
+			fogNear: { value: fog.near },
+			fogFar: { value: fog.far },
+		},
+		vertexShader: `
+			precision mediump float;
+			precision mediump int;
+
+			// uniform mat4 modelViewMatrix;
+			// uniform mat4 projectionMatrix;
+			uniform vec2 uvRepeat;
+
+			// attribute vec3 position;
+			attribute vec4 color;
+			// attribute vec2 uv;
+
+			varying float vFogDepth;
+
+			varying float vBrightness;
+			varying vec2 vUV;
+
+			void main()	{
+				vUV = uvRepeat * uv;
+				vBrightness = color.r;
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				vFogDepth = - mvPosition.z;
+				gl_Position = projectionMatrix * mvPosition;
+			}
+		`,
+		fragmentShader: `
+			precision mediump float;
+			precision mediump int;
+
+			varying float vBrightness;
+			varying vec2 vUV;
+
+			uniform sampler2D tex;
+
+			uniform vec3 fogColor;
+			varying float vFogDepth;
+			uniform float fogNear;
+			uniform float fogFar;
+
+			void main()	{
+				gl_FragColor = vec4(texture2D( tex, vUV ).rgb * vBrightness, 1.0);
+				float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );
+				// gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor ); // TODO: comment back in for fog
+			}
+		`
+	});
+	return new THREE.Mesh(geometry, material);
+};
+
+export { heightmapSize, terrainSize, getHeight, isInZone, isInZones, createTerrain };
