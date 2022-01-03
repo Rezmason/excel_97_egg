@@ -1,3 +1,28 @@
+regl
+	Terrain
+		Vertex data
+			vec3 position
+			vec2 centroid
+			int whichTexture
+			float brightness
+		Repeating and culling
+			based on x and y distances to centroid
+		brightness
+			Computation
+			Zone override
+		whichTexture
+			Zone based
+		Fog
+	Credits
+		Scrolling texture
+		Colors
+	Controls
+
+Procedural terrain?
+	Try it!
+	Try and make it interesting
+	Move monolith placement to shader
+
 Readme
 	"faithful reproduction"
 	Running the egg in virtualization
@@ -9,7 +34,6 @@ Readme
 
 Interview and technical explanation
 
-Find a way to merge airplane into camera
 Handbrake
 	Holding down space stops all motion and sets the roll to zero
 Improve mobile controls
