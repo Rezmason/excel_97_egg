@@ -2,12 +2,36 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Excel 97 Egg — Charting Credits</title>
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-		<link rel="stylesheet" type="text/css" title="main" href="./assets/main.css" />
-		<!-- <script src="lib/three/three.min.js"></script> -->
-		<script src="lib/three/three.js"></script>
-		<script type="module" src="js/excel97egg.js"></script>
+		<title>Excel 97 Egg — Charting Credits</title>
+		<meta
+			name="viewport"
+			content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+		/>
+		<style>
+			html,
+			body {
+				margin: 0;
+				overscroll-behavior: none;
+				cursor: crosshair;
+			}
+
+			body {
+				background: black;
+				font-family: Tahoma, sans-serif;
+				color: white;
+				overflow: hidden;
+			}
+
+			canvas {
+				width: 100vw;
+				height: 100vh;
+				image-rendering: crisp-edges;
+				image-rendering: pixelated;
+			}
+		</style>
+		<script type="module" src="js/main.js"></script>
 	</head>
-	<body></body>
+	<body>
+		<canvas></canvas>
+	</body>
 </html>
