@@ -3,8 +3,11 @@ regl
 		Vertex data
 			vec3 position
 			vec2 centroid
-			int whichTexture
-			float brightness
+			Zone stuff
+				default zone object
+					whichTexture
+					brightness magnifier
+				getZone logic
 		Repeating and culling
 			based on x and y distances to centroid
 		brightness
@@ -17,6 +20,7 @@ regl
 		Scrolling texture
 		Colors
 	Controls
+	Make sure horizon moves and turns correctly
 
 Procedural terrain?
 	Try it!

@@ -1,3 +1,5 @@
+import makeTerrain from "./terrain.js";
+
 const loadJS = (src) =>
 	new Promise((resolve, reject) => {
 		const tag = document.createElement("script");
@@ -38,16 +40,15 @@ document.body.onload = async () => {
 			})
 		);
 
+	const resolution = 0.25;
 	const fov = 26;
-	const renderScale = 0.125;
-	const maxDrawDistance = 1000;
 
 	const resize = () => {
 		canvas.width = Math.ceil(
-			canvas.clientWidth * window.devicePixelRatio * renderScale
+			canvas.clientWidth * window.devicePixelRatio * resolution
 		);
 		canvas.height = Math.ceil(
-			canvas.clientHeight * window.devicePixelRatio * renderScale
+			canvas.clientHeight * window.devicePixelRatio * resolution
 		);
 	};
 	window.onresize = resize;
@@ -81,15 +82,29 @@ document.body.onload = async () => {
 
 	const updateAirplane = (time, deltaTime) => {
 		mat4.identity(transform);
-		mat4.translate(transform, transform, vec3.fromValues(0, 0, -6));
-		mat4.rotateY(transform, transform, time * 4);
+		mat4.rotateX(transform, transform, Math.PI / 2);
+
+		// mat4.translate(transform, transform, vec3.fromValues(0, -500, 72));
+		// mat4.rotateZ(transform, transform, time * 0.25);
+		// mat4.translate(transform, transform, vec3.fromValues(-1000, -1000, 0));
+
+		mat4.translate(transform, transform, vec3.fromValues(0, 0, 72));
+		mat4.rotateZ(transform, transform, time * 0.25);
+		mat4.translate(transform, transform, vec3.fromValues(-1000, -1000, 0));
+
+		// mat4.rotateX(transform, transform, Math.PI * 0.5);
+		// mat4.translate(transform, transform, vec3.fromValues(0, 0, 5000));
+		// mat4.translate(transform, transform, vec3.fromValues(-1000, -1000, 0));
 	};
 
 	const drawBackground = regl({
 		vert: `
 			precision mediump float;
+
 			attribute vec2 aPosition;
+
 			varying vec2 vUV;
+
 			void main() {
 				vUV = 0.5 * (aPosition + 1.0);
 				gl_Position = vec4(aPosition, 0, 1);
@@ -98,9 +113,12 @@ document.body.onload = async () => {
 
 		frag: `
 			precision mediump float;
-			varying vec2 vUV;
+
 			uniform sampler2D tex;
 			uniform float textureHeight;
+
+			varying vec2 vUV;
+
 			void main() {
 				vec2 uv = vUV;
 				// TODO: apply tilt to UV
@@ -126,17 +144,30 @@ document.body.onload = async () => {
 		depth: { enable: false },
 	});
 
+	const terrain = makeTerrain(data);
+
 	const drawTerrain = regl({
 		vert: `
 			precision mediump float;
+
 			uniform float time;
-			attribute vec2 aPosition;
-			varying vec2 vUV;
 			uniform mat4 camera, transform;
+
+			attribute vec3 aPosition;
+			attribute float aBrightness;
+
+			varying vec2 vUV;
+			varying float vBrightness;
+			varying float vFogDepth;
+			varying float vWhichTexture;
+
 			void main() {
-				vUV = 0.5 * (aPosition + 1.0);
-				vec4 position = vec4(aPosition, 0, 1);
+				vBrightness = aBrightness;
+				vWhichTexture = 0.0;
+				vUV = 0.5 * (aPosition.xy + 1.0);
+				vec4 position = vec4(aPosition, 1);
 				position = transform * position;
+				vFogDepth = -position.z;
 				position = camera * position;
 				gl_Position = position;
 			}
@@ -144,31 +175,53 @@ document.body.onload = async () => {
 
 		frag: `
 			precision mediump float;
-			varying vec2 vUV;
+
 			uniform float tick, time;
 			uniform sampler2D moonscapeTexture;
 			uniform sampler2D platformTexture;
 			uniform sampler2D creditsTexture;
 			uniform float textureHeight;
+			uniform float terrainScale;
+			uniform vec3 fogColor;
+			uniform float fogNear;
+			uniform float fogFar;
+
+			varying vec2 vUV;
+			varying float vBrightness;
+			varying float vFogDepth;
+			varying float vWhichTexture;
+
 			void main() {
-				gl_FragColor = texture2D(moonscapeTexture, fract(vUV));
+
+				if (vWhichTexture == 0.0) {
+					gl_FragColor = texture2D(moonscapeTexture, fract(vUV / terrainScale));
+				}
+				if (vWhichTexture == 1.0) {
+					gl_FragColor = texture2D(platformTexture, fract(vUV / terrainScale));
+				}
+				if (vWhichTexture == 2.0) {
+					gl_FragColor = texture2D(creditsTexture, fract(vUV / terrainScale));
+				}
+
+				gl_FragColor.rgb *= vBrightness;
+
+				float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );
+				// gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
 			}
 		`,
 
-		attributes: {
-			aPosition: [
-				[-1, -Math.sqrt(3) / 2],
-				[1, -Math.sqrt(3) / 2],
-				[0, Math.sqrt(3) / 2],
-			],
-		},
-		count: 3,
+		attributes: terrain.attributes,
+		count: terrain.numVertices,
 
 		uniforms: {
 			time: regl.context("time"),
 			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
 			transform: regl.prop("transform"),
+			terrainScale: terrain.scale,
+			fogColor: [0, 0, 0],
+			fogNear: 1,
+			fogFar: 1000,
 			moonscapeTexture,
 			platformTexture,
 			creditsTexture,
@@ -190,7 +243,7 @@ document.body.onload = async () => {
 				(Math.PI / 180) * fov,
 				aspectRatio,
 				0.1,
-				maxDrawDistance
+				1000000
 			);
 		}
 
