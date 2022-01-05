@@ -140,4 +140,4 @@ const createTerrain = (data, params, texture, fog) => {
 	return new THREE.Mesh(geometry, material);
 };
 
-export { heightmapSize, terrainSize, getHeight, isInZone, isInZones, createTerrain };
+export { heightmapSize, terrainSize, getHeight, isInZone, isInZones, createTerrain, createTerrainGeometry };

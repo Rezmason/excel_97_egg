@@ -1,31 +1,7 @@
 regl
 	Terrain
-		Vertex data
-			vec3 position
-			vec2 centroid
-			Zone stuff
-				default zone object
-					whichTexture
-					brightness magnifier
-				getZone logic
-		Repeating and culling
-			based on x and y distances to centroid
-		brightness
-			Computation
-			Zone override
-		whichTexture
-			Zone based
-		Fog
-	Credits
-		Scrolling texture
-		Colors
+		Animation
 	Controls
-	Make sure horizon moves and turns correctly
-
-Procedural terrain?
-	Try it!
-	Try and make it interesting
-	Move monolith placement to shader
 
 Readme
 	"faithful reproduction"
@@ -42,6 +18,7 @@ Handbrake
 	Holding down space stops all motion and sets the roll to zero
 Improve mobile controls
 	Integrate turn speed somehow
+Procedural terrain
 Improve platform lighting
 Improve the pool lighting?
 	Plug the extreme vertices into the lighting function

@@ -1,23 +1,13 @@
 import makeTerrain from "./terrain.js";
 
-const loadJS = (src) =>
-	new Promise((resolve, reject) => {
-		const tag = document.createElement("script");
-		tag.onload = resolve;
-		tag.onerror = reject;
-		tag.src = src;
-		document.body.appendChild(tag);
-	});
-
 const canvas = document.querySelector("canvas");
 document.addEventListener("touchmove", (e) => e.preventDefault(), {
 	passive: false,
 });
 
 document.body.onload = async () => {
-	await Promise.all([loadJS("lib/regl.js"), loadJS("lib/gl-matrix.js")]);
 	const regl = createREGL({ canvas, attributes: { antialias: false } });
-	const { mat4, vec3 } = glMatrix;
+	const { mat4, vec3, quat } = glMatrix;
 
 	const data = await fetch("assets/data.json").then((response) =>
 		response.json()
@@ -36,19 +26,16 @@ document.body.onload = async () => {
 				image.src = `assets/textures/${url}.png`;
 				await image.decode();
 				document.body.appendChild(image);
-				return regl.texture({ data: image, flipY: true });
+				return regl.texture({ data: image, flipY: false });
 			})
 		);
 
-	const resolution = 0.25;
-	const fov = 26;
-
 	const resize = () => {
 		canvas.width = Math.ceil(
-			canvas.clientWidth * window.devicePixelRatio * resolution
+			canvas.clientWidth * window.devicePixelRatio * data.resolution
 		);
 		canvas.height = Math.ceil(
-			canvas.clientHeight * window.devicePixelRatio * resolution
+			canvas.clientHeight * window.devicePixelRatio * data.resolution
 		);
 	};
 	window.onresize = resize;
@@ -77,24 +64,46 @@ document.body.onload = async () => {
 		});
 	}
 
+	const terrain = makeTerrain(data);
+
 	const camera = mat4.create();
 	const transform = mat4.create();
 
+	// const location = data.locations.spawn;
+	// const location = data.locations.looking_at_monolith;
+	// const location = data.locations.credits;
+	const location = data.locations.poolside;
+	// const location = data.locations.spikes;
+
+	const position = vec3.fromValues(...location.position);
+
+	const euler = vec3.create();
+	const rotQuat = quat.create();
+	vec3.set(
+		euler,
+		location.rotation[0],
+		location.rotation[1],
+		location.rotation[2]
+	);
+	quat.fromEuler(rotQuat, ...euler, "xzy");
+
 	const updateAirplane = (time, deltaTime) => {
-		mat4.identity(transform);
-		mat4.rotateX(transform, transform, Math.PI / 2);
+		// position[0] -= deltaTime * 300;
+		// position[1] -= deltaTime * 300;
 
-		// mat4.translate(transform, transform, vec3.fromValues(0, -500, 72));
-		// mat4.rotateZ(transform, transform, time * 0.25);
-		// mat4.translate(transform, transform, vec3.fromValues(-1000, -1000, 0));
+		located: {
+			mat4.fromQuat(transform, rotQuat);
+			mat4.rotateX(transform, transform, Math.PI / 2);
+			mat4.translate(transform, transform, position);
+		}
 
-		mat4.translate(transform, transform, vec3.fromValues(0, 0, 72));
-		mat4.rotateZ(transform, transform, time * 0.25);
-		mat4.translate(transform, transform, vec3.fromValues(-1000, -1000, 0));
-
-		// mat4.rotateX(transform, transform, Math.PI * 0.5);
-		// mat4.translate(transform, transform, vec3.fromValues(0, 0, 5000));
-		// mat4.translate(transform, transform, vec3.fromValues(-1000, -1000, 0));
+		topDown: {
+			// mat4.identity(transform);
+			// mat4.rotateX(transform, transform, Math.PI);
+			// mat4.rotateZ(transform, transform, Math.PI);
+			// mat4.translate(transform, transform, vec3.fromValues(0, 0, 5000));
+			// mat4.translate(transform, transform, vec3.fromValues(position[0], position[1], position[2]));
+		}
 	};
 
 	const drawBackground = regl({
@@ -122,9 +131,9 @@ document.body.onload = async () => {
 			void main() {
 				vec2 uv = vUV;
 				// TODO: apply tilt to UV
-				float y = (uv.y - 0.5) * 480. / textureHeight;
+				float y = (0.5 - uv.y) * 480. / textureHeight + 1.0;
 				vec3 color = vec3(0.0);
-				if (y > 0.0) {
+				if (y < 1.0) {
 					color = texture2D(tex, vec2(uv.x, y)).rgb;
 				}
 				gl_FragColor = vec4(color, 1.0);
@@ -144,17 +153,20 @@ document.body.onload = async () => {
 		depth: { enable: false },
 	});
 
-	const terrain = makeTerrain(data);
-
 	const drawTerrain = regl({
 		vert: `
 			precision mediump float;
 
 			uniform float time;
 			uniform mat4 camera, transform;
+			uniform vec3 position;
+			uniform float terrainSize, maxDrawDistance;
 
 			attribute vec3 aPosition;
+			attribute vec2 aUV;
+			attribute vec2 aCentroid;
 			attribute float aBrightness;
+			attribute float aWhichTexture;
 
 			varying vec2 vUV;
 			varying float vBrightness;
@@ -163,9 +175,18 @@ document.body.onload = async () => {
 
 			void main() {
 				vBrightness = aBrightness;
-				vWhichTexture = 0.0;
-				vUV = 0.5 * (aPosition.xy + 1.0);
-				vec4 position = vec4(aPosition, 1);
+				vWhichTexture = aWhichTexture;
+				vUV = aUV + 0.5;
+
+				vec2 centroid = aCentroid;
+				centroid = (fract((centroid + position.xy) / terrainSize + 0.5) - 0.5) * terrainSize - position.xy;
+
+				vec2 diff = -abs(centroid + position.xy) + maxDrawDistance;
+				if (diff.x < 0.0 || diff.y < 0.0) {
+					return;
+				}
+
+				vec4 position = vec4(aPosition + vec3(centroid, 0.0), 1);
 				position = transform * position;
 				vFogDepth = -position.z;
 				position = camera * position;
@@ -181,10 +202,14 @@ document.body.onload = async () => {
 			uniform sampler2D platformTexture;
 			uniform sampler2D creditsTexture;
 			uniform float textureHeight;
-			uniform float terrainScale;
 			uniform vec3 fogColor;
 			uniform float fogNear;
 			uniform float fogFar;
+
+			uniform vec3 creditColor1;
+			uniform vec3 creditColor2;
+			uniform vec3 creditColor3;
+			uniform vec3 creditColor4;
 
 			varying vec2 vUV;
 			varying float vBrightness;
@@ -193,20 +218,29 @@ document.body.onload = async () => {
 
 			void main() {
 
-				if (vWhichTexture == 0.0) {
-					gl_FragColor = texture2D(moonscapeTexture, fract(vUV / terrainScale));
+				int whichTexture = int(vWhichTexture);
+
+				if (whichTexture == 0) {
+					gl_FragColor = texture2D(moonscapeTexture, vUV);
 				}
-				if (vWhichTexture == 1.0) {
-					gl_FragColor = texture2D(platformTexture, fract(vUV / terrainScale));
+				if (whichTexture == 1) {
+					gl_FragColor = texture2D(platformTexture, vUV);
 				}
-				if (vWhichTexture == 2.0) {
-					gl_FragColor = texture2D(creditsTexture, fract(vUV / terrainScale));
+				if (whichTexture == 2) {
+					vec4 credits = texture2D(creditsTexture, vec2(1.0) - vec2(vUV.x, fract(time * -0.006 + vUV.y * 0.03 - 0.03)));
+					vec3 creditColor = vec3(0.0);
+					if (credits.b == 1.0) {
+						creditColor = mix(creditColor2, creditColor1, abs(vUV.y - 0.5) * 2.0);
+					} else if (credits.g == 1.0) {
+						creditColor = mix(creditColor4, creditColor3, abs(vUV.y - 0.5) * 2.0);
+					}
+					gl_FragColor = vec4(creditColor, 1.0);
 				}
 
 				gl_FragColor.rgb *= vBrightness;
 
 				float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );
-				// gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
+				gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
 			}
 		`,
 
@@ -217,20 +251,27 @@ document.body.onload = async () => {
 			time: regl.context("time"),
 			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
+			position: regl.prop("position"),
+			terrainSize: data.size,
+			maxDrawDistance: data.maxDrawDistance,
 			transform: regl.prop("transform"),
-			terrainScale: terrain.scale,
 			fogColor: [0, 0, 0],
 			fogNear: 1,
-			fogFar: 1000,
+			fogFar: data.maxFog,
 			moonscapeTexture,
 			platformTexture,
 			creditsTexture,
+
+			creditColor1: [0.0, 0.0, 0.0],
+			creditColor2: [0.87, 0.87, 0.87],
+			creditColor3: [0.19, 0.09, 0.17 /* 0.06, 0.03, 0.06 */],
+			creditColor4: [0.94, 0.52, 0.12],
 		},
 	});
 
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
-	const tick = regl.frame(({ viewportWidth, viewportHeight, time, tick }) => {
+	const raf = regl.frame(({ viewportWidth, viewportHeight, time, tick }) => {
 		if (
 			dimensions.width !== viewportWidth ||
 			dimensions.height !== viewportHeight
@@ -238,12 +279,13 @@ document.body.onload = async () => {
 			dimensions.width = viewportWidth;
 			dimensions.height = viewportHeight;
 			const aspectRatio = viewportWidth / viewportHeight;
+
 			mat4.perspective(
 				camera,
-				(Math.PI / 180) * fov,
+				(Math.PI / 180) * data.fov,
 				aspectRatio,
 				0.1,
-				1000000
+				10000
 			);
 		}
 
@@ -256,9 +298,10 @@ document.body.onload = async () => {
 		try {
 			updateAirplane(time, deltaTime);
 			drawBackground({ camera, transform });
-			drawTerrain({ camera, transform });
-		} catch {
-			tick.cancel();
+			drawTerrain({ camera, transform, position });
+		} catch (error) {
+			raf.cancel();
+			throw error;
 		}
 	});
 };

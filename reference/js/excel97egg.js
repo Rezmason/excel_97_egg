@@ -1,5 +1,5 @@
 import Controls from "./controls.js";
-import { heightmapSize, terrainSize, isInZone, getHeight, createTerrain } from "./terrain.js";
+import { heightmapSize, terrainSize, isInZone, getHeight, createTerrain, createTerrainGeometry } from "./terrain.js";
 import { loadTexture } from "./utils.js";
 import { setupPool, updatePool } from "./pool.js";
 import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
@@ -38,7 +38,12 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 
 	let camera = airplaneCamera;
 
-	const location = data.locations.spawn;
+	// const location = {position: [0, 0, 0], rotation: [0, 1, 0]};
+	// const location = data.locations.spawn;
+	// const location = data.locations.looking_at_monolith;
+	// const location = data.locations.credits;
+	const location = data.locations.poolside;
+	// const location = data.locations.spikes;
 	airplane.position.set(...location.position);
 	airplane.rotation.set(...location.rotation.map(x => Math.PI * x));
 
@@ -122,15 +127,15 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	scene.add( cameraHelper );
 
 	scene.add(createTerrain(data, { lightingMagnifier: 0.06 }, textures.moonscape, fog));
-	// scene.add(createTerrain(data, { zoneName: "platform", lightingMagnifier: 0.05, useBakedLighting: true }, textures.platform, fog));
+	scene.add(createTerrain(data, { zoneName: "platform", lightingMagnifier: 0.05, useBakedLighting: true }, textures.platform, fog));
 
-	// const poolGeometry = createTerrainGeometry(data, { zoneName: "pool", lightingMagnifier: 0.06 });
-	// const poolPoints = setupPool(poolGeometry, data.zones.pool);
-	// scene.add(new THREE.Mesh(poolGeometry, new THREE.MeshBasicMaterial({ map: textures.moonscape, side: THREE.DoubleSide, vertexColors: true })));
+	const poolGeometry = createTerrainGeometry(data, { zoneName: "pool", lightingMagnifier: 0.06 });
+	const poolPoints = setupPool(poolGeometry, data.zones.pool);
+	scene.add(new THREE.Mesh(poolGeometry, new THREE.MeshBasicMaterial({ map: textures.moonscape, side: THREE.DoubleSide, vertexColors: true })));
 
-	// const creditsGeometry = createTerrainGeometry(data, { zoneName: "credits", lightingMagnifier: 0, exclusiveToZone: false });
-	// const creditsPoints = setupCredits(creditsGeometry, data.zones.credits);
-	// scene.add(new THREE.Mesh(creditsGeometry, new CreditsMaterial(textures.credits)));
+	const creditsGeometry = createTerrainGeometry(data, { zoneName: "credits", lightingMagnifier: 0, exclusiveToZone: false });
+	const creditsPoints = setupCredits(creditsGeometry, data.zones.credits);
+	scene.add(new THREE.Mesh(creditsGeometry, new CreditsMaterial(textures.credits)));
 
 	const updateAirplane = delta => {
 		controls.update(delta);
@@ -168,8 +173,8 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 		const delta = accumulatedDelta;
 		accumulatedDelta %= 1 / data.targetFPS;
 
-		// updatePool(poolGeometry, poolPoints, clock.elapsedTime);
-		// updateCredits(creditsGeometry, creditsPoints, clock.elapsedTime);
+		updatePool(poolGeometry, poolPoints, clock.elapsedTime);
+		updateCredits(creditsGeometry, creditsPoints, clock.elapsedTime);
 		updateAirplane(delta);
 
 		renderer.render(scene, camera);
