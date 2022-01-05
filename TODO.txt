@@ -1,6 +1,4 @@
 regl
-	Terrain
-		Animation
 	Controls
 
 Readme

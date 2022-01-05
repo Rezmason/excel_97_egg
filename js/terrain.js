@@ -10,14 +10,14 @@ export default (data) => {
 
 	const defaultZone = data.zones[data.zones.length - 1];
 
-	const getZone = (x, y, offset) => {
+	const getZone = (x, y, minOffset, maxOffset) => {
 		return (
 			data.zones.find(
 				(zone) =>
-					x >= zone.x &&
-					x < zone.x + zone.numColumns - offset &&
-					y >= zone.y &&
-					y < zone.y + zone.numRows - offset
+					x >= zone.x + minOffset &&
+					x < zone.x + zone.numColumns - maxOffset &&
+					y >= zone.y + minOffset &&
+					y < zone.y + zone.numRows - maxOffset
 			) ?? defaultZone
 		);
 	};
@@ -34,6 +34,11 @@ export default (data) => {
 	const quads = elevations
 		.map((row, y) =>
 			row.map((_, x) => {
+				const centroid = [
+					(modulo(x + 0.5, numColumns) * size) / numColumns,
+					(modulo(y + 0.5, numRows) * size) / numRows,
+				];
+
 				const nx = modulo(x + 1, numColumns);
 				const ny = modulo(y + 1, numRows);
 				const [tl, tr, bl, br] = [
@@ -46,13 +51,11 @@ export default (data) => {
 				const zone = getZone(
 					modulo(x + 0.5, numColumns),
 					modulo(y + 0.5, numRows),
+					0,
 					1
 				);
-				const centroid = [
-					(modulo(x + 0.5, numColumns) * size) / numColumns,
-					(modulo(y + 0.5, numRows) * size) / numRows,
-				];
 				return {
+					centroid: vertices.map((_) => centroid).flat(),
 					position: vertices
 						.map(([x, y], index) => [
 							(quadCornerOffsets[index][0] * size) / numColumns,
@@ -60,8 +63,9 @@ export default (data) => {
 							-elevations[y][x],
 						])
 						.flat(),
+					whichTexture: vertices.map((_) => zone.texture).flat(),
 					uv:
-						zone.texture === 2
+						zone.name === "credits"
 							? quadCornerOffsets
 									.map(([u, v]) => [
 										(u + 0.5 + x - zone.x) / (zone.numColumns - 1) - 0.5,
@@ -86,19 +90,27 @@ export default (data) => {
 							return Math.max(0, Math.min(1, brightness));
 						})
 						.flat(),
-					centroid: vertices.map((_) => centroid).flat(),
-					whichTexture: vertices.map((_) => zone.texture).flat(),
+					waveAmplitude: vertices
+						.map(([x, y]) =>
+							zone.name === "pool" && getZone(x, y, 1, 1).name === zone.name
+								? data.waveAmplitude
+								: 0
+						)
+						.flat(),
+					wavePhase: vertices.map(([x, y]) => ((x * y) % 2) * 0.5).flat(),
 				};
 			})
 		)
 		.flat();
 
 	const attributes = {
+		aCentroid: quads.map((quad) => quad.centroid).flat(),
 		aPosition: quads.map((quad) => quad.position).flat(),
+		aWhichTexture: quads.map((quad) => quad.whichTexture).flat(),
 		aUV: quads.map((quad) => quad.uv).flat(),
 		aBrightness: quads.map((quad) => quad.brightness).flat(),
-		aCentroid: quads.map((quad) => quad.centroid).flat(),
-		aWhichTexture: quads.map((quad) => quad.whichTexture).flat(),
+		aWaveAmplitude: quads.map((quad) => quad.waveAmplitude).flat(),
+		aWavePhase: quads.map((quad) => quad.wavePhase).flat(),
 	};
 	const numVerticesPerQuad = 6;
 	const numVertices = numVerticesPerQuad * numColumns * numRows;

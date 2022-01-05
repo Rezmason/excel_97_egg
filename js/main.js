@@ -69,10 +69,10 @@ document.body.onload = async () => {
 	const camera = mat4.create();
 	const transform = mat4.create();
 
-	// const location = data.locations.spawn;
+	const location = data.locations.spawn;
 	// const location = data.locations.looking_at_monolith;
 	// const location = data.locations.credits;
-	const location = data.locations.poolside;
+	// const location = data.locations.poolside;
 	// const location = data.locations.spikes;
 
 	const position = vec3.fromValues(...location.position);
@@ -102,7 +102,8 @@ document.body.onload = async () => {
 			// mat4.rotateX(transform, transform, Math.PI);
 			// mat4.rotateZ(transform, transform, Math.PI);
 			// mat4.translate(transform, transform, vec3.fromValues(0, 0, 5000));
-			// mat4.translate(transform, transform, vec3.fromValues(position[0], position[1], position[2]));
+			// mat4.translate(transform, transform, vec3.fromValues(...position));
+			// mat4.rotateX(transform, transform, Math.PI * 0.2 );
 		}
 	};
 
@@ -146,8 +147,8 @@ document.body.onload = async () => {
 		count: 3,
 
 		uniforms: {
-			textureHeight: horizonTexture.height,
 			tex: horizonTexture,
+			textureHeight: horizonTexture.height,
 		},
 
 		depth: { enable: false },
@@ -157,24 +158,26 @@ document.body.onload = async () => {
 		vert: `
 			precision mediump float;
 
+			#define TWO_PI 6.2831853072
+
 			uniform float time;
 			uniform mat4 camera, transform;
 			uniform vec3 position;
 			uniform float terrainSize, maxDrawDistance;
 
-			attribute vec3 aPosition;
-			attribute vec2 aUV;
 			attribute vec2 aCentroid;
-			attribute float aBrightness;
+			attribute vec3 aPosition;
 			attribute float aWhichTexture;
+			attribute vec2 aUV;
+			attribute float aBrightness;
+			attribute float aWaveAmplitude, aWavePhase;
 
+			varying float vWhichTexture;
 			varying vec2 vUV;
 			varying float vBrightness;
 			varying float vFogDepth;
-			varying float vWhichTexture;
 
 			void main() {
-				vBrightness = aBrightness;
 				vWhichTexture = aWhichTexture;
 				vUV = aUV + 0.5;
 
@@ -186,7 +189,15 @@ document.body.onload = async () => {
 					return;
 				}
 
-				vec4 position = vec4(aPosition + vec3(centroid, 0.0), 1);
+				vec4 position = vec4(
+					aPosition
+					// * 0.95 // shrink the quads to help differentiate them
+					+ vec3(centroid, 0.0),
+					1
+				);
+				float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * TWO_PI);
+				position.z += wave;
+				vBrightness = aBrightness + wave * 0.08;
 				position = transform * position;
 				vFogDepth = -position.z;
 				position = camera * position;
@@ -201,7 +212,6 @@ document.body.onload = async () => {
 			uniform sampler2D moonscapeTexture;
 			uniform sampler2D platformTexture;
 			uniform sampler2D creditsTexture;
-			uniform float textureHeight;
 			uniform vec3 fogColor;
 			uniform float fogNear;
 			uniform float fogFar;
@@ -211,10 +221,10 @@ document.body.onload = async () => {
 			uniform vec3 creditColor3;
 			uniform vec3 creditColor4;
 
+			varying float vWhichTexture;
 			varying vec2 vUV;
 			varying float vBrightness;
 			varying float vFogDepth;
-			varying float vWhichTexture;
 
 			void main() {
 
