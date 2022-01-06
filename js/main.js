@@ -1,4 +1,5 @@
 import makeTerrain from "./terrain.js";
+import Controls from "./controls.js";
 
 const canvas = document.querySelector("canvas");
 document.addEventListener("touchmove", (e) => e.preventDefault(), {
@@ -7,7 +8,7 @@ document.addEventListener("touchmove", (e) => e.preventDefault(), {
 
 document.body.onload = async () => {
 	const regl = createREGL({ canvas, attributes: { antialias: false } });
-	const { mat4, vec3, quat } = glMatrix;
+	const { mat4 } = glMatrix;
 
 	const data = await fetch("assets/data.json").then((response) =>
 		response.json()
@@ -37,9 +38,12 @@ document.body.onload = async () => {
 		canvas.height = Math.ceil(
 			canvas.clientHeight * window.devicePixelRatio * data.resolution
 		);
+		Controls.resize();
 	};
 	window.onresize = resize;
 	resize();
+
+	Controls.attach(canvas);
 
 	if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
 		document.addEventListener("keydown", (event) => {
@@ -67,44 +71,17 @@ document.body.onload = async () => {
 	const terrain = makeTerrain(data);
 
 	const camera = mat4.create();
-	const transform = mat4.create();
 
-	const location = data.locations.spawn;
+	// const location = data.locations.spawn;
 	// const location = data.locations.looking_at_monolith;
 	// const location = data.locations.credits;
-	// const location = data.locations.poolside;
+	const location = data.locations.poolside;
 	// const location = data.locations.spikes;
 
-	const position = vec3.fromValues(...location.position);
-
-	const euler = vec3.create();
-	const rotQuat = quat.create();
-	vec3.set(
-		euler,
-		location.rotation[0],
-		location.rotation[1],
-		location.rotation[2]
-	);
-	quat.fromEuler(rotQuat, ...euler, "xzy");
+	Controls.goto(location);
 
 	const updateAirplane = (time, deltaTime) => {
-		// position[0] -= deltaTime * 300;
-		// position[1] -= deltaTime * 300;
-
-		located: {
-			mat4.fromQuat(transform, rotQuat);
-			mat4.rotateX(transform, transform, Math.PI / 2);
-			mat4.translate(transform, transform, position);
-		}
-
-		topDown: {
-			// mat4.identity(transform);
-			// mat4.rotateX(transform, transform, Math.PI);
-			// mat4.rotateZ(transform, transform, Math.PI);
-			// mat4.translate(transform, transform, vec3.fromValues(0, 0, 5000));
-			// mat4.translate(transform, transform, vec3.fromValues(...position));
-			// mat4.rotateX(transform, transform, Math.PI * 0.2 );
-		}
+		Controls.update(deltaTime);
 	};
 
 	const drawBackground = regl({
@@ -304,6 +281,8 @@ document.body.onload = async () => {
 			return;
 		}
 		lastFrameTime = time;
+
+		const { transform, position, rotation } = Controls;
 
 		try {
 			updateAirplane(time, deltaTime);

@@ -1,5 +1,7 @@
 regl
 	Controls
+		Tilt horizon and move it up and down
+	Break main module into pieces
 
 Readme
 	"faithful reproduction"
