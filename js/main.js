@@ -5,6 +5,7 @@ const canvas = document.querySelector("canvas");
 document.addEventListener("touchmove", (e) => e.preventDefault(), {
 	passive: false,
 });
+const { transform, position } = Controls;
 
 document.body.onload = async () => {
 	const regl = createREGL({ canvas, attributes: { antialias: false } });
@@ -31,12 +32,14 @@ document.body.onload = async () => {
 			})
 		);
 
+	let resolution = data.resolution;
+
 	const resize = () => {
 		canvas.width = Math.ceil(
-			canvas.clientWidth * window.devicePixelRatio * data.resolution
+			canvas.clientWidth * window.devicePixelRatio * resolution
 		);
 		canvas.height = Math.ceil(
-			canvas.clientHeight * window.devicePixelRatio * data.resolution
+			canvas.clientHeight * window.devicePixelRatio * resolution
 		);
 		Controls.resize();
 	};
@@ -65,28 +68,33 @@ document.body.onload = async () => {
 					}
 				}
 			}
+			if (event.code === "KeyB") {
+				Controls.birdsEyeView = !Controls.birdsEyeView;
+				spotlight = Controls.birdsEyeView ? 1 : 0;
+				resolution = Controls.birdsEyeView ? 1 : data.resolution;
+				resize();
+			}
 		});
 	}
 
 	const terrain = makeTerrain(data);
-
 	const camera = mat4.create();
+	let spotlight = 0.0;
 
-	// const location = data.locations.spawn;
+	const location = data.locations.spawn;
 	// const location = data.locations.looking_at_monolith;
 	// const location = data.locations.credits;
-	const location = data.locations.poolside;
+	// const location = data.locations.poolside;
 	// const location = data.locations.spikes;
 
 	Controls.goto(location);
 
-	const updateAirplane = (time, deltaTime) => {
-		Controls.update(deltaTime);
-	};
-
 	const drawBackground = regl({
 		vert: `
 			precision mediump float;
+
+			uniform float pitch;
+			uniform mat2 rollMat;
 
 			attribute vec2 aPosition;
 
@@ -94,6 +102,8 @@ document.body.onload = async () => {
 
 			void main() {
 				vUV = 0.5 * (aPosition + 1.0);
+				vUV.y += pitch * -0.04;
+				vUV = rollMat * (vUV - 0.5) + 0.5;
 				gl_Position = vec4(aPosition, 0, 1);
 			}
 		`,
@@ -108,7 +118,6 @@ document.body.onload = async () => {
 
 			void main() {
 				vec2 uv = vUV;
-				// TODO: apply tilt to UV
 				float y = (0.5 - uv.y) * 480. / textureHeight + 1.0;
 				vec3 color = vec3(0.0);
 				if (y < 1.0) {
@@ -126,6 +135,8 @@ document.body.onload = async () => {
 		uniforms: {
 			tex: horizonTexture,
 			textureHeight: horizonTexture.height,
+			pitch: regl.prop("pitch"),
+			rollMat: regl.prop("rollMat"),
 		},
 
 		depth: { enable: false },
@@ -139,9 +150,12 @@ document.body.onload = async () => {
 
 			uniform float time;
 			uniform mat4 camera, transform;
-			uniform vec3 position;
+			uniform vec3 airplanePosition;
 			uniform float terrainSize, maxDrawDistance;
+			uniform float currentQuadID;
+			uniform float spotlight;
 
+			attribute float aQuadID;
 			attribute vec2 aCentroid;
 			attribute vec3 aPosition;
 			attribute float aWhichTexture;
@@ -152,19 +166,20 @@ document.body.onload = async () => {
 			varying float vWhichTexture;
 			varying vec2 vUV;
 			varying float vBrightness;
+			varying float vSpotlight;
 			varying float vFogDepth;
 
 			void main() {
 				vWhichTexture = aWhichTexture;
 				vUV = aUV + 0.5;
 
-				vec2 centroid = aCentroid;
-				centroid = (fract((centroid + position.xy) / terrainSize + 0.5) - 0.5) * terrainSize - position.xy;
+				vec2 centroid = (fract((aCentroid + airplanePosition.xy) / terrainSize + 0.5) - 0.5) * terrainSize - airplanePosition.xy;
 
-				vec2 diff = -abs(centroid + position.xy) + maxDrawDistance;
+				vec2 diff = maxDrawDistance - abs(centroid + airplanePosition.xy);
 				if (diff.x < 0.0 || diff.y < 0.0) {
 					return;
 				}
+
 
 				vec4 position = vec4(
 					aPosition
@@ -175,6 +190,11 @@ document.body.onload = async () => {
 				float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * TWO_PI);
 				position.z += wave;
 				vBrightness = aBrightness + wave * 0.08;
+				vSpotlight = spotlight * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
+				if (aQuadID == currentQuadID) {
+					vSpotlight = spotlight;
+				}
+				vSpotlight = clamp(vSpotlight, 0.0, spotlight);
 				position = transform * position;
 				vFogDepth = -position.z;
 				position = camera * position;
@@ -201,6 +221,7 @@ document.body.onload = async () => {
 			varying float vWhichTexture;
 			varying vec2 vUV;
 			varying float vBrightness;
+			varying float vSpotlight;
 			varying float vFogDepth;
 
 			void main() {
@@ -228,6 +249,8 @@ document.body.onload = async () => {
 
 				float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );
 				gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
+
+				gl_FragColor.rg += vSpotlight;
 			}
 		`,
 
@@ -238,10 +261,12 @@ document.body.onload = async () => {
 			time: regl.context("time"),
 			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
-			position: regl.prop("position"),
+			airplanePosition: regl.prop("position"),
 			terrainSize: data.size,
 			maxDrawDistance: data.maxDrawDistance,
 			transform: regl.prop("transform"),
+			currentQuadID: regl.prop("currentQuadID"),
+			spotlight: regl.prop("spotlight"),
 			fogColor: [0, 0, 0],
 			fogNear: 1,
 			fogFar: data.maxFog,
@@ -282,12 +307,19 @@ document.body.onload = async () => {
 		}
 		lastFrameTime = time;
 
-		const { transform, position, rotation } = Controls;
-
 		try {
-			updateAirplane(time, deltaTime);
-			drawBackground({ camera, transform });
-			drawTerrain({ camera, transform, position });
+			Controls.update(terrain.clampAltitude, deltaTime);
+			const { pitch, rollMat } = Controls;
+			if (!Controls.birdsEyeView) {
+				drawBackground({ camera, transform, pitch, rollMat });
+			}
+			drawTerrain({
+				camera,
+				transform,
+				position,
+				currentQuadID: terrain.currentQuadID,
+				spotlight,
+			});
 		} catch (error) {
 			raf.cancel();
 			throw error;

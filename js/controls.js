@@ -1,40 +1,24 @@
-const { mat4, vec3, quat } = glMatrix;
+const { mat2, mat4, vec2, vec3, quat } = glMatrix;
 
-const maxMovementSpeed = 1000;
-const maxCameraRoll = 0.2375;
+const degreesToRadians = Math.PI / 180;
 
-// const object = new THREE.Object3D();
+const forwardAcceleration = 500;
+const maxForwardSpeed = 1000;
+const turnSpeed = 0.125;
 
-const verticalMin = Math.PI * (0.5 - 0.05); // const verticalMin = Math.PI * 0;
-const verticalMax = Math.PI * (0.5 + 0.05); // const verticalMax = Math.PI * 2;
-
-let domElement = null;
-
-let movementAcceleration = 500;
-let turnSpeed = 0.0025;
-
-let mouseButtonDown = null;
-let mouseX = 0;
-let mouseY = 0;
-let movementSpeed = 0;
-let viewWidth = 0;
-let viewHeight = 0;
-
-let touchStartPhi = 0;
-let touchStartTheta = 0;
-let touchStartX = 0;
-let touchStartY = 0;
-
-let theta = 0;
-let phi = 0;
-let roll = 0;
-
-let topDown = false;
-
+const mouseJoystick = vec2.create();
+const viewportSize = vec2.create();
 const transform = mat4.create();
 const position = vec3.create();
 const rotation = vec3.create();
+const rollMat = mat2.create();
+const touchStartRotation = vec3.create();
 const rotQuat = quat.create();
+let mouseButtonDown = null;
+let forwardSpeed = 0;
+let domElement = null;
+let touchStartX = 0;
+let touchStartY = 0;
 
 const coarse = (value, granularity = 1000) =>
 	Math.round(value * granularity) / granularity;
@@ -53,11 +37,11 @@ const attach = (element) => {
 	domElement.addEventListener("dblclick", (event) => event.preventDefault());
 	domElement.addEventListener("mousemove", (event) => {
 		event.preventDefault();
-		mouseX = event.pageX - viewWidth / 2;
-		mouseY = event.pageY - viewHeight / 2;
-
-		phi = Math.PI * 0.5 + mouseY * 0.0005;
-		phi = clamp(phi, verticalMin, verticalMax);
+		vec2.set(
+			mouseJoystick,
+			event.pageX - viewportSize[0] / 2,
+			event.pageY - viewportSize[1] / 2
+		);
 	});
 	domElement.addEventListener("mousedown", (event) => {
 		event.preventDefault();
@@ -73,9 +57,8 @@ const attach = (element) => {
 		const { pageX, pageY } = event.touches.item(0);
 		touchStartX = pageX;
 		touchStartY = pageY;
-		touchStartPhi = phi;
-		touchStartTheta = theta;
-		const isAboveMiddle = touchStartY - viewHeight / 2 < 0;
+		vec3.set(touchStartRotation, ...rotation);
+		const isAboveMiddle = touchStartY - viewportSize[1] / 2 < 0;
 		mouseButtonDown = isAboveMiddle ? "primary" : "secondary";
 	});
 	domElement.addEventListener("touchmove", (event) => {
@@ -86,9 +69,13 @@ const attach = (element) => {
 		) {
 			mouseButtonDown = null;
 		}
-		theta = touchStartTheta + (pageX - touchStartX) * 0.001;
-		phi = touchStartPhi + (pageY - touchStartY) * 0.0005;
-		phi = clamp(phi, verticalMin, verticalMax);
+		const pitch = clamp(
+			coarse(touchStartRotation[0] + (pageY - touchStartY) * 1) - 9,
+			9
+		);
+		const roll = 0;
+		const yaw = touchStartRotation[1] + coarse(pageX - touchStartX) * 1;
+		vec3.set(rotation, pitch, yaw, roll);
 	});
 	domElement.addEventListener("touchend", (event) => {
 		event.preventDefault();
@@ -98,20 +85,24 @@ const attach = (element) => {
 	});
 };
 
-const resize = () => {
-	viewWidth = window.innerWidth;
-	viewHeight = window.innerHeight;
-};
+const resize = () =>
+	vec2.set(viewportSize, window.innerWidth, window.innerHeight);
 
-const refreshTransform = () => {
-	if (topDown) {
+const updateTransform = () => {
+	if (controls.birdsEyeView) {
 		mat4.identity(transform);
 		mat4.rotateX(transform, transform, Math.PI);
-		mat4.rotateZ(transform, transform, Math.PI);
-		mat4.translate(transform, transform, vec3.fromValues(0, 0, 5000));
-		mat4.translate(transform, transform, vec3.fromValues(...position));
-		mat4.rotateX(transform, transform, Math.PI * 0.2);
+		mat4.translate(transform, transform, vec3.fromValues(0, 0, 100));
+		mat4.scale(transform, transform, vec3.fromValues(0.03, 0.03, 0.03));
+		mat4.rotateX(transform, transform, -Math.PI * 0.375);
+		mat4.rotateZ(transform, transform, degreesToRadians * -rotation[1]);
+		mat4.translate(
+			transform,
+			transform,
+			vec3.fromValues(position[0], position[1], -150)
+		);
 	} else {
+		quat.fromEuler(rotQuat, ...rotation, "xzy");
 		mat4.fromQuat(transform, rotQuat);
 		mat4.rotateX(transform, transform, Math.PI / 2);
 		mat4.translate(transform, transform, position);
@@ -120,73 +111,69 @@ const refreshTransform = () => {
 
 const goto = (location) => {
 	vec3.set(position, ...location.position);
-	vec3.set(rotation, ...location.rotation);
-	quat.fromEuler(rotQuat, ...rotation, "xzy");
-
-	// TODO: transfer rotation to spherical coordinates
-	/*
-		const lookDirection = vec3.fromValues(0, 0, -1);
-		lookDirection.applyQuaternion(object.quaternion);
-		const spherical = new THREE.Spherical();
-		spherical.setFromVector3(lookDirection);
-		phi = spherical.phi;
-		theta = spherical.theta;
-	*/
-
-	refreshTransform();
+	vec3.set(rotation, ...location.rotation, 0);
+	updateTransform();
 };
 
-const update = (deltaTime) => {
-	if (mouseButtonDown != null) {
-		const lastMovementSpeed = movementSpeed;
-		movementSpeed +=
-			deltaTime *
-			movementAcceleration *
-			(mouseButtonDown === "primary" ? -1 : 1);
-		movementSpeed = clamp(movementSpeed, -maxMovementSpeed, maxMovementSpeed);
-		movementSpeed = coarse(movementSpeed, 10);
-		if (lastMovementSpeed != 0 && lastMovementSpeed < 0 != movementSpeed < 0) {
-			movementSpeed = 0;
-		}
-		if (Math.abs(movementSpeed) < 5) {
-			movementSpeed = 0;
-		}
+const updateForwardSpeed = (deltaTime) => {
+	if (mouseButtonDown == null) {
+		return;
 	}
 
-	// TODO: append forward motion to position
-	/*
-		object.translateZ(deltaTime * movementSpeed);
-	*/
-
-	// TODO: limit altitude between ground level plus offset and max
-
-	roll = coarse(turnSpeed * -mouseX);
-	theta += deltaTime * turnSpeed * -mouseX;
-
-	// TODO: assign rotation from spherical coordinates to quaternion
-	/*
-		let targetPosition = new THREE.Vector3();
-		targetPosition.setFromSphericalCoords(1, coarse(phi), coarse(theta)).add(object.position);
-		object.lookAt(targetPosition);
-	*/
-
-	// TODO: camera roll
-	/*
-		camera.rotation.z = roll * maxCameraRoll;
-	*/
-
-	refreshTransform();
+	const lastForwardSpeed = forwardSpeed;
+	forwardSpeed +=
+		deltaTime * forwardAcceleration * (mouseButtonDown === "primary" ? -1 : 1);
+	forwardSpeed = clamp(forwardSpeed, -maxForwardSpeed, maxForwardSpeed);
+	forwardSpeed = coarse(forwardSpeed, 10);
+	if (lastForwardSpeed != 0 && lastForwardSpeed < 0 != forwardSpeed < 0) {
+		forwardSpeed = 0;
+	}
+	if (Math.abs(forwardSpeed) < 5) {
+		forwardSpeed = 0;
+	}
 };
 
-refreshTransform();
+const updateRotation = (deltaTime) => {
+	const pitch = clamp(coarse(-mouseJoystick[1] * 0.025), -9, 9);
+	const roll = coarse(turnSpeed * mouseJoystick[0]) * 0.2375;
+	const yaw = rotation[1] + deltaTime * coarse(turnSpeed * mouseJoystick[0]);
+	vec3.set(rotation, pitch, yaw, roll);
 
-export default {
+	controls.pitch = pitch;
+	mat2.fromRotation(rollMat, -roll * degreesToRadians * 1.5);
+};
+
+const updatePosition = (clampAltitude, deltaTime) => {
+	const pitchRad = degreesToRadians * rotation[0];
+	const yawRad = degreesToRadians * rotation[1];
+	const magnitude = deltaTime * forwardSpeed;
+
+	position[0] += magnitude * Math.sin(yawRad) * Math.cos(pitchRad);
+	position[1] += magnitude * Math.cos(yawRad) * Math.cos(pitchRad) * -1;
+	position[2] += magnitude * Math.sin(pitchRad);
+
+	position[2] = clampAltitude(...position);
+};
+
+const update = (clampAltitude, deltaTime) => {
+	updateRotation(deltaTime);
+	updatePosition(clampAltitude, deltaTime);
+	updateForwardSpeed(deltaTime);
+	updateTransform();
+};
+
+const controls = {
 	attach,
 	goto,
 	resize,
 	update,
-	topDown,
 	transform,
 	position,
-	rotation,
+	pitch: 0,
+	rollMat,
+	birdsEyeView: false,
 };
+
+updateTransform();
+
+export default controls;

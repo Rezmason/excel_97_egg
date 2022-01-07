@@ -124,23 +124,23 @@
 	"locations": {
 		"spawn": {
 			"position": [0, 0, 45],
-			"rotation": [0, 260, 0]
+			"rotation": [0, 260]
 		},
 		"looking_at_monolith": {
 			"position": [0, 0, 45],
-			"rotation": [0, 230, 0]
+			"rotation": [0, 230]
 		},
 		"credits": {
 			"position": [470, 1800, 45],
-			"rotation": [5, 180, 0]
+			"rotation": [5, 180]
 		},
 		"poolside": {
 			"position": [300, 595, 85],
-			"rotation": [10, 315, 0]
+			"rotation": [10, 315]
 		},
 		"spikes": {
 			"position": [336, 1276, 85],
-			"rotation": [6.5, 225, 0]
+			"rotation": [6.5, 225]
 		}
 	}
 }

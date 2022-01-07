@@ -39,10 +39,10 @@ import { CreditsMaterial, setupCredits, updateCredits } from "./credits.js";
 	let camera = airplaneCamera;
 
 	// const location = {position: [0, 0, 0], rotation: [0, 1, 0]};
-	// const location = data.locations.spawn;
+	const location = data.locations.spawn;
 	// const location = data.locations.looking_at_monolith;
 	// const location = data.locations.credits;
-	const location = data.locations.poolside;
+	// const location = data.locations.poolside;
 	// const location = data.locations.spikes;
 	airplane.position.set(...location.position);
 	airplane.rotation.set(...location.rotation.map(x => Math.PI * x));

@@ -1,6 +1,5 @@
 regl
-	Controls
-		Tilt horizon and move it up and down
+	Test on touch screen
 	Break main module into pieces
 
 Readme
