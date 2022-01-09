@@ -312,7 +312,7 @@ document.body.onload = async () => {
 				} else if (whichTexture == 1) {
 					gl_FragColor = texture2D(platformTexture, vUV);
 				} else if (whichTexture == 2) {
-					vec2 uv = vUV;
+					highp vec2 uv = vUV;
 					uv.y = fract(time * -0.006 + uv.y * 0.03 - 0.0225);
 
 					uv.y *= 0.92;
