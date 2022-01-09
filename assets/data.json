@@ -1,10 +1,11 @@
 {
 	"targetFPS": 15,
 	"size": 2000,
-	"minHeightOffGround": 5,
+	"minHeightOffGround": 3,
 	"maxAltitude": 104,
-	"maxFog": 1500,
-	"maxDrawDistance": 1200,
+	"fogNear": 100,
+	"fogFar": 800,
+	"maxDrawDistance": 600,
 	"fov": 26,
 	"resolution": 0.25,
 	"waveAmplitude": 0.125,
@@ -141,6 +142,20 @@
 		"spikes": {
 			"position": [336, 1276, 85],
 			"rotation": [6.5, 225]
+		}
+	},
+	"texture_packs": {
+		"standard": {
+			"horizonTexture": { "url": "assets/textures/horizon_screenshot.png", "hi_rez": false },
+			"moonscapeTexture": { "url": "assets/textures/moonscape_brighter.png", "hi_rez": false },
+			"platformTexture": { "url": "assets/textures/platform.png", "hi_rez": false },
+			"creditsTexture": { "url": "assets/textures/credits_rm.png", "hi_rez": false }
+		},
+		"hi_rez": {
+			"horizonTexture": { "url": "assets/textures/hi_rez/horizon_hi_rez.png", "hi_rez": true },
+			"moonscapeTexture": { "url": "assets/textures/hi_rez/moonscape_hi_rez.png", "hi_rez": true },
+			"platformTexture": { "url": "assets/textures/hi_rez/platform_hi_rez.png", "hi_rez": true },
+			"creditsTexture": { "url": "assets/textures/hi_rez/credits_sdf.png", "hi_rez": true }
 		}
 	}
 }

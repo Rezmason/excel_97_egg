@@ -1,25 +1,60 @@
 regl
 	Test on touch screen
-	Break main module into pieces
+	Clean up code
+		Move as many magic numbers as is sensible into data
+		Is there a simpler operation to perform to append forward motion?
+			Maybe composing a matrix and then transforming the position?
+		It's weird that the terrain has a current quad
+			It should return the current quad data, and the control module should expose it to the renderer
+		Isolate the renderer from the main module
+		Load the shaders in
+		Review the shader code
+	Compare with reference some more
 
 Readme
+	Link and controls
 	"faithful reproduction"
-	Running the egg in virtualization
-	Whittling down the scope (DLL deletion, etc)
-	Memory dump comparison
-	Data and texture extraction
-	Reference images/video and observations
+	Reverse engineering
+		Running the egg in virtualization
+		Whittling down the scope (DLL deletion, etc)
+		Memory dump comparison
+		Data and texture extraction
+		Reference images/video and observations
+	ThreeJS process
+		Build off of terrain example
+		(look at git history for the rest)
+	regl process
+		Reduce the ThreeJS project to a reference
+		Set up a basic render pipeline for textured geometries
+		Build out zoned terrain that separates geometry into quads with centroids
+		Expand shader support for water and scrolling, fading credit texture
+		Teleport centroids to airplane position
+		Work out the math for positioning and rotating the scene
+		Replace ThreeJS-based math from old controls module with glMatrix operations
+		Wire up horizon position and rotation to controls
+		Add "bird's eye view" to help illustrate how the demo works
+		Test touch controls
 	Acknowledgements
+		Charting team
+			Jason Allen
+			Andy Verprauskus
+			Hank Chien
+		Help from
+			retrodev - reverse engineer
+			ridiculous_fish - developer of Hex Fiend
+			@kurtruslfanclub — making SDFs in Photoshop
+
 
 Interview and technical explanation
 
-Handbrake
+Add handbrake to controls
 	Holding down space stops all motion and sets the roll to zero
 Improve mobile controls
 	Integrate turn speed somehow
 Procedural terrain
-Improve platform lighting
-Improve the pool lighting?
-	Plug the extreme vertices into the lighting function
-Is the spawn point and angle correct?
-Smarter texture filtering to reduce aliasing
+Smarter texture filtering to reduce aliasing?
+"SINDOGS" tribute?
+	Maybe sine wave sundogs
+
+XENIUM/XENIOLUM LUNENSIS
+	Endless Column, by Blue Man Group

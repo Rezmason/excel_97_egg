@@ -2,7 +2,7 @@ const { mat2, mat4, vec2, vec3, quat } = glMatrix;
 
 const degreesToRadians = Math.PI / 180;
 
-const forwardAcceleration = 500;
+const forwardAcceleration = 400;
 const maxForwardSpeed = 1000;
 const turnSpeed = 0.125;
 
@@ -19,9 +19,10 @@ let forwardSpeed = 0;
 let domElement = null;
 let touchStartX = 0;
 let touchStartY = 0;
+let smooth = false;
 
 const coarse = (value, granularity = 1000) =>
-	Math.round(value * granularity) / granularity;
+	smooth ? value : Math.round(value * granularity) / granularity;
 
 const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
 
@@ -92,7 +93,7 @@ const updateTransform = () => {
 	if (controls.birdsEyeView) {
 		mat4.identity(transform);
 		mat4.rotateX(transform, transform, Math.PI);
-		mat4.translate(transform, transform, vec3.fromValues(0, 0, 100));
+		mat4.translate(transform, transform, vec3.fromValues(0, 0, 75));
 		mat4.scale(transform, transform, vec3.fromValues(0.03, 0.03, 0.03));
 		mat4.rotateX(transform, transform, -Math.PI * 0.375);
 		mat4.rotateZ(transform, transform, degreesToRadians * -rotation[1]);
@@ -143,7 +144,8 @@ const updateRotation = (deltaTime) => {
 	mat2.fromRotation(rollMat, -roll * degreesToRadians * 1.5);
 };
 
-const updatePosition = (clampAltitude, deltaTime) => {
+const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
+	smooth = smoothMotion;
 	const pitchRad = degreesToRadians * rotation[0];
 	const yawRad = degreesToRadians * rotation[1];
 	const magnitude = deltaTime * forwardSpeed;
