@@ -315,12 +315,12 @@ document.body.onload = async () => {
 					vec2 uv = vUV;
 					uv.y = fract(time * -0.006 + uv.y * 0.03 - 0.0225);
 
-					// uv.y *= 0.92;
-					// uv.y += 0.076;
+					uv.y *= 0.92;
+					uv.y += 0.076;
 
-					// uv.y *= 5.0;
-					// uv.x = uv.x / 5.0 + (1.0 - 1.0 / 5.0);
-					// uv.x += 1.0 / 5.0 * (1.0 + floor(uv.y));
+					uv.y *= 5.0;
+					uv.x = uv.x / 5.0 + (1.0 - 1.0 / 5.0);
+					uv.x += 1.0 / 5.0 * (1.0 + floor(uv.y));
 
 					uv = vec2(1.0) - uv;
 					vec4 credits = texture2D(creditsTexture, fract(uv));
