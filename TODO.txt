@@ -1,5 +1,4 @@
 regl
-	Test on touch screen
 	Clean up code
 		Move as many magic numbers as is sensible into data
 		Is there a simpler operation to perform to append forward motion?
@@ -10,6 +9,19 @@ regl
 		Load the shaders in
 		Review the shader code
 	Compare with reference some more
+	UI
+		Toolbar
+			Fades away like Drivey's
+			Looks like a zoomed in, pixelated Excel 97 toolbar
+			Buttons
+				Bird's eye view
+				Clipping
+				View options
+					Classic
+					Mipmap
+					High resolution textures
+				Show quads
+
 
 Readme
 	Link and controls

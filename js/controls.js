@@ -20,6 +20,7 @@ let domElement = null;
 let touchStartX = 0;
 let touchStartY = 0;
 let smooth = false;
+let useMouseJoystick = false;
 
 const coarse = (value, granularity = 1000) =>
 	smooth ? value : Math.round(value * granularity) / granularity;
@@ -38,6 +39,7 @@ const attach = (element) => {
 	domElement.addEventListener("dblclick", (event) => event.preventDefault());
 	domElement.addEventListener("mousemove", (event) => {
 		event.preventDefault();
+		useMouseJoystick = true;
 		vec2.set(
 			mouseJoystick,
 			event.pageX - viewportSize[0] / 2,
@@ -55,32 +57,37 @@ const attach = (element) => {
 
 	domElement.addEventListener("touchstart", (event) => {
 		event.preventDefault();
-		const { pageX, pageY } = event.touches.item(0);
+		let { pageX, pageY } = event.touches.item(0);
+		const maxViewportDimension = Math.max(...viewportSize);
+		pageX /= maxViewportDimension;
+		pageY /= maxViewportDimension;
+		useMouseJoystick = false;
 		touchStartX = pageX;
 		touchStartY = pageY;
 		vec3.set(touchStartRotation, ...rotation);
-		const isAboveMiddle = touchStartY - viewportSize[1] / 2 < 0;
-		mouseButtonDown = isAboveMiddle ? "primary" : "secondary";
 	});
 	domElement.addEventListener("touchmove", (event) => {
 		event.preventDefault();
-		const { pageX, pageY } = event.touches.item(0);
-		if (
-			Math.sqrt((pageX - touchStartX) ** 2 + (pageY - touchStartY) ** 2) > 10
-		) {
-			mouseButtonDown = null;
-		}
+		let { pageX, pageY } = event.touches.item(0);
+		const maxViewportDimension = Math.max(...viewportSize);
+		pageX /= maxViewportDimension;
+		pageY /= maxViewportDimension;
 		const pitch = clamp(
-			coarse(touchStartRotation[0] + (pageY - touchStartY) * 1) - 9,
-			9
+			coarse(touchStartRotation[0] + (pageY - touchStartY) * -100),
+			-9,
+			18
 		);
 		const roll = 0;
-		const yaw = touchStartRotation[1] + coarse(pageX - touchStartX) * 1;
+		const yaw = touchStartRotation[1] + coarse(pageX - touchStartX) * -100;
 		vec3.set(rotation, pitch, yaw, roll);
+		if (event.touches.length > 1) {
+			const isAboveMiddle = event.touches.item(1).pageY / viewportSize[1] < 0.5;
+			mouseButtonDown = isAboveMiddle ? "primary" : "secondary";
+		}
 	});
 	domElement.addEventListener("touchend", (event) => {
 		event.preventDefault();
-		if (event.touches.length === 0) {
+		if (event.touches.length < 2) {
 			mouseButtonDown = null;
 		}
 	});
@@ -135,13 +142,15 @@ const updateForwardSpeed = (deltaTime) => {
 };
 
 const updateRotation = (deltaTime) => {
-	const pitch = clamp(coarse(-mouseJoystick[1] * 0.025), -9, 9);
-	const roll = coarse(turnSpeed * mouseJoystick[0]) * 0.2375;
-	const yaw = rotation[1] + deltaTime * coarse(turnSpeed * mouseJoystick[0]);
-	vec3.set(rotation, pitch, yaw, roll);
+	if (useMouseJoystick) {
+		const pitch = clamp(coarse(-mouseJoystick[1] * 0.025), -9, 9);
+		const roll = coarse(turnSpeed * mouseJoystick[0]) * 0.2375;
+		const yaw = rotation[1] + deltaTime * coarse(turnSpeed * mouseJoystick[0]);
+		vec3.set(rotation, pitch, yaw, roll);
+	}
 
-	controls.pitch = pitch;
-	mat2.fromRotation(rollMat, -roll * degreesToRadians * 1.5);
+	controls.pitch = rotation[0];
+	mat2.fromRotation(rollMat, -rotation[2] * degreesToRadians * 1.5);
 };
 
 const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
@@ -154,7 +163,9 @@ const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
 	position[1] += magnitude * Math.cos(yawRad) * Math.cos(pitchRad) * -1;
 	position[2] += magnitude * Math.sin(pitchRad);
 
-	position[2] = clampAltitude(...position);
+	const lerpRatio = clamp(0.4 + deltaTime * 4, 0, 1);
+	position[2] =
+		position[2] * (1 - lerpRatio) + clampAltitude(...position) * lerpRatio;
 };
 
 const update = (clampAltitude, deltaTime) => {

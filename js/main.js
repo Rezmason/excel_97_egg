@@ -5,7 +5,6 @@ const canvas = document.querySelector("canvas");
 document.addEventListener("touchmove", (e) => e.preventDefault(), {
 	passive: false,
 });
-const { transform, position } = Controls;
 
 document.body.onload = async () => {
 	const regl = createREGL({
@@ -13,7 +12,7 @@ document.body.onload = async () => {
 		attributes: { antialias: false },
 		optionalExtensions: ["OES_standard_derivatives"],
 	});
-	const { mat4 } = glMatrix;
+	const { mat4, vec2 } = glMatrix;
 
 	const data = await fetch("assets/data.json").then((response) =>
 		response.json()
@@ -28,7 +27,7 @@ document.body.onload = async () => {
 				await image.decode();
 				const isNPOT =
 					Math.log2(image.width) % 1 > 0 || Math.log2(image.height) % 1 > 0;
-				const hiRezParams = entry.hi_rez
+				const hiRezParams = entry.hi_res
 					? {
 							min: isNPOT ? "linear" : "linear",
 							mag: "linear",
@@ -49,13 +48,23 @@ document.body.onload = async () => {
 	Controls.attach(canvas);
 	const terrain = makeTerrain(data);
 	const camera = mat4.create();
-	let spotlight = 0.0;
-	let clipping = 1.0;
 	let smooth = false;
 	let resolution = data.resolution;
 	let reduceResolution = true;
-	let revealQuads = false;
+	let showQuads = false;
 	let useHiRezTextures = false;
+
+	const { transform, position, rollMat } = Controls;
+
+	const renderProperties = {
+		camera,
+		repeatOffset: vec2.create(),
+
+		spotlight: 0,
+		clipping: 1,
+		quadBorder: 0,
+		fogFar: data.fogFar,
+	};
 
 	const resize = () => {
 		canvas.width = Math.ceil(
@@ -93,14 +102,16 @@ document.body.onload = async () => {
 				}
 				case "KeyB": {
 					Controls.birdsEyeView = !Controls.birdsEyeView;
-					spotlight = Controls.birdsEyeView ? 1 : 0;
+					renderProperties.spotlight = Controls.birdsEyeView ? 1 : 0;
 					resolution =
 						Controls.birdsEyeView || !reduceResolution ? 1 : data.resolution;
 					resize();
 					break;
 				}
 				case "KeyC": {
-					clipping = 1.0 - clipping;
+					renderProperties.clipping = renderProperties.clipping === 0 ? 1 : 0;
+					renderProperties.fogFar =
+						data.fogFar * (renderProperties.clipping === 1 ? 1 : 3);
 					break;
 				}
 				case "KeyS": {
@@ -115,13 +126,14 @@ document.body.onload = async () => {
 					break;
 				}
 				case "KeyQ": {
-					revealQuads = !revealQuads;
+					showQuads = !showQuads;
+					renderProperties.quadBorder = showQuads ? 0.05 : 0;
 					break;
 				}
 				case "KeyT": {
 					if (hiRezTexturePack == null) {
 						console.log("loading");
-						hiRezTexturePack = await loadTexturePack(data.texture_packs.hi_rez);
+						hiRezTexturePack = await loadTexturePack(data.texture_packs.hi_res);
 					}
 					useHiRezTextures = !useHiRezTextures;
 					break;
@@ -197,13 +209,14 @@ document.body.onload = async () => {
 
 			#define TWO_PI 6.2831853072
 
-			uniform float time;
+			uniform highp float time;
 			uniform mat4 camera, transform;
 			uniform vec3 airplanePosition;
 			uniform float terrainSize, maxDrawDistance;
 			uniform float currentQuadID;
 			uniform float spotlight, clipping;
 			uniform float fogNear, fogFar;
+			uniform vec2 repeatOffset;
 
 			attribute float aQuadID;
 			attribute vec2 aCentroid;
@@ -224,6 +237,8 @@ document.body.onload = async () => {
 
 				vec2 centroid = (fract((aCentroid + airplanePosition.xy) / terrainSize + 0.5) - 0.5) * terrainSize - airplanePosition.xy;
 
+				centroid += terrainSize * repeatOffset;
+
 				vec2 diff = maxDrawDistance - abs(centroid + airplanePosition.xy);
 				if (clipping == 1.0 && (diff.x < 0.0 || diff.y < 0.0)) {
 					return;
@@ -238,6 +253,10 @@ document.body.onload = async () => {
 					vSpotlight = spotlight;
 				}
 				vSpotlight = clamp(vSpotlight, 0.0, spotlight);
+				if (repeatOffset.x != 0.0 || repeatOffset.y != 0.0) {
+					vSpotlight = 0.0;
+				}
+
 				position = transform * position;
 
 				vBrightness = aBrightness + wave * 0.08;
@@ -258,11 +277,11 @@ document.body.onload = async () => {
 
 			precision mediump float;
 
-			uniform float tick, time;
+			uniform highp float tick, time;
 			uniform sampler2D moonscapeTexture;
 			uniform sampler2D platformTexture;
 			uniform sampler2D creditsTexture;
-			uniform float quadScale;
+			uniform float quadBorder;
 
 
 			uniform vec3 creditColor1;
@@ -279,14 +298,32 @@ document.body.onload = async () => {
 
 				int whichTexture = int(vWhichTexture);
 
-				if (max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0 > quadScale) {
+				float borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
+
+				if (vSpotlight == 1.0 && borderDistance < quadBorder * 3.0) {
+					gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+					return;
+				}
+				if (borderDistance < quadBorder) {
 					gl_FragColor = vec4(1.0, 0.0, 0.5, 1.0);
+					return;
 				} else if (whichTexture == 0) {
 					gl_FragColor = texture2D(moonscapeTexture, vUV);
 				} else if (whichTexture == 1) {
 					gl_FragColor = texture2D(platformTexture, vUV);
 				} else if (whichTexture == 2) {
-					vec4 credits = texture2D(creditsTexture, vec2(1.0) - vec2(vUV.x, fract(time * -0.006 + vUV.y * 0.03 - 0.03)));
+					vec2 uv = vUV;
+					uv.y = fract(time * -0.006 + uv.y * 0.03 - 0.0225);
+
+					// uv.y *= 0.92;
+					// uv.y += 0.076;
+
+					// uv.y *= 5.0;
+					// uv.x = uv.x / 5.0 + (1.0 - 1.0 / 5.0);
+					// uv.x += 1.0 / 5.0 * (1.0 + floor(uv.y));
+
+					uv = vec2(1.0) - uv;
+					vec4 credits = texture2D(creditsTexture, fract(uv));
 					vec3 creditColor = vec3(0.0);
 					float amount = 0.0;
 					if (credits.b > 0.0 && credits.b > credits.g) {
@@ -304,7 +341,9 @@ document.body.onload = async () => {
 				}
 
 				gl_FragColor.rgb *= vBrightness;
-				gl_FragColor.rg += vSpotlight;
+				if (quadBorder == 0.0) {
+					gl_FragColor.rg += vSpotlight;
+				}
 			}
 		`,
 
@@ -312,7 +351,6 @@ document.body.onload = async () => {
 		count: terrain.numVertices,
 
 		uniforms: {
-			time: regl.context("time"),
 			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
 			airplanePosition: regl.prop("position"),
@@ -322,9 +360,11 @@ document.body.onload = async () => {
 			currentQuadID: regl.prop("currentQuadID"),
 			spotlight: regl.prop("spotlight"),
 			clipping: regl.prop("clipping"),
-			quadScale: regl.prop("quadScale"),
+			quadBorder: regl.prop("quadBorder"),
+			repeatOffset: regl.prop("repeatOffset"),
+			time: regl.prop("time"),
 			fogNear: data.fogNear,
-			fogFar: data.fogFar,
+			fogFar: regl.prop("fogFar"),
 			moonscapeTexture: regl.prop("moonscapeTexture"),
 			platformTexture: regl.prop("platformTexture"),
 			creditsTexture: regl.prop("creditsTexture"),
@@ -338,6 +378,7 @@ document.body.onload = async () => {
 
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
+	const start = Date.now();
 	const raf = regl.frame(({ viewportWidth, viewportHeight, time, tick }) => {
 		if (
 			dimensions.width !== viewportWidth ||
@@ -352,7 +393,7 @@ document.body.onload = async () => {
 				(Math.PI / 180) * data.fov,
 				aspectRatio,
 				0.1,
-				10000
+				data.size * 1.5
 			);
 		}
 
@@ -363,24 +404,31 @@ document.body.onload = async () => {
 		lastFrameTime = time;
 
 		Controls.update(terrain.clampAltitude, deltaTime, smooth);
-		const { pitch, rollMat } = Controls;
 		const textures = useHiRezTextures ? hiRezTexturePack : texturePack;
-		const horizonTexture = textures.horizonTexture;
+		Object.assign(renderProperties, textures);
+		renderProperties.pitch = Controls.pitch;
+		renderProperties.rollMat = rollMat;
+		renderProperties.transform = transform;
+		renderProperties.position = position;
+		renderProperties.currentQuadID = terrain.currentQuadID;
+		renderProperties.time = (Date.now() - start) / 1000;
 
 		try {
 			if (!Controls.birdsEyeView) {
-				drawBackground({ camera, transform, pitch, rollMat, horizonTexture });
+				drawBackground(renderProperties);
 			}
-			drawTerrain({
-				camera,
-				transform,
-				position,
-				currentQuadID: terrain.currentQuadID,
-				spotlight,
-				clipping,
-				quadScale: revealQuads ? 0.95 : 1.0,
-				...textures,
-			});
+
+			if (renderProperties.clipping == 0) {
+				for (let y = -1; y < 2; y++) {
+					for (let x = -1; x < 2; x++) {
+						vec2.set(renderProperties.repeatOffset, x, y);
+						drawTerrain(renderProperties);
+					}
+				}
+			} else {
+				vec2.set(renderProperties.repeatOffset, 0, 0);
+				drawTerrain(renderProperties);
+			}
 		} catch (error) {
 			raf.cancel();
 			throw error;

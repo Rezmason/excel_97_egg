@@ -146,16 +146,16 @@
 	},
 	"texture_packs": {
 		"standard": {
-			"horizonTexture": { "url": "assets/textures/horizon_screenshot.png", "hi_rez": false },
-			"moonscapeTexture": { "url": "assets/textures/moonscape_brighter.png", "hi_rez": false },
-			"platformTexture": { "url": "assets/textures/platform.png", "hi_rez": false },
-			"creditsTexture": { "url": "assets/textures/credits_rm.png", "hi_rez": false }
+			"horizonTexture": { "url": "assets/textures/horizon_screenshot.png", "hi_res": false },
+			"moonscapeTexture": { "url": "assets/textures/moonscape_brighter.png", "hi_res": false },
+			"platformTexture": { "url": "assets/textures/platform.png", "hi_res": false },
+			"creditsTexture": { "url": "assets/textures/credits_rm.png", "hi_res": false }
 		},
-		"hi_rez": {
-			"horizonTexture": { "url": "assets/textures/hi_rez/horizon_hi_rez.png", "hi_rez": true },
-			"moonscapeTexture": { "url": "assets/textures/hi_rez/moonscape_hi_rez.png", "hi_rez": true },
-			"platformTexture": { "url": "assets/textures/hi_rez/platform_hi_rez.png", "hi_rez": true },
-			"creditsTexture": { "url": "assets/textures/hi_rez/credits_sdf.png", "hi_rez": true }
+		"hi_res": {
+			"horizonTexture": { "url": "assets/textures/hi_res/horizon_hi_res.png", "hi_res": true },
+			"moonscapeTexture": { "url": "assets/textures/hi_res/moonscape_hi_res.png", "hi_res": true },
+			"platformTexture": { "url": "assets/textures/hi_res/platform_hi_res.png", "hi_res": true },
+			"creditsTexture": { "url": "assets/textures/hi_res/credits_sdf.png", "hi_res": true }
 		}
 	}
 }
