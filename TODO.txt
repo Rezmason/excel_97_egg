@@ -1,27 +1,26 @@
-regl
-	Clean up code
-		Move as many magic numbers as is sensible into data
-		Is there a simpler operation to perform to append forward motion?
-			Maybe composing a matrix and then transforming the position?
-		It's weird that the terrain has a current quad
-			It should return the current quad data, and the control module should expose it to the renderer
-		Isolate the renderer from the main module
-		Load the shaders in
-		Review the shader code
-	Compare with reference some more
-	UI
-		Toolbar
-			Fades away like Drivey's
-			Looks like a zoomed in, pixelated Excel 97 toolbar
-			Buttons
-				Bird's eye view
-				Clipping
-				View options
-					Classic
-					Mipmap
-					High resolution textures
-				Show quads
-
+Clean up code
+	Move as many magic numbers as is sensible into data
+	Is there a simpler operation to perform to append forward motion?
+		Maybe composing a matrix and then transforming the position?
+	It's weird that the terrain has a current quad
+		It should return the current quad data, and the control module should expose it to the renderer
+	Isolate the renderer from the main module
+	Load the shaders in
+	Review the shader code
+Compare with reference some more
+UI
+	Toolbar
+		Fades away like Drivey's
+		Looks like a zoomed in, pixelated Excel 97 toolbar
+		Buttons
+			About...
+			Bird's eye view (B)
+			Clipping (C)
+			Smooth movement (S)
+			Resolution (R)
+			Quads (Q)
+			High resolution textures (T)
+			Full screen (F)
 
 Readme
 	Link and controls
