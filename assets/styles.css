@@ -1,0 +1,107 @@
+html,
+body {
+	margin: 0;
+	overscroll-behavior: none;
+	cursor: crosshair;
+}
+
+body {
+	background: black;
+	font-family: Tahoma, sans-serif;
+	color: white;
+	overflow: hidden;
+}
+
+canvas {
+	width: 100vw;
+	height: 100vh;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+}
+
+form.mso {
+	display: block;
+	position: absolute;
+	top: 1em;
+	left: calc(1em + 5px);
+
+	display: flex;
+
+	border-image-outset: 3px 2px 3px 11px;
+	border-image-repeat: stretch;
+	border-image-slice: 3 2 3 11 fill;
+	border-image-source: url("ui/toolbar_background.png");
+	border-image-width: 3px 2px 3px 11px;
+
+	cursor: pointer;
+}
+
+form.mso divider {
+	background-image: url("ui/toolbar_divider.png");
+	width: 6px;
+	height: 22px;
+}
+
+button.mso,
+input[type="checkbox"].mso {
+	-webkit-appearance: unset;
+	font-size: unset;
+	border: none;
+	padding: 0;
+	margin: 0;
+
+	display: block;
+	width: 23px;
+	height: 22px;
+
+	background-image: url("ui/icon_spritesheet.png");
+	background-position: calc(-23px * var(--sprite-x))
+		calc(-22px * var(--sprite-y));
+}
+
+button.mso,
+input[type="checkbox"].mso {
+	--sprite-y: 0;
+}
+button.mso:hover,
+input[type="checkbox"].mso:hover {
+	--sprite-y: 1;
+}
+button.mso:active,
+input[type="checkbox"].mso:active {
+	--sprite-y: 2;
+}
+input[type="checkbox"].mso:checked {
+	--sprite-y: 3;
+}
+input[type="checkbox"].mso:checked:hover {
+	--sprite-y: 4;
+}
+input[type="checkbox"].mso:checked:active {
+	--sprite-y: 5;
+}
+
+button#about {
+	--sprite-x: 0;
+}
+input#birdseye {
+	--sprite-x: 1;
+}
+input#lighting {
+	--sprite-x: 2;
+}
+input#quads {
+	--sprite-x: 3;
+}
+input#hi_res {
+	--sprite-x: 4;
+}
+input#resolution {
+	--sprite-x: 5;
+}
+input#smooth {
+	--sprite-x: 6;
+}
+input#fullscreen {
+	--sprite-x: 7;
+}
