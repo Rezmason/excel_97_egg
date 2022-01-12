@@ -83,7 +83,9 @@ const attach = (element) => {
 			18
 		);
 		const roll = 0;
-		const yaw = touchStartRotation[1] + coarse(pageX - touchStartX) * -100;
+		const flipYaw = controls.birdsEyeView ? -1 : 1;
+		const yaw =
+			touchStartRotation[1] + coarse(pageX - touchStartX) * -100 * flipYaw;
 		vec3.set(rotation, pitch, yaw, roll);
 		if (event.touches.length > 1) {
 			const isAboveMiddle = event.touches.item(1).pageY / viewportSize[1] < 0.5;
