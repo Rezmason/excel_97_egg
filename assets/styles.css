@@ -21,11 +21,11 @@ canvas {
 
 toolbar {
 	position: absolute;
-	top: 1rem;
-	left: 1rem;
+	top: 1vw;
+	left: 1vw;
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
-	font-size: 2px;
+	font-size: 0.2vw;
 }
 
 form.mso {
@@ -34,8 +34,11 @@ form.mso {
 	margin: 3em 2em 3em 11em;
 	border-image-outset: 3em 2em 3em 11em;
 	border-image-repeat: stretch;
-	border-image-slice: calc(100% * 3 / 26) calc(100% * 2 / 14)
-		calc(100% * 3 / 26) calc(100% * 11 / 14) fill;
+	--svg-width: 26;
+	--svg-height: 26;
+	border-image-slice: calc(100% * 3 / var(--svg-height))
+		calc(100% * 2 / var(--svg-width)) calc(100% * 3 / var(--svg-height))
+		calc(100% * 11 / var(--svg-width)) fill;
 	border-image-source: url("ui/toolbar_background.svg");
 	border-image-width: 3em 2em 3em 11em;
 

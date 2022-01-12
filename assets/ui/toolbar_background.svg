@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 26">
-	<rect x="0" fill="#D4D0C8" width="13" height="26"/>
-	<rect x="0" fill="#FFFFFF" width="12" height="1"/>
-	<rect x="0" y="1" fill="#FFFFFF" width="1" height="24"/>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="26px" height="26px" viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+	<rect fill="#D4D0C8" width="26" height="26"/>
+	<rect fill="#FFFFFF" width="25" height="1"/>
+	<rect y="1" fill="#FFFFFF" width="1" height="24"/>
 	<rect x="4" y="2" fill="#FFFFFF" width="2" height="1"/>
 	<rect x="4" y="3" fill="#FFFFFF" width="1" height="21"/>
 	<rect x="7" y="2" fill="#FFFFFF" width="2" height="1"/>
 	<rect x="7" y="3" fill="#FFFFFF" width="1" height="21"/>
-	<rect x="0" y="25" fill="#808080" width="13" height="1"/>
-	<rect x="12" fill="#808080" width="1" height="25"/>
+	<rect y="25" fill="#808080" width="26" height="1"/>
+	<rect x="25" fill="#808080" width="1" height="25"/>
 	<rect x="5" y="23" fill="#808080" width="2" height="1"/>
 	<rect x="6" y="2" fill="#808080" width="1" height="21"/>
 	<rect x="8" y="23" fill="#808080" width="2" height="1"/>
