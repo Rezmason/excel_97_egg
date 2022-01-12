@@ -1,7 +1,5 @@
-Toolbar
-	Shrinks once "not in use"
-	About box
-		https://jdan.github.io/98.css
+About box
+	https://jdan.github.io/98.css
 
 Clean up code
 	Move as many magic numbers as is sensible into data

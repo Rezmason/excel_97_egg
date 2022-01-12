@@ -67,6 +67,11 @@ input[type="checkbox"].mso {
 		calc(-22em * var(--sprite-y));
 }
 
+input[type="checkbox"].mso:disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}
+
 button.mso,
 input[type="checkbox"].mso {
 	--sprite-y: 0;
@@ -95,7 +100,7 @@ button#about {
 input#birdseye {
 	--sprite-x: 1;
 }
-input#lighting {
+input#cutoff {
 	--sprite-x: 2;
 }
 input#quads {

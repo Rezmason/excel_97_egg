@@ -1,12 +1,103 @@
 import makeTerrain from "./terrain.js";
 import Controls from "./controls.js";
 
-const canvas = document.querySelector("canvas");
-document.addEventListener("touchmove", (e) => e.preventDefault(), {
-	passive: false,
-});
-
 document.body.onload = async () => {
+	const canvas = document.querySelector("canvas");
+	document.addEventListener("touchmove", (event) => event.preventDefault(), {
+		passive: false,
+	});
+
+	const checkboxesByKeyCode = Object.fromEntries(
+		Array.from(document.querySelectorAll("input.mso")).map((checkbox) => [
+			checkbox.getAttribute("data-keycode"),
+			checkbox,
+		])
+	);
+
+	const fullscreenCheckbox = document.querySelector("input#fullscreen");
+	fullscreenCheckbox.disabled = !(
+		document.fullscreenEnabled || document.webkitFullscreenEnabled
+	);
+
+	const fullscreenChangeEventType = document.fullscreenEnabled
+		? "fullscreenchange"
+		: "webkitfullscreenchange";
+	document.addEventListener(fullscreenChangeEventType, (event) => {
+		let isFullscreen;
+		if (document.fullscreenEnabled) {
+			isFullscreen = document.fullscreenElement != null;
+		} else if (document.webkitFullscreenEnabled) {
+			isFullscreen = document.webkitFullscreenElement != null;
+		}
+		const changed = isFullscreen != fullscreenCheckbox.checked;
+		fullscreenCheckbox.checked = isFullscreen;
+		if (changed) {
+			updateToggles();
+		}
+	});
+
+	const toolbar = document.querySelector("toolbar");
+	toolbar.addEventListener("click", (event) => {
+		if (event.target.tagName.toLowerCase() === "input") {
+			updateToggles();
+		}
+	});
+
+	const aboutButton = document.querySelector("button#about");
+	aboutButton.addEventListener("click", (event) => {
+		showAboutBox();
+	});
+
+	const showAboutBox = () => {
+		// TODO: about box
+	};
+
+	const form = document.querySelector("toolbar form");
+	const updateToggles = async () => {
+		const toggles = Object.fromEntries(
+			Array.from(new FormData(form).keys()).map((key) => [key, true])
+		);
+
+		if (toggles.hi_res && hiRezTexturePack == null) {
+			hiRezTexturePack = await loadTexturePack(data.texture_packs.hi_res);
+		}
+
+		if (toggles.fullscreen) {
+			if (document.fullscreenEnabled) {
+				document.body.requestFullscreen();
+			} else if (document.webkitFullscreenEnabled) {
+				document.body.webkitRequestFullscreen();
+			}
+		} else {
+			if (document.fullscreenEnabled) {
+				if (document.fullscreenElement != null) {
+					document.exitFullscreen();
+				}
+			} else if (document.webkitFullscreenEnabled) {
+				if (document.webkitFullscreenElement == null) {
+					document.webkitExitFullscreen();
+				}
+			}
+		}
+
+		Controls.birdsEyeView = toggles.birdseye;
+		renderProperties.spotlight = toggles.birdseye ? 1 : 0;
+
+		renderProperties.cutoff = toggles.cutoff ? 1 : 0;
+		renderProperties.fogFar = data.fogFar * (toggles.cutoff ? 1 : 3);
+		smooth = !toggles.smooth;
+		reduceResolution = toggles.resolution;
+		showQuads = toggles.quads;
+		renderProperties.quadBorder = showQuads ? 0.05 : 0;
+		useHiRezTextures = toggles.hi_res;
+
+		const oldResolution = resolution;
+		resolution = toggles.birdseye || !reduceResolution ? 1 : data.resolution;
+		if (oldResolution !== resolution) {
+			resize();
+		}
+	};
+
 	const regl = createREGL({
 		canvas,
 		attributes: { antialias: false },
@@ -61,7 +152,7 @@ document.body.onload = async () => {
 		repeatOffset: vec2.create(),
 
 		spotlight: 0,
-		clipping: 1,
+		cutoff: 1,
 		quadBorder: 0,
 		fogFar: data.fogFar,
 	};
@@ -78,69 +169,32 @@ document.body.onload = async () => {
 	window.onresize = resize;
 	resize();
 
-	if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
-		document.addEventListener("keydown", async (event) => {
-			if (event.repeat) {
-				return;
+	document.addEventListener("keydown", async (event) => {
+		if (event.repeat) {
+			return;
+		}
+
+		if (event.code === "Space") {
+			if (toolbar.contains(event.target)) {
+				event.preventDefault();
 			}
-			switch (event.code) {
-				case "KeyF": {
-					if (document.fullscreenEnabled) {
-						if (document.fullscreenElement == null) {
-							canvas.requestFullscreen();
-						} else {
-							document.exitFullscreen();
-						}
-					} else if (document.webkitFullscreenEnabled) {
-						if (document.webkitFullscreenElement == null) {
-							canvas.webkitRequestFullscreen();
-						} else {
-							document.webkitExitFullscreen();
-						}
-					}
-					break;
-				}
-				case "KeyB": {
-					Controls.birdsEyeView = !Controls.birdsEyeView;
-					renderProperties.spotlight = Controls.birdsEyeView ? 1 : 0;
-					resolution =
-						Controls.birdsEyeView || !reduceResolution ? 1 : data.resolution;
-					resize();
-					break;
-				}
-				case "KeyC": {
-					renderProperties.clipping = renderProperties.clipping === 0 ? 1 : 0;
-					renderProperties.fogFar =
-						data.fogFar * (renderProperties.clipping === 1 ? 1 : 3);
-					break;
-				}
-				case "KeyS": {
-					smooth = !smooth;
-					break;
-				}
-				case "KeyR": {
-					reduceResolution = !reduceResolution;
-					resolution =
-						Controls.birdsEyeView || !reduceResolution ? 1 : data.resolution;
-					resize();
-					break;
-				}
-				case "KeyQ": {
-					showQuads = !showQuads;
-					renderProperties.quadBorder = showQuads ? 0.05 : 0;
-					break;
-				}
-				case "KeyT": {
-					if (hiRezTexturePack == null) {
-						console.log("loading");
-						hiRezTexturePack = await loadTexturePack(data.texture_packs.hi_res);
-					}
-					useHiRezTextures = !useHiRezTextures;
-					break;
-				}
-			}
-		});
-	}
+
+			// TODO: handbrake
+			return;
+		}
+
+		if (event.code === "KeyA") {
+			showAboutBox();
+			return;
+		}
+
+		const checkbox = checkboxesByKeyCode[event.code];
+
+		if (checkbox != null && !checkbox.disabled) {
+			checkbox.checked = !checkbox.checked;
+			updateToggles();
+		}
+	});
 
 	const location = data.locations.spawn;
 	// const location = data.locations.looking_at_monolith;
@@ -149,6 +203,8 @@ document.body.onload = async () => {
 	// const location = data.locations.spikes;
 
 	Controls.goto(location);
+
+	updateToggles();
 
 	const drawBackground = regl({
 		vert: `
@@ -214,7 +270,7 @@ document.body.onload = async () => {
 			uniform vec3 airplanePosition;
 			uniform float terrainSize, maxDrawDistance;
 			uniform float currentQuadID;
-			uniform float spotlight, clipping;
+			uniform float spotlight, cutoff;
 			uniform float fogNear, fogFar;
 			uniform vec2 repeatOffset;
 
@@ -240,7 +296,7 @@ document.body.onload = async () => {
 				centroid += terrainSize * repeatOffset;
 
 				vec2 diff = maxDrawDistance - abs(centroid + airplanePosition.xy);
-				if (clipping == 1.0 && (diff.x < 0.0 || diff.y < 0.0)) {
+				if (cutoff == 1.0 && (diff.x < 0.0 || diff.y < 0.0)) {
 					return;
 				}
 
@@ -359,7 +415,7 @@ document.body.onload = async () => {
 			transform: regl.prop("transform"),
 			currentQuadID: regl.prop("currentQuadID"),
 			spotlight: regl.prop("spotlight"),
-			clipping: regl.prop("clipping"),
+			cutoff: regl.prop("cutoff"),
 			quadBorder: regl.prop("quadBorder"),
 			repeatOffset: regl.prop("repeatOffset"),
 			time: regl.prop("time"),
@@ -403,7 +459,12 @@ document.body.onload = async () => {
 		}
 		lastFrameTime = time;
 
-		Controls.update(terrain.clampAltitude, deltaTime, smooth);
+		try {
+			Controls.update(terrain.clampAltitude, deltaTime, smooth);
+		} catch (error) {
+			raf.cancel();
+			throw error;
+		}
 		const textures = useHiRezTextures ? hiRezTexturePack : texturePack;
 		Object.assign(renderProperties, textures);
 		renderProperties.pitch = Controls.pitch;
@@ -418,7 +479,7 @@ document.body.onload = async () => {
 				drawBackground(renderProperties);
 			}
 
-			if (renderProperties.clipping == 0) {
+			if (renderProperties.cutoff == 0) {
 				for (let y = -1; y < 2; y++) {
 					for (let x = -1; x < 2; x++) {
 						vec2.set(renderProperties.repeatOffset, x, y);

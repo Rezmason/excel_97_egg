@@ -7,6 +7,7 @@ const maxForwardSpeed = 1000;
 const turnSpeed = 0.125;
 
 const mouseJoystick = vec2.create();
+const goalMouseJoystick = vec2.create();
 const viewportSize = vec2.create();
 const transform = mat4.create();
 const position = vec3.create();
@@ -41,7 +42,7 @@ const attach = (element) => {
 		event.preventDefault();
 		useMouseJoystick = true;
 		vec2.set(
-			mouseJoystick,
+			goalMouseJoystick,
 			event.pageX - viewportSize[0] / 2,
 			event.pageY - viewportSize[1] / 2
 		);
@@ -53,6 +54,10 @@ const attach = (element) => {
 	domElement.addEventListener("mouseup", (event) => {
 		event.preventDefault();
 		mouseButtonDown = null;
+	});
+
+	domElement.addEventListener("mouseleave", (event) => {
+		vec2.set(goalMouseJoystick, 0, 0);
 	});
 
 	domElement.addEventListener("touchstart", (event) => {
@@ -142,6 +147,13 @@ const updateForwardSpeed = (deltaTime) => {
 };
 
 const updateRotation = (deltaTime) => {
+	vec2.lerp(
+		mouseJoystick,
+		mouseJoystick,
+		goalMouseJoystick,
+		clamp(0.5 + deltaTime, 0, 1)
+	);
+
 	if (useMouseJoystick) {
 		const pitch = clamp(coarse(-mouseJoystick[1] * 0.025), -9, 9);
 		const roll = coarse(turnSpeed * mouseJoystick[0]) * 0.2375;

@@ -16,59 +16,73 @@
 		<canvas></canvas>
 		<toolbar>
 			<form onsubmit="return false" class="mso">
-				<button class="mso" id="about" title="About..."></button>
+				<button class="mso" id="about" title="About... (A)"></button>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
 					id="birdseye"
 					name="birdseye"
+					data-keycode="KeyB"
 					title="Bird's Eye View (B)"
 				/>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
-					id="lighting"
-					name="lighting"
-					title="Lighting Cuttoff (C)"
+					id="cutoff"
+					name="cutoff"
+					data-keycode="KeyC"
+					title="Lighting Cutoff (C)"
 					checked
 				/>
 				<divider></divider>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
 					id="quads"
 					name="quads"
+					data-keycode="KeyQ"
 					title="Show Quad Edges (Q)"
 				/>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
 					id="hi_res"
 					name="hi_res"
+					data-keycode="KeyT"
 					title="Use High Resolution Textures (T)"
 				/>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
 					id="resolution"
 					name="resolution"
+					data-keycode="KeyR"
 					title="Limit Drawing Resolution (R)"
 					checked
 				/>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
 					id="smooth"
 					name="smooth"
+					data-keycode="KeyS"
 					title="Limit Simulation Speed (S)"
 					checked
 				/>
 				<divider></divider>
 				<input
+					autocomplete="off"
 					class="mso"
 					type="checkbox"
 					id="fullscreen"
 					name="fullscreen"
+					data-keycode="KeyF"
 					title="Full Screen (F)"
 				/>
 			</form>
