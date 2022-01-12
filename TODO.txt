@@ -1,9 +1,7 @@
 Toolbar
-	Fades it to 50% when "not in use"
+	Shrinks once "not in use"
 	About box
 		https://jdan.github.io/98.css
-	Figure best solution for making it resolution independent
-		Avoid pixelation
 
 Clean up code
 	Move as many magic numbers as is sensible into data

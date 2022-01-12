@@ -2,12 +2,12 @@ html,
 body {
 	margin: 0;
 	overscroll-behavior: none;
+	font-family: Tahoma, sans-serif;
 	cursor: crosshair;
 }
 
 body {
 	background: black;
-	font-family: Tahoma, sans-serif;
 	color: white;
 	overflow: hidden;
 }
@@ -19,27 +19,34 @@ canvas {
 	image-rendering: pixelated;
 }
 
-form.mso {
-	display: block;
+toolbar {
 	position: absolute;
-	top: 1em;
-	left: calc(1em + 5px);
+	top: 1rem;
+	left: 1rem;
+	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
+	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
+	font-size: 2px;
+}
 
+form.mso {
 	display: flex;
 
-	border-image-outset: 3px 2px 3px 11px;
+	margin: 3em 2em 3em 11em;
+	border-image-outset: 3em 2em 3em 11em;
 	border-image-repeat: stretch;
-	border-image-slice: 3 2 3 11 fill;
-	border-image-source: url("ui/toolbar_background.png");
-	border-image-width: 3px 2px 3px 11px;
+	border-image-slice: calc(100% * 3 / 26) calc(100% * 2 / 14)
+		calc(100% * 3 / 26) calc(100% * 11 / 14) fill;
+	border-image-source: url("ui/toolbar_background.svg");
+	border-image-width: 3em 2em 3em 11em;
 
 	cursor: pointer;
 }
 
 form.mso divider {
 	background-image: url("ui/toolbar_divider.png");
-	width: 6px;
-	height: 22px;
+	background-size: cover;
+	width: 6em;
+	height: 22em;
 }
 
 button.mso,
@@ -51,12 +58,13 @@ input[type="checkbox"].mso {
 	margin: 0;
 
 	display: block;
-	width: 23px;
-	height: 22px;
+	width: 23em;
+	height: 22em;
 
+	background-size: calc(100% * 184 / 23) calc(100% * 132 / 22);
 	background-image: url("ui/icon_spritesheet.png");
-	background-position: calc(-23px * var(--sprite-x))
-		calc(-22px * var(--sprite-y));
+	background-position: calc(-23em * var(--sprite-x))
+		calc(-22em * var(--sprite-y));
 }
 
 button.mso,
