@@ -129,15 +129,15 @@ const attach = (element) => {
 	const handleSecondTouch = (touch) => {
 		const verticalFraction = touch.pageY / viewportSize[1] - 0.5;
 		braking = false;
-		if (verticalFraction < -1/6) {
+		if (verticalFraction < -1 / 6) {
 			mouseButtonDown = "primary";
-		} else if (verticalFraction > 1/6) {
+		} else if (verticalFraction > 1 / 6) {
 			mouseButtonDown = "secondary";
 		} else {
 			mouseButtonDown = null;
 			braking = true;
 		}
-	}
+	};
 };
 
 const resize = () =>
@@ -172,18 +172,18 @@ const goto = (location) => {
 
 const updateForwardSpeed = (deltaTime) => {
 	const lastForwardSpeed = forwardSpeed;
-	
+
 	if (braking) {
 		forwardSpeed *= 1 - deltaTime * 5;
 	} else if (mouseButtonDown != null) {
 		const direction = mouseButtonDown === "primary" ? -1 : 1;
 		forwardSpeed += deltaTime * forwardAcceleration * direction;
 	}
-	
+
 	forwardSpeed = coarse(forwardSpeed, 10);
 	forwardSpeed = clamp(forwardSpeed, -maxForwardSpeed, maxForwardSpeed);
-	
-	// When rapidly accelerating or decelerating, this guarantees 
+
+	// When rapidly accelerating or decelerating, this guarantees
 	// that at some point the forward speed is zero
 	if (lastForwardSpeed != 0 && lastForwardSpeed < 0 != forwardSpeed < 0) {
 		forwardSpeed = 0;
@@ -196,7 +196,6 @@ const updateForwardSpeed = (deltaTime) => {
 };
 
 const updateRotation = (deltaTime) => {
-
 	vec2.lerp(
 		mouseJoystick,
 		mouseJoystick,
@@ -219,13 +218,13 @@ const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
 	smooth = smoothMotion;
 	const pitchRad = degreesToRadians * rotation[0];
 	const yawRad = degreesToRadians * rotation[1];
-	
+
 	const displacement = vec3.fromValues(
 		Math.sin(yawRad) * Math.cos(pitchRad),
 		Math.cos(yawRad) * Math.cos(pitchRad) * -1,
 		Math.sin(pitchRad)
 	);
-	vec3.scale(displacement, displacement, deltaTime * forwardSpeed)
+	vec3.scale(displacement, displacement, deltaTime * forwardSpeed);
 	vec3.add(position, position, displacement);
 
 	const lerpRatio = clamp(0.4 + deltaTime * 4, 0, 1);
