@@ -93,11 +93,7 @@ document.body.onload = async () => {
 		renderProperties.sindogs = sindogs ? 1 : 0;
 		useHiRezTextures = toggles.hi_res;
 
-		const oldResolution = resolution;
-		resolution = toggles.birdseye || !reduceResolution ? 1 : data.resolution;
-		if (oldResolution !== resolution) {
-			resize();
-		}
+		resize();
 	};
 
 	const regl = createREGL({
@@ -165,12 +161,16 @@ document.body.onload = async () => {
 	};
 
 	const resize = () => {
-		canvas.width = Math.ceil(
-			canvas.clientWidth * window.devicePixelRatio * resolution
-		);
-		canvas.height = Math.ceil(
-			canvas.clientHeight * window.devicePixelRatio * resolution
-		);
+		let scaleFactor = window.devicePixelRatio;
+		if (reduceResolution) {
+			scaleFactor =
+				canvas.clientWidth > canvas.clientHeight
+					? data.resolution[0] / canvas.clientWidth
+					: data.resolution[1] / canvas.clientHeight;
+			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
+		}
+		canvas.width = Math.ceil(canvas.clientWidth * scaleFactor);
+		canvas.height = Math.ceil(canvas.clientHeight * scaleFactor);
 		Controls.resize();
 	};
 	window.onresize = resize;

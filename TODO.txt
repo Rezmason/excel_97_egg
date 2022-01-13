@@ -1,10 +1,10 @@
 About box
 	https://jdan.github.io/98.css
 
+goal roll
+
 Clean up code
 	Move as many magic numbers as is sensible into data
-	Is there a simpler operation to perform to append forward motion?
-		Maybe composing a matrix and then transforming the position?
 	It's weird that the terrain has a current quad
 		It should return the current quad data, and the control module should expose it to the renderer
 	Isolate the renderer from the main module
@@ -49,8 +49,6 @@ Readme
 Interview and technical explanation
 
 Procedural terrain
-"SINDOGS" tribute?
-	Maybe sine wave sundogs
 
 XENIUM/XENIOLUM LUNENSIS
 	Endless Column, by Blue Man Group
