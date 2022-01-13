@@ -89,6 +89,8 @@ document.body.onload = async () => {
 		reduceResolution = toggles.resolution;
 		showQuads = toggles.quads;
 		renderProperties.quadBorder = showQuads ? 0.05 : 0;
+		sindogs = toggles.sindogs;
+		renderProperties.sindogs = sindogs ? 1 : 0;
 		useHiRezTextures = toggles.hi_res;
 
 		const oldResolution = resolution;
@@ -143,17 +145,22 @@ document.body.onload = async () => {
 	let resolution = data.resolution;
 	let reduceResolution = true;
 	let showQuads = false;
+	let sindogs = false;
 	let useHiRezTextures = false;
 
-	const { transform, position, rollMat } = Controls;
-
+	const { transform, position, rotation, rollMat } = Controls;
+	
 	const renderProperties = {
 		camera,
+		rollMat,
+		transform,
+		position,
+		rotation,
 		repeatOffset: vec2.create(),
-
 		spotlight: 0,
 		cutoff: 1,
 		quadBorder: 0,
+		sindogs: 0,
 		fogFar: data.fogFar,
 	};
 
@@ -210,7 +217,7 @@ document.body.onload = async () => {
 		vert: `
 			precision mediump float;
 
-			uniform float pitch;
+			uniform vec3 rotation;
 			uniform mat2 rollMat;
 
 			attribute vec2 aPosition;
@@ -219,17 +226,20 @@ document.body.onload = async () => {
 
 			void main() {
 				vUV = 0.5 * (aPosition + 1.0);
-				vUV.y += pitch * -0.04;
+				vUV.y += rotation.x * -0.04;
 				vUV = rollMat * (vUV - 0.5) + 0.5;
 				gl_Position = vec4(aPosition, 0, 1);
 			}
 		`,
 
 		frag: `
+			#define PI 3.14159265359
 			precision mediump float;
 
 			uniform sampler2D horizonTexture;
 			uniform float horizonHeight;
+			uniform vec3 rotation;
+			uniform float sindogs;
 
 			varying vec2 vUV;
 
@@ -238,8 +248,13 @@ document.body.onload = async () => {
 				float y = (0.5 - uv.y) * 480. / horizonHeight + 1.0;
 				vec3 color = vec3(0.0);
 				if (y < 1.0) {
-					color = texture2D(horizonTexture, vec2(uv.x, y)).rgb;
+					float brightness = 1.0;
+					if (sindogs == 1.0) {
+						brightness += (sin((rotation.y + uv.x * 2.0 * 26.0) * PI / 180.0 * 15.0) - (uv.y) + 1.0) * 0.5;
+					}
+					color = texture2D(horizonTexture, vec2(uv.x, y)).rgb * brightness;
 				}
+
 				gl_FragColor = vec4(color, 1.0);
 			}
 		`,
@@ -252,7 +267,8 @@ document.body.onload = async () => {
 		uniforms: {
 			horizonTexture: regl.prop("horizonTexture"),
 			horizonHeight: texturePack.horizonTexture.height,
-			pitch: regl.prop("pitch"),
+			sindogs: regl.prop("sindogs"),
+			rotation: regl.prop("rotation"),
 			rollMat: regl.prop("rollMat"),
 		},
 
@@ -467,10 +483,6 @@ document.body.onload = async () => {
 		}
 		const textures = useHiRezTextures ? hiRezTexturePack : texturePack;
 		Object.assign(renderProperties, textures);
-		renderProperties.pitch = Controls.pitch;
-		renderProperties.rollMat = rollMat;
-		renderProperties.transform = transform;
-		renderProperties.position = position;
 		renderProperties.currentQuadID = terrain.currentQuadID;
 		renderProperties.time = (Date.now() - start) / 1000;
 

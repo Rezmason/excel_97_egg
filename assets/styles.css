@@ -121,3 +121,6 @@ input#smooth {
 input#fullscreen {
 	--sprite-x: 7;
 }
+input#sindogs {
+	--sprite-x: 8;
+}

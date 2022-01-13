@@ -210,7 +210,7 @@ const updateRotation = (deltaTime) => {
 		vec3.set(rotation, pitch, yaw, roll);
 	}
 
-	controls.pitch = rotation[0];
+	vec3.copy(controls.rotation, rotation);
 	mat2.fromRotation(rollMat, -rotation[2] * degreesToRadians * 1.5);
 };
 
@@ -246,7 +246,7 @@ const controls = {
 	update,
 	transform,
 	position,
-	pitch: 0,
+	rotation: vec3.create(),
 	rollMat,
 	birdsEyeView: false,
 };
