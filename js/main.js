@@ -99,8 +99,9 @@ document.body.onload = async () => {
 	const regl = createREGL({
 		canvas,
 		attributes: { antialias: false },
-		optionalExtensions: ["OES_standard_derivatives"],
+		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
+
 	const { mat4, vec2 } = glMatrix;
 
 	const data = await fetch("assets/data.json").then((response) =>
@@ -118,7 +119,9 @@ document.body.onload = async () => {
 					Math.log2(image.width) % 1 > 0 || Math.log2(image.height) % 1 > 0;
 				const hiRezParams = entry.hi_res
 					? {
-							min: isNPOT ? "linear" : "linear",
+							mipmap: !isNPOT,
+							anisotropic: 12,
+							min: isNPOT ? "linear" : "mipmap",
 							mag: "linear",
 					  }
 					: {};
