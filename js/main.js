@@ -88,7 +88,7 @@ document.body.onload = async () => {
 		smooth = !toggles.smooth;
 		reduceResolution = toggles.resolution;
 		showQuads = toggles.quads;
-		renderProperties.quadBorder = showQuads ? 0.05 : 0;
+		renderProperties.quadBorder = showQuads ? 0.02 : 0;
 		sindogs = toggles.sindogs;
 		renderProperties.sindogs = sindogs ? 1 : 0;
 		useHiRezTextures = toggles.hi_res;
@@ -149,7 +149,7 @@ document.body.onload = async () => {
 	let useHiRezTextures = false;
 
 	const { transform, position, rotation, rollMat } = Controls;
-	
+
 	const renderProperties = {
 		camera,
 		rollMat,
@@ -300,8 +300,7 @@ document.body.onload = async () => {
 
 			varying float vWhichTexture;
 			varying vec2 vUV;
-			varying float vBrightness;
-			varying float vSpotlight;
+			varying float vFogFactor, vBrightness, vSpotlight;
 
 			void main() {
 				vWhichTexture = aWhichTexture;
@@ -334,6 +333,7 @@ document.body.onload = async () => {
 				vBrightness = aBrightness + wave * 0.08;
 				float fogDepth = -position.z;
 				float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
+				vFogFactor = fogFactor;
 				// vBrightness *= (1.0 - fogFactor);
 				vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
 
@@ -363,8 +363,7 @@ document.body.onload = async () => {
 
 			varying float vWhichTexture;
 			varying vec2 vUV;
-			varying float vBrightness;
-			varying float vSpotlight;
+			varying float vFogFactor, vBrightness, vSpotlight;
 
 			void main() {
 
@@ -372,14 +371,7 @@ document.body.onload = async () => {
 
 				float borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
 
-				if (vSpotlight == 1.0 && borderDistance < quadBorder * 3.0) {
-					gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
-					return;
-				}
-				if (borderDistance < quadBorder) {
-					gl_FragColor = vec4(1.0, 0.0, 0.5, 1.0);
-					return;
-				} else if (whichTexture == 0) {
+				if (whichTexture == 0) {
 					gl_FragColor = texture2D(moonscapeTexture, vUV);
 				} else if (whichTexture == 1) {
 					gl_FragColor = texture2D(platformTexture, vUV);
@@ -416,6 +408,26 @@ document.body.onload = async () => {
 				if (quadBorder == 0.0) {
 					gl_FragColor.rg += vSpotlight;
 				}
+
+				if (vSpotlight == 1.0 && borderDistance - quadBorder * 3.0 < 0.0) {
+					gl_FragColor = mix(
+						vec4(1.0, 1.0, 0.0, 1.0),
+						gl_FragColor,
+						smoothstep(quadBorder - 0.02, quadBorder, borderDistance - quadBorder * 3.0)
+					);
+				} else {
+					vec4 borderColor = mix(
+						vec4(1.0, 0.0, 0.5, 1.0),
+						vec4(1.0, 0.5, 0.0, 1.0),
+						vFogFactor
+					);
+					gl_FragColor = mix(
+						borderColor,
+						gl_FragColor,
+						smoothstep(quadBorder * 0.5, quadBorder, borderDistance - quadBorder)
+					);
+				}
+
 			}
 		`,
 
