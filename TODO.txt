@@ -48,12 +48,7 @@ Readme
 
 Interview and technical explanation
 
-Add handbrake to controls
-	Holding down space stops all motion and sets the roll to zero
-Improve mobile controls
-	Integrate turn speed somehow
 Procedural terrain
-Smarter texture filtering to reduce aliasing?
 "SINDOGS" tribute?
 	Maybe sine wave sundogs
 

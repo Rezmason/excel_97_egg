@@ -21,6 +21,7 @@ let domElement = null;
 let touchStartX = 0;
 let touchStartY = 0;
 let smooth = false;
+let braking = false;
 let useMouseJoystick = false;
 
 const coarse = (value, granularity = 1000) =>
@@ -36,10 +37,30 @@ const attach = (element) => {
 
 	domElement = element;
 
+	document.addEventListener("keydown", async (event) => {
+		if (event.repeat) {
+			return;
+		}
+
+		if (event.code === "Space") {
+			braking = true;
+			goalMouseJoystick[0] = 0;
+		}
+	});
+
+	document.addEventListener("keyup", async (event) => {
+		if (event.code === "Space") {
+			braking = false;
+		}
+	});
+
 	domElement.addEventListener("contextmenu", (event) => event.preventDefault());
 	domElement.addEventListener("dblclick", (event) => event.preventDefault());
 	domElement.addEventListener("mousemove", (event) => {
 		event.preventDefault();
+		if (braking) {
+			return;
+		}
 		useMouseJoystick = true;
 		vec2.set(
 			goalMouseJoystick,
@@ -57,7 +78,9 @@ const attach = (element) => {
 	});
 
 	domElement.addEventListener("mouseleave", (event) => {
-		vec2.set(goalMouseJoystick, 0, 0);
+		if (!braking) {
+			vec2.set(goalMouseJoystick, 0, 0);
+		}
 	});
 
 	domElement.addEventListener("touchstart", (event) => {
@@ -70,6 +93,10 @@ const attach = (element) => {
 		touchStartX = pageX;
 		touchStartY = pageY;
 		vec3.set(touchStartRotation, ...rotation);
+
+		if (event.touches.length > 1) {
+			handleSecondTouch(event.touches.item(1));
+		}
 	});
 	domElement.addEventListener("touchmove", (event) => {
 		event.preventDefault();
@@ -88,16 +115,29 @@ const attach = (element) => {
 			touchStartRotation[1] + coarse(pageX - touchStartX) * -100 * flipYaw;
 		vec3.set(rotation, pitch, yaw, roll);
 		if (event.touches.length > 1) {
-			const isAboveMiddle = event.touches.item(1).pageY / viewportSize[1] < 0.5;
-			mouseButtonDown = isAboveMiddle ? "primary" : "secondary";
+			handleSecondTouch(event.touches.item(1));
 		}
 	});
 	domElement.addEventListener("touchend", (event) => {
 		event.preventDefault();
 		if (event.touches.length < 2) {
 			mouseButtonDown = null;
+			braking = false;
 		}
 	});
+
+	const handleSecondTouch = (touch) => {
+		const verticalFraction = touch.pageY / viewportSize[1] - 0.5;
+		braking = false;
+		if (verticalFraction < -1/6) {
+			mouseButtonDown = "primary";
+		} else if (verticalFraction > 1/6) {
+			mouseButtonDown = "secondary";
+		} else {
+			mouseButtonDown = null;
+			braking = true;
+		}
+	}
 };
 
 const resize = () =>
@@ -131,24 +171,32 @@ const goto = (location) => {
 };
 
 const updateForwardSpeed = (deltaTime) => {
-	if (mouseButtonDown == null) {
-		return;
-	}
-
 	const lastForwardSpeed = forwardSpeed;
-	forwardSpeed +=
-		deltaTime * forwardAcceleration * (mouseButtonDown === "primary" ? -1 : 1);
-	forwardSpeed = clamp(forwardSpeed, -maxForwardSpeed, maxForwardSpeed);
+	
+	if (braking) {
+		forwardSpeed *= 1 - deltaTime * 5;
+	} else if (mouseButtonDown != null) {
+		const direction = mouseButtonDown === "primary" ? -1 : 1;
+		forwardSpeed += deltaTime * forwardAcceleration * direction;
+	}
+	
 	forwardSpeed = coarse(forwardSpeed, 10);
+	forwardSpeed = clamp(forwardSpeed, -maxForwardSpeed, maxForwardSpeed);
+	
+	// When rapidly accelerating or decelerating, this guarantees 
+	// that at some point the forward speed is zero
 	if (lastForwardSpeed != 0 && lastForwardSpeed < 0 != forwardSpeed < 0) {
 		forwardSpeed = 0;
 	}
+
+	// Rounds any forward speed near zero to zero
 	if (Math.abs(forwardSpeed) < 5) {
 		forwardSpeed = 0;
 	}
 };
 
 const updateRotation = (deltaTime) => {
+
 	vec2.lerp(
 		mouseJoystick,
 		mouseJoystick,
@@ -171,11 +219,14 @@ const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
 	smooth = smoothMotion;
 	const pitchRad = degreesToRadians * rotation[0];
 	const yawRad = degreesToRadians * rotation[1];
-	const magnitude = deltaTime * forwardSpeed;
-
-	position[0] += magnitude * Math.sin(yawRad) * Math.cos(pitchRad);
-	position[1] += magnitude * Math.cos(yawRad) * Math.cos(pitchRad) * -1;
-	position[2] += magnitude * Math.sin(pitchRad);
+	
+	const displacement = vec3.fromValues(
+		Math.sin(yawRad) * Math.cos(pitchRad),
+		Math.cos(yawRad) * Math.cos(pitchRad) * -1,
+		Math.sin(pitchRad)
+	);
+	vec3.scale(displacement, displacement, deltaTime * forwardSpeed)
+	vec3.add(position, position, displacement);
 
 	const lerpRatio = clamp(0.4 + deltaTime * 4, 0, 1);
 	position[2] =
