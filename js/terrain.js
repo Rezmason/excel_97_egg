@@ -24,8 +24,8 @@ export default (data) => {
 
 	const quadCornerOffsets = [
 		[-0.5, -0.5],
-		[0.5, -0.5],
 		[-0.5, 0.5],
+		[0.5, -0.5],
 		[0.5, -0.5],
 		[-0.5, 0.5],
 		[0.5, 0.5],
@@ -47,7 +47,7 @@ export default (data) => {
 				[x, ny],
 				[nx, ny],
 			];
-			const vertices = [tl, tr, bl, tr, bl, br];
+			const vertices = [tl, bl, tr, tr, bl, br];
 			const zone = getZone(
 				modulo(x + 0.5, numColumns),
 				modulo(y + 0.5, numRows),

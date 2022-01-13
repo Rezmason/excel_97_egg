@@ -1,8 +1,6 @@
 About box
 	https://jdan.github.io/98.css
 
-goal roll
-
 Clean up code
 	Move as many magic numbers as is sensible into data
 	It's weird that the terrain has a current quad
@@ -10,6 +8,7 @@ Clean up code
 	Isolate the renderer from the main module
 	Load the shaders in
 	Review the shader code
+	Switch a bunch of terrain stuff to vec2?
 Compare with reference some more
 
 Readme
@@ -49,6 +48,7 @@ Readme
 Interview and technical explanation
 
 Procedural terrain
+goal roll
 
 XENIUM/XENIOLUM LUNENSIS
 	Endless Column, by Blue Man Group

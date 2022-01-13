@@ -179,6 +179,12 @@ document.body.onload = async () => {
 	window.onresize = resize;
 	resize();
 
+	document.addEventListener("keyup", async (event) => {
+		if (event.code === "Space" && toolbar.contains(event.target)) {
+			event.preventDefault();
+		}
+	});
+
 	document.addEventListener("keydown", async (event) => {
 		if (event.repeat) {
 			return;
@@ -279,6 +285,10 @@ document.body.onload = async () => {
 	});
 
 	const drawTerrain = regl({
+		cull: {
+			enable: true,
+			face: "back",
+		},
 		vert: `
 			precision mediump float;
 
