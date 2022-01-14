@@ -276,10 +276,12 @@ document.body.onload = async () => {
 	let lastFrameTime = -1;
 	const start = Date.now();
 	const raf = regl.frame(({ viewportWidth, viewportHeight, time, tick }) => {
-		if (
+		const deltaTime = time - lastFrameTime;
+
+		let mustResize =
 			dimensions.width !== viewportWidth ||
-			dimensions.height !== viewportHeight
-		) {
+			dimensions.height !== viewportHeight;
+		if (mustResize) {
 			dimensions.width = viewportWidth;
 			dimensions.height = viewportHeight;
 			const aspectRatio = viewportWidth / viewportHeight;
@@ -293,8 +295,11 @@ document.body.onload = async () => {
 			);
 		}
 
-		const deltaTime = time - lastFrameTime;
-		if (settings.limitDrawSpeed && deltaTime < 1 / data.targetFPS) {
+		if (
+			!mustResize &&
+			settings.limitDrawSpeed &&
+			deltaTime < 1 / data.targetFPS
+		) {
 			return;
 		}
 		lastFrameTime = time;
