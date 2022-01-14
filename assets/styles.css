@@ -100,27 +100,27 @@ input[type="checkbox"].mso:checked:active {
 button#about {
 	--sprite-x: 0;
 }
-input#birdseye {
+input#birds_eye_view {
 	--sprite-x: 1;
 }
-input#cutoff {
+input#lighting_cutoff {
 	--sprite-x: 2;
 }
-input#quads {
+input#show_quad_edges {
 	--sprite-x: 3;
 }
-input#hi_res {
+input#hi_res_textures {
 	--sprite-x: 4;
 }
-input#resolution {
+input#limit_draw_resolution {
 	--sprite-x: 5;
 }
-input#smooth {
+input#limit_draw_speed {
 	--sprite-x: 6;
 }
-input#fullscreen {
+input#show_sindogs {
 	--sprite-x: 7;
 }
-input#sindogs {
+input#fullscreen {
 	--sprite-x: 8;
 }

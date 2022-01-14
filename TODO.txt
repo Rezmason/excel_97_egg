@@ -2,13 +2,15 @@ About box
 	https://jdan.github.io/98.css
 
 Clean up code
-	Move as many magic numbers as is sensible into data
-	It's weird that the terrain has a current quad
-		It should return the current quad data, and the control module should expose it to the renderer
-	Isolate the renderer from the main module
-	Load the shaders in
+	Data module
+		The other modules can import it
+		The data will also own and expose the terrain
+		The other modules can then get the quad from the terrain themselves
+	GUI module
+	Renderer module
+	Move as many magic numbers as possible into data
+		 // TODO: move magic number to data
 	Review the shader code
-	Switch a bunch of terrain stuff to vec2?
 Compare with reference some more
 
 Readme

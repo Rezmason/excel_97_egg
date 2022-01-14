@@ -23,6 +23,7 @@ let touchStartY = 0;
 let smooth = false;
 let braking = false;
 let useMouseJoystick = false;
+let birdsEyeView = false;
 
 const coarse = (value, granularity = 1000) =>
 	smooth ? value : Math.round(value * granularity) / granularity;
@@ -110,7 +111,7 @@ const attach = (element) => {
 			18
 		);
 		const roll = 0;
-		const flipYaw = controls.birdsEyeView ? -1 : 1;
+		const flipYaw = birdsEyeView ? -1 : 1;
 		const yaw =
 			touchStartRotation[1] + coarse(pageX - touchStartX) * -100 * flipYaw;
 		vec3.set(rotation, pitch, yaw, roll);
@@ -144,17 +145,17 @@ const resize = () =>
 	vec2.set(viewportSize, window.innerWidth, window.innerHeight);
 
 const updateTransform = () => {
-	if (controls.birdsEyeView) {
+	if (birdsEyeView) {
 		mat4.identity(transform);
 		mat4.rotateX(transform, transform, Math.PI);
-		mat4.translate(transform, transform, vec3.fromValues(0, 0, 75));
+		mat4.translate(transform, transform, vec3.fromValues(0, 0, 2000 / 26));
 		mat4.scale(transform, transform, vec3.fromValues(0.03, 0.03, 0.03));
 		mat4.rotateX(transform, transform, -Math.PI * 0.375);
 		mat4.rotateZ(transform, transform, degreesToRadians * -rotation[1]);
 		mat4.translate(
 			transform,
 			transform,
-			vec3.fromValues(position[0], position[1], -150)
+			vec3.fromValues(position[0], position[1], -80)
 		);
 	} else {
 		quat.fromEuler(rotQuat, ...rotation, "xzy");
@@ -210,7 +211,6 @@ const updateRotation = (deltaTime) => {
 		vec3.set(rotation, pitch, yaw, roll);
 	}
 
-	vec3.copy(controls.rotation, rotation);
 	mat2.fromRotation(rollMat, -rotation[2] * degreesToRadians * 1.5);
 };
 
@@ -232,25 +232,23 @@ const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
 		position[2] * (1 - lerpRatio) + clampAltitude(...position) * lerpRatio;
 };
 
-const update = (clampAltitude, deltaTime) => {
+const update = (settings, clampAltitude, deltaTime) => {
+	birdsEyeView = settings.birdsEyeView;
 	updateRotation(deltaTime);
 	updatePosition(clampAltitude, deltaTime);
 	updateForwardSpeed(deltaTime);
 	updateTransform();
 };
 
-const controls = {
+updateTransform();
+
+export default {
 	attach,
 	goto,
 	resize,
 	update,
 	transform,
 	position,
-	rotation: vec3.create(),
+	rotation,
 	rollMat,
-	birdsEyeView: false,
 };
-
-updateTransform();
-
-export default controls;

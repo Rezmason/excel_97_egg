@@ -32,14 +32,14 @@ document.body.onload = async () => {
 		const changed = isFullscreen != fullscreenCheckbox.checked;
 		fullscreenCheckbox.checked = isFullscreen;
 		if (changed) {
-			updateToggles();
+			updateSettings();
 		}
 	});
 
 	const toolbar = document.querySelector("toolbar");
 	toolbar.addEventListener("click", (event) => {
 		if (event.target.tagName.toLowerCase() === "input") {
-			updateToggles();
+			updateSettings();
 		}
 	});
 
@@ -53,16 +53,19 @@ document.body.onload = async () => {
 	};
 
 	const form = document.querySelector("toolbar form");
-	const updateToggles = async () => {
-		const toggles = Object.fromEntries(
-			Array.from(new FormData(form).keys()).map((key) => [key, true])
+	const updateSettings = async () => {
+		settings = Object.fromEntries(
+			Array.from(new FormData(form).keys()).map((key) => [
+				key.replace(/(_[a-z])/g, (s) => s.substr(1).toUpperCase()),
+				true,
+			])
 		);
 
-		if (toggles.hi_res && hiRezTexturePack == null) {
-			hiRezTexturePack = await loadTexturePack(data.texture_packs.hi_res);
+		if (settings.hiResTextures && hiResTexturePack == null) {
+			hiResTexturePack = await loadTexturePack(data.texture_packs.hi_res);
 		}
 
-		if (toggles.fullscreen) {
+		if (settings.fullscreen) {
 			if (document.fullscreenEnabled) {
 				document.body.requestFullscreen();
 			} else if (document.webkitFullscreenEnabled) {
@@ -80,19 +83,6 @@ document.body.onload = async () => {
 			}
 		}
 
-		Controls.birdsEyeView = toggles.birdseye;
-		renderProperties.spotlight = toggles.birdseye ? 1 : 0;
-
-		renderProperties.cutoff = toggles.cutoff ? 1 : 0;
-		renderProperties.fogFar = data.fogFar * (toggles.cutoff ? 1 : 3);
-		smooth = !toggles.smooth;
-		reduceResolution = toggles.resolution;
-		showQuads = toggles.quads;
-		renderProperties.quadBorder = showQuads ? 0.02 : 0;
-		sindogs = toggles.sindogs;
-		renderProperties.sindogs = sindogs ? 1 : 0;
-		useHiRezTextures = toggles.hi_res;
-
 		resize();
 	};
 
@@ -108,6 +98,16 @@ document.body.onload = async () => {
 		response.json()
 	);
 
+	const [horizonVert, horizonFrag, terrainVert, terrainFrag] =
+		await Promise.all(
+			[
+				"glsl/horizon.vert",
+				"glsl/horizon.frag",
+				"glsl/terrain.vert",
+				"glsl/terrain.frag",
+			].map((url) => fetch(url).then((response) => response.text()))
+		);
+
 	const loadTexturePack = async (pack) => {
 		const textures = await Promise.all(
 			Object.values(pack).map(async (entry) => {
@@ -117,7 +117,7 @@ document.body.onload = async () => {
 				await image.decode();
 				const isNPOT =
 					Math.log2(image.width) % 1 > 0 || Math.log2(image.height) % 1 > 0;
-				const hiRezParams = entry.hi_res
+				const hiResParams = entry.hi_res
 					? {
 							mipmap: !isNPOT,
 							anisotropic: 12,
@@ -125,7 +125,7 @@ document.body.onload = async () => {
 							mag: "linear",
 					  }
 					: {};
-				return regl.texture({ data: image, ...hiRezParams });
+				return regl.texture({ data: image, ...hiResParams });
 			})
 		);
 		return Object.fromEntries(
@@ -134,18 +134,12 @@ document.body.onload = async () => {
 	};
 
 	const texturePack = await loadTexturePack(data.texture_packs.standard);
-
-	let hiRezTexturePack = null;
+	let hiResTexturePack = null;
 
 	Controls.attach(canvas);
 	const terrain = makeTerrain(data);
 	const camera = mat4.create();
-	let smooth = false;
-	let resolution = data.resolution;
-	let reduceResolution = true;
-	let showQuads = false;
-	let sindogs = false;
-	let useHiRezTextures = false;
+	let settings;
 
 	const { transform, position, rotation, rollMat } = Controls;
 
@@ -156,16 +150,16 @@ document.body.onload = async () => {
 		position,
 		rotation,
 		repeatOffset: vec2.create(),
-		spotlight: 0,
-		cutoff: 1,
+		showSpotlight: 0,
+		lightingCutoff: 1,
 		quadBorder: 0,
-		sindogs: 0,
+		showSindogs: 0,
 		fogFar: data.fogFar,
 	};
 
 	const resize = () => {
 		let scaleFactor = window.devicePixelRatio;
-		if (reduceResolution) {
+		if (settings.limitDrawResolution) {
 			scaleFactor =
 				canvas.clientWidth > canvas.clientHeight
 					? data.resolution[0] / canvas.clientWidth
@@ -176,8 +170,6 @@ document.body.onload = async () => {
 		canvas.height = Math.ceil(canvas.clientHeight * scaleFactor);
 		Controls.resize();
 	};
-	window.onresize = resize;
-	resize();
 
 	document.addEventListener("keyup", async (event) => {
 		if (event.code === "Space" && toolbar.contains(event.target)) {
@@ -208,7 +200,7 @@ document.body.onload = async () => {
 
 		if (checkbox != null && !checkbox.disabled) {
 			checkbox.checked = !checkbox.checked;
-			updateToggles();
+			updateSettings();
 		}
 	});
 
@@ -217,56 +209,15 @@ document.body.onload = async () => {
 	// const location = data.locations.credits;
 	// const location = data.locations.poolside;
 	// const location = data.locations.spikes;
-
 	Controls.goto(location);
 
-	updateToggles();
+	updateSettings();
+	window.onresize = resize;
+	resize();
 
 	const drawBackground = regl({
-		vert: `
-			precision mediump float;
-
-			uniform vec3 rotation;
-			uniform mat2 rollMat;
-
-			attribute vec2 aPosition;
-
-			varying vec2 vUV;
-
-			void main() {
-				vUV = 0.5 * (aPosition + 1.0);
-				vUV.y += rotation.x * -0.04;
-				vUV = rollMat * (vUV - 0.5) + 0.5;
-				gl_Position = vec4(aPosition, 0, 1);
-			}
-		`,
-
-		frag: `
-			#define PI 3.14159265359
-			precision mediump float;
-
-			uniform sampler2D horizonTexture;
-			uniform float horizonHeight;
-			uniform vec3 rotation;
-			uniform float sindogs;
-
-			varying vec2 vUV;
-
-			void main() {
-				vec2 uv = vUV;
-				float y = (0.5 - uv.y) * 480. / horizonHeight + 1.0;
-				vec3 color = vec3(0.0);
-				if (y < 1.0) {
-					float brightness = 1.0;
-					if (sindogs == 1.0) {
-						brightness += (sin((rotation.y + uv.x * 2.0 * 26.0) * PI / 180.0 * 15.0) - (uv.y) + 1.0) * 0.5;
-					}
-					color = texture2D(horizonTexture, vec2(uv.x, y)).rgb * brightness;
-				}
-
-				gl_FragColor = vec4(color, 1.0);
-			}
-		`,
+		vert: horizonVert,
+		frag: horizonFrag,
 
 		attributes: {
 			aPosition: [-4, -4, 4, -4, 0, 4],
@@ -276,7 +227,7 @@ document.body.onload = async () => {
 		uniforms: {
 			horizonTexture: regl.prop("horizonTexture"),
 			horizonHeight: texturePack.horizonTexture.height,
-			sindogs: regl.prop("sindogs"),
+			showSindogs: regl.prop("showSindogs"),
 			rotation: regl.prop("rotation"),
 			rollMat: regl.prop("rollMat"),
 		},
@@ -289,160 +240,8 @@ document.body.onload = async () => {
 			enable: true,
 			face: "back",
 		},
-		vert: `
-			precision mediump float;
-
-			#define TWO_PI 6.2831853072
-
-			uniform highp float time;
-			uniform mat4 camera, transform;
-			uniform vec3 airplanePosition;
-			uniform float terrainSize, maxDrawDistance;
-			uniform float currentQuadID;
-			uniform float spotlight, cutoff;
-			uniform float fogNear, fogFar;
-			uniform vec2 repeatOffset;
-
-			attribute float aQuadID;
-			attribute vec2 aCentroid;
-			attribute vec3 aPosition;
-			attribute float aWhichTexture;
-			attribute vec2 aUV;
-			attribute float aBrightness;
-			attribute float aWaveAmplitude, aWavePhase;
-
-			varying float vWhichTexture;
-			varying vec2 vUV;
-			varying float vFogFactor, vBrightness, vSpotlight;
-
-			void main() {
-				vWhichTexture = aWhichTexture;
-				vUV = aUV + 0.5;
-
-				vec2 centroid = (fract((aCentroid + airplanePosition.xy) / terrainSize + 0.5) - 0.5) * terrainSize - airplanePosition.xy;
-
-				centroid += terrainSize * repeatOffset;
-
-				vec2 diff = maxDrawDistance - abs(centroid + airplanePosition.xy);
-				if (cutoff == 1.0 && (diff.x < 0.0 || diff.y < 0.0)) {
-					return;
-				}
-
-				vec4 position = vec4(aPosition + vec3(centroid, 0.0), 1);
-				float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * TWO_PI);
-				position.z += wave;
-
-				vSpotlight = spotlight * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
-				if (aQuadID == currentQuadID) {
-					vSpotlight = spotlight;
-				}
-				vSpotlight = clamp(vSpotlight, 0.0, spotlight);
-				if (repeatOffset.x != 0.0 || repeatOffset.y != 0.0) {
-					vSpotlight = 0.0;
-				}
-
-				position = transform * position;
-
-				vBrightness = aBrightness + wave * 0.08;
-				float fogDepth = -position.z;
-				float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
-				vFogFactor = fogFactor;
-				// vBrightness *= (1.0 - fogFactor);
-				vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
-
-				position = camera * position;
-				gl_Position = position;
-			}
-		`,
-
-		frag: `
-			#ifdef GL_OES_standard_derivatives
-			#extension GL_OES_standard_derivatives: enable
-			#endif
-
-			precision mediump float;
-
-			uniform highp float tick, time;
-			uniform sampler2D moonscapeTexture;
-			uniform sampler2D platformTexture;
-			uniform sampler2D creditsTexture;
-			uniform float quadBorder;
-
-
-			uniform vec3 creditColor1;
-			uniform vec3 creditColor2;
-			uniform vec3 creditColor3;
-			uniform vec3 creditColor4;
-
-			varying float vWhichTexture;
-			varying vec2 vUV;
-			varying float vFogFactor, vBrightness, vSpotlight;
-
-			void main() {
-
-				int whichTexture = int(vWhichTexture);
-
-				float borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
-
-				if (whichTexture == 0) {
-					gl_FragColor = texture2D(moonscapeTexture, vUV);
-				} else if (whichTexture == 1) {
-					gl_FragColor = texture2D(platformTexture, vUV);
-				} else if (whichTexture == 2) {
-					highp vec2 uv = vUV;
-					uv.y = fract(time * -0.006 + uv.y * 0.03 - 0.0225);
-
-					uv.y *= 0.92;
-					uv.y += 0.076;
-
-					uv.y *= 5.0;
-					uv.x = uv.x / 5.0 + (1.0 - 1.0 / 5.0);
-					uv.x += 1.0 / 5.0 * (1.0 + floor(uv.y));
-
-					uv = vec2(1.0) - uv;
-					vec4 credits = texture2D(creditsTexture, fract(uv));
-					vec3 creditColor = vec3(0.0);
-					float amount = 0.0;
-					if (credits.b > 0.0 && credits.b > credits.g) {
-						amount = credits.b;
-						creditColor = mix(creditColor2, creditColor1, abs(vUV.y - 0.5) * 2.0);
-					} else if (credits.g > 0.0) {
-						amount = credits.g;
-						creditColor = mix(creditColor4, creditColor3, abs(vUV.y - 0.5) * 2.0);
-					}
-
-					float radius = 0.4;
-					amount = clamp(smoothstep(radius - fwidth(amount), radius, amount), 0.0, 1.0);
-
-					gl_FragColor = vec4(amount * creditColor, 1.0);
-				}
-
-				gl_FragColor.rgb *= vBrightness;
-				if (quadBorder == 0.0) {
-					gl_FragColor.rg += vSpotlight;
-				}
-
-				if (vSpotlight == 1.0 && borderDistance - quadBorder * 3.0 < 0.0) {
-					gl_FragColor = mix(
-						vec4(1.0, 1.0, 0.0, 1.0),
-						gl_FragColor,
-						smoothstep(quadBorder - 0.02, quadBorder, borderDistance - quadBorder * 3.0)
-					);
-				} else {
-					vec4 borderColor = mix(
-						vec4(1.0, 0.0, 0.5, 1.0),
-						vec4(1.0, 0.5, 0.0, 1.0),
-						vFogFactor
-					);
-					gl_FragColor = mix(
-						borderColor,
-						gl_FragColor,
-						smoothstep(quadBorder * 0.5, quadBorder, borderDistance - quadBorder)
-					);
-				}
-
-			}
-		`,
+		vert: terrainVert,
+		frag: terrainFrag,
 
 		attributes: terrain.attributes,
 		count: terrain.numVertices,
@@ -455,8 +254,8 @@ document.body.onload = async () => {
 			maxDrawDistance: data.maxDrawDistance,
 			transform: regl.prop("transform"),
 			currentQuadID: regl.prop("currentQuadID"),
-			spotlight: regl.prop("spotlight"),
-			cutoff: regl.prop("cutoff"),
+			showSpotlight: regl.prop("showSpotlight"),
+			lightingCutoff: regl.prop("lightingCutoff"),
 			quadBorder: regl.prop("quadBorder"),
 			repeatOffset: regl.prop("repeatOffset"),
 			time: regl.prop("time"),
@@ -495,28 +294,34 @@ document.body.onload = async () => {
 		}
 
 		const deltaTime = time - lastFrameTime;
-		if (!smooth && deltaTime < 1 / data.targetFPS) {
+		if (settings.limitDrawSpeed && deltaTime < 1 / data.targetFPS) {
 			return;
 		}
 		lastFrameTime = time;
 
 		try {
-			Controls.update(terrain.clampAltitude, deltaTime, smooth);
+			Controls.update(settings, terrain.clampAltitude, deltaTime);
 		} catch (error) {
 			raf.cancel();
 			throw error;
 		}
-		const textures = useHiRezTextures ? hiRezTexturePack : texturePack;
+		const textures = settings.hiResTextures ? hiResTexturePack : texturePack;
 		Object.assign(renderProperties, textures);
 		renderProperties.currentQuadID = terrain.currentQuadID;
 		renderProperties.time = (Date.now() - start) / 1000;
 
+		renderProperties.showSpotlight = settings.birdsEyeView ? 1 : 0;
+		renderProperties.lightingCutoff = settings.lightingCutoff ? 1 : 0;
+		renderProperties.fogFar = data.fogFar * (settings.lightingCutoff ? 1 : 3);
+		renderProperties.quadBorder = settings.showQuadEdges ? 0.02 : 0;
+		renderProperties.showSindogs = settings.showSindogs ? 1 : 0;
+
 		try {
-			if (!Controls.birdsEyeView) {
+			if (!settings.birdsEyeView) {
 				drawBackground(renderProperties);
 			}
 
-			if (renderProperties.cutoff == 0) {
+			if (renderProperties.lightingCutoff == 0) {
 				for (let y = -1; y < 2; y++) {
 					for (let x = -1; x < 2; x++) {
 						vec2.set(renderProperties.repeatOffset, x, y);
