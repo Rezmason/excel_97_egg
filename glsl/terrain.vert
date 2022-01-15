@@ -7,7 +7,7 @@ uniform mat4 camera, transform;
 uniform vec3 airplanePosition;
 uniform float terrainSize, maxDrawDistance;
 uniform float currentQuadID;
-uniform float showSpotlight, lightingCutoff;
+uniform float birdsEyeView, lightingCutoff;
 uniform float fogNear, fogFar;
 uniform vec2 repeatOffset;
 
@@ -40,11 +40,11 @@ void main() {
 	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * TWO_PI);
 	position.z += wave;
 
-	vSpotlight = showSpotlight * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
+	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
 	if (aQuadID == currentQuadID) {
-		vSpotlight = showSpotlight;
+		vSpotlight = birdsEyeView;
 	}
-	vSpotlight = clamp(vSpotlight, 0.0, showSpotlight);
+	vSpotlight = clamp(vSpotlight, 0.0, birdsEyeView);
 	if (repeatOffset.x != 0.0 || repeatOffset.y != 0.0) {
 		vSpotlight = 0.0;
 	}

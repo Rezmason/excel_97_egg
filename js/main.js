@@ -150,7 +150,7 @@ document.body.onload = async () => {
 		position,
 		rotation,
 		repeatOffset: vec2.create(),
-		showSpotlight: 0,
+		birdsEyeView: 0,
 		lightingCutoff: 1,
 		quadBorder: 0,
 		showSindogs: 0,
@@ -254,7 +254,7 @@ document.body.onload = async () => {
 			maxDrawDistance: data.maxDrawDistance,
 			transform: regl.prop("transform"),
 			currentQuadID: regl.prop("currentQuadID"),
-			showSpotlight: regl.prop("showSpotlight"),
+			birdsEyeView: regl.prop("birdsEyeView"),
 			lightingCutoff: regl.prop("lightingCutoff"),
 			quadBorder: regl.prop("quadBorder"),
 			repeatOffset: regl.prop("repeatOffset"),
@@ -315,7 +315,7 @@ document.body.onload = async () => {
 		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
 		renderProperties.time = (Date.now() - start) / 1000;
 
-		renderProperties.showSpotlight = settings.birdsEyeView ? 1 : 0;
+		renderProperties.birdsEyeView = settings.birdsEyeView ? 1 : 0;
 		renderProperties.lightingCutoff = settings.lightingCutoff ? 1 : 0;
 		renderProperties.fogFar = data.fogFar * (settings.lightingCutoff ? 1 : 3);
 		renderProperties.quadBorder = settings.showQuadEdges ? 0.02 : 0;

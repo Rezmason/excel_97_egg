@@ -8,7 +8,7 @@ uniform highp float tick, time;
 uniform sampler2D moonscapeTexture;
 uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
-uniform float quadBorder;
+uniform float quadBorder, birdsEyeView;
 
 
 uniform vec3 creditColor1;
@@ -60,6 +60,12 @@ void main() {
 	}
 
 	gl_FragColor.rgb *= vBrightness;
+
+	float quadBorder = quadBorder;
+	if (birdsEyeView == 1.0) {
+		quadBorder *= 3.0;
+	}
+
 	if (quadBorder == 0.0) {
 		gl_FragColor.rg += vSpotlight;
 	}
