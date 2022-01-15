@@ -45,7 +45,6 @@ Readme
 			ridiculous_fish - developer of Hex Fiend
 			@kurtruslfanclub — making SDFs in Photoshop
 
-
 Interview and technical explanation
 
 Procedural terrain

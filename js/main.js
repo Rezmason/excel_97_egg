@@ -151,7 +151,7 @@ const { mat4, vec2 } = glMatrix;
 
 			creditColor1: [0.0, 0.0, 0.0],
 			creditColor2: [0.87, 0.87, 0.87],
-			creditColor3: [0.19, 0.09, 0.17 /* 0.06, 0.03, 0.06 */],
+			creditColor3: [0.19, 0.09, 0.17], // 0.06, 0.03, 0.06
 			creditColor4: [0.94, 0.52, 0.12],
 		},
 	});

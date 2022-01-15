@@ -11,15 +11,19 @@ export default (data) => {
 	const defaultZone = data.zones[data.zones.length - 1];
 
 	const getZone = (x, y, minOffset, maxOffset) => {
-		return (
-			data.zones.find(
-				(zone) =>
-					x >= zone.x + minOffset &&
-					x < zone.x + zone.width - maxOffset &&
-					y >= zone.y + minOffset &&
-					y < zone.y + zone.height - maxOffset
-			) ?? defaultZone
+		const zone = data.zones.find(
+			(zone) =>
+				x >= zone.x + minOffset &&
+				x < zone.x + zone.width - maxOffset &&
+				y >= zone.y + minOffset &&
+				y < zone.y + zone.height - maxOffset
 		);
+
+		if (zone == null) {
+			return defaultZone;
+		}
+
+		return zone;
 	};
 
 	const quadCornerOffsets = [

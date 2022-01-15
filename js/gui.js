@@ -1,8 +1,16 @@
 import Model from "./model.js";
 
+const makeEventTarget = () => {
+	try {
+		return new EventTarget();
+	} catch {
+		return new DocumentFragment();
+	}
+};
+
 export default (async () => {
 	const settings = {};
-	const events = new (class extends EventTarget {})();
+	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
 
 	const toolbar = document.querySelector("toolbar");
