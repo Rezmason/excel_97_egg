@@ -1,8 +1,15 @@
 import Model from "./model.js";
 import GUI from "./gui.js";
 import Controls from "./controls.js";
+const { mat4, vec2 } = glMatrix;
 
 (async () => {
+	const canvas = document.querySelector("canvas");
+
+	document.addEventListener("touchmove", (event) => event.preventDefault(), {
+		passive: false,
+	});
+
 	const { events, settings } = await GUI;
 
 	events.addEventListener("settingsChanged", async (event) => {
@@ -14,18 +21,11 @@ import Controls from "./controls.js";
 
 	const { data, terrain } = await Model;
 
-	const canvas = document.querySelector("canvas");
-	document.addEventListener("touchmove", (event) => event.preventDefault(), {
-		passive: false,
-	});
-
 	const regl = createREGL({
 		canvas,
 		attributes: { antialias: false },
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
-
-	const { mat4, vec2 } = glMatrix;
 
 	const [horizonVert, horizonFrag, terrainVert, terrainFrag] =
 		await Promise.all(
@@ -67,8 +67,7 @@ import Controls from "./controls.js";
 
 	const camera = mat4.create();
 
-	await Controls.init();
-	const { transform, position, rotation, rollMat } = Controls;
+	const { update, transform, position, rotation, rollMat } = await Controls;
 
 	const renderProperties = {
 		camera,
@@ -95,17 +94,9 @@ import Controls from "./controls.js";
 		}
 		canvas.width = Math.ceil(canvas.clientWidth * scaleFactor);
 		canvas.height = Math.ceil(canvas.clientHeight * scaleFactor);
-		Controls.resize();
 	};
 
-	const location = data.locations.spawn;
-	// const location = data.locations.looking_at_monolith;
-	// const location = data.locations.credits;
-	// const location = data.locations.poolside;
-	// const location = data.locations.spikes;
-	Controls.goto(location);
-
-	window.onresize = resize;
+	window.addEventListener("resize", (event) => resize);
 	resize();
 
 	const drawHorizon = regl({
@@ -198,7 +189,7 @@ import Controls from "./controls.js";
 		lastFrameTime = time;
 
 		try {
-			Controls.update(deltaTime);
+			update(deltaTime);
 		} catch (error) {
 			raf.cancel();
 			throw error;

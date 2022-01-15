@@ -1,9 +1,8 @@
 Clean up code
-	Reorganize controls module
+	Renderer module
 	Organize data JSON into categories: controls, rendering, terrain
 	Move magic numbers (including consts) into data
 		 // TODO: move magic number to data
-	Renderer module
 	Review the shader code
 
 Revisit the dark blue parts of the high resolution moonscape texture
