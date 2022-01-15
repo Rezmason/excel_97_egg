@@ -1,3 +1,6 @@
+import Model from "./model.js";
+import GUI from "./gui.js";
+
 const { mat2, mat4, vec2, vec3, quat } = glMatrix;
 
 const degreesToRadians = Math.PI / 180;
@@ -5,6 +8,8 @@ const degreesToRadians = Math.PI / 180;
 const forwardAcceleration = 400;
 const maxForwardSpeed = 1000;
 const turnSpeed = 0.125;
+
+const domElement = document.querySelector("canvas");
 
 const mouseJoystick = vec2.create();
 const goalMouseJoystick = vec2.create();
@@ -17,15 +22,15 @@ const touchStartRotation = vec3.create();
 const rotQuat = quat.create();
 let mouseButtonDown = null;
 let forwardSpeed = 0;
-let domElement = null;
 let touchStartX = 0;
 let touchStartY = 0;
 let smooth = false;
 let braking = false;
 let useMouseJoystick = false;
-let birdsEyeView = false;
 
 let data;
+let terrain;
+let settings;
 
 const coarse = (value, granularity = 1000) =>
 	smooth ? value : Math.round(value * granularity) / granularity;
@@ -34,14 +39,9 @@ const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
 
 const lerp = (a, b, t) => a + t * (b - a);
 
-const init = (d, el) => {
-	if (domElement != null) {
-		console.warn("You can't init the controls twice.");
-		return;
-	}
-
-	data = d;
-	domElement = el;
+const init = async () => {
+	({ data, terrain } = await Model);
+	({ settings } = await GUI);
 
 	document.addEventListener("keydown", async (event) => {
 		if (event.repeat) {
@@ -116,7 +116,7 @@ const init = (d, el) => {
 			18
 		);
 		const roll = 0;
-		const flipYaw = birdsEyeView ? -1 : 1;
+		const flipYaw = settings.birdsEyeView ? -1 : 1;
 		const yaw =
 			touchStartRotation[1] + coarse(pageX - touchStartX) * -100 * flipYaw;
 		vec3.set(rotation, pitch, yaw, roll);
@@ -144,13 +144,15 @@ const init = (d, el) => {
 			braking = true;
 		}
 	};
+
+	updateTransform();
 };
 
 const resize = () =>
 	vec2.set(viewportSize, window.innerWidth, window.innerHeight);
 
 const updateTransform = () => {
-	if (birdsEyeView) {
+	if (settings.birdsEyeView) {
 		mat4.identity(transform);
 		mat4.rotateX(transform, transform, Math.PI);
 		mat4.translate(transform, transform, vec3.fromValues(0, 0, 2000 / 26));
@@ -233,7 +235,7 @@ const updatePosition = (deltaTime, smoothMotion) => {
 	vec3.add(position, position, displacement);
 };
 
-const limitAltitude = (terrain, deltaTime) => {
+const limitAltitude = (deltaTime) => {
 	const altitude = position[2];
 	const quad = terrain.getQuadAt(...position);
 	const clampedAltitude = Math.max(
@@ -247,16 +249,13 @@ const limitAltitude = (terrain, deltaTime) => {
 	);
 };
 
-const update = (settings, terrain, deltaTime) => {
-	birdsEyeView = settings.birdsEyeView;
+const update = (deltaTime) => {
 	updateRotation(deltaTime);
 	updatePosition(deltaTime);
-	limitAltitude(terrain, deltaTime);
+	limitAltitude(deltaTime);
 	updateForwardSpeed(deltaTime);
 	updateTransform();
 };
-
-updateTransform();
 
 export default {
 	init,

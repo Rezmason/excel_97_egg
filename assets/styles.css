@@ -26,9 +26,7 @@ toolbar {
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
 	font-size: 0.2vw;
-}
 
-form.mso {
 	display: flex;
 
 	margin: 3em 2em 3em 11em;
@@ -45,7 +43,7 @@ form.mso {
 	cursor: pointer;
 }
 
-form.mso divider {
+toolbar divider {
 	background-image: url("ui/toolbar_divider.png");
 	background-size: cover;
 	width: 6em;

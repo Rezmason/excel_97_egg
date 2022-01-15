@@ -1,11 +1,8 @@
 Clean up code
-	Data module
-		The other modules can import it
-			Organize data JSON into categories: controls, rendering, terrain
-		This module will also own the terrain
-		Move magic numbers (including consts) into data
-			 // TODO: move magic number to data
-	GUI module
+	Reorganize controls module
+	Organize data JSON into categories: controls, rendering, terrain
+	Move magic numbers (including consts) into data
+		 // TODO: move magic number to data
 	Renderer module
 	Review the shader code
 

@@ -1,90 +1,23 @@
-import makeTerrain from "./terrain.js";
+import Model from "./model.js";
+import GUI from "./gui.js";
 import Controls from "./controls.js";
 
-document.body.onload = async () => {
+(async () => {
+	const { events, settings } = await GUI;
+
+	events.addEventListener("settingsChanged", async (event) => {
+		if (settings.hiResTextures && hiResTexturePack == null) {
+			hiResTexturePack = await loadTexturePack(data.texture_packs.hi_res);
+		}
+		resize();
+	});
+
+	const { data, terrain } = await Model;
+
 	const canvas = document.querySelector("canvas");
 	document.addEventListener("touchmove", (event) => event.preventDefault(), {
 		passive: false,
 	});
-
-	const checkboxesByKeyCode = Object.fromEntries(
-		Array.from(document.querySelectorAll("input.mso")).map((checkbox) => [
-			checkbox.getAttribute("data-keycode"),
-			checkbox,
-		])
-	);
-
-	const fullscreenCheckbox = document.querySelector("input#fullscreen");
-	fullscreenCheckbox.disabled = !(
-		document.fullscreenEnabled || document.webkitFullscreenEnabled
-	);
-
-	const fullscreenChangeEventType = document.fullscreenEnabled
-		? "fullscreenchange"
-		: "webkitfullscreenchange";
-	document.addEventListener(fullscreenChangeEventType, (event) => {
-		let isFullscreen;
-		if (document.fullscreenEnabled) {
-			isFullscreen = document.fullscreenElement != null;
-		} else if (document.webkitFullscreenEnabled) {
-			isFullscreen = document.webkitFullscreenElement != null;
-		}
-		const changed = isFullscreen != fullscreenCheckbox.checked;
-		fullscreenCheckbox.checked = isFullscreen;
-		if (changed) {
-			updateSettings();
-		}
-	});
-
-	const toolbar = document.querySelector("toolbar");
-	toolbar.addEventListener("click", (event) => {
-		if (event.target.tagName.toLowerCase() === "input") {
-			updateSettings();
-		}
-	});
-
-	const aboutButton = document.querySelector("button#about");
-	aboutButton.addEventListener("click", (event) => {
-		showAboutBox();
-	});
-
-	const showAboutBox = () => {
-		// TODO: about box
-	};
-
-	const form = document.querySelector("toolbar form");
-	const updateSettings = async () => {
-		settings = Object.fromEntries(
-			Array.from(new FormData(form).keys()).map((key) => [
-				key.replace(/(_[a-z])/g, (s) => s.substr(1).toUpperCase()),
-				true,
-			])
-		);
-
-		if (settings.hiResTextures && hiResTexturePack == null) {
-			hiResTexturePack = await loadTexturePack(data.texture_packs.hi_res);
-		}
-
-		if (settings.fullscreen) {
-			if (document.fullscreenEnabled) {
-				document.body.requestFullscreen();
-			} else if (document.webkitFullscreenEnabled) {
-				document.body.webkitRequestFullscreen();
-			}
-		} else {
-			if (document.fullscreenEnabled) {
-				if (document.fullscreenElement != null) {
-					document.exitFullscreen();
-				}
-			} else if (document.webkitFullscreenEnabled) {
-				if (document.webkitFullscreenElement == null) {
-					document.webkitExitFullscreen();
-				}
-			}
-		}
-
-		resize();
-	};
 
 	const regl = createREGL({
 		canvas,
@@ -93,10 +26,6 @@ document.body.onload = async () => {
 	});
 
 	const { mat4, vec2 } = glMatrix;
-
-	const data = await fetch("assets/data.json").then((response) =>
-		response.json()
-	);
 
 	const [horizonVert, horizonFrag, terrainVert, terrainFrag] =
 		await Promise.all(
@@ -136,11 +65,9 @@ document.body.onload = async () => {
 	const texturePack = await loadTexturePack(data.texture_packs.standard);
 	let hiResTexturePack = null;
 
-	Controls.init(data, canvas);
-	const terrain = makeTerrain(data);
 	const camera = mat4.create();
-	let settings;
 
+	await Controls.init();
 	const { transform, position, rotation, rollMat } = Controls;
 
 	const renderProperties = {
@@ -171,39 +98,6 @@ document.body.onload = async () => {
 		Controls.resize();
 	};
 
-	document.addEventListener("keyup", async (event) => {
-		if (event.code === "Space" && toolbar.contains(event.target)) {
-			event.preventDefault();
-		}
-	});
-
-	document.addEventListener("keydown", async (event) => {
-		if (event.repeat) {
-			return;
-		}
-
-		if (event.code === "Space") {
-			if (toolbar.contains(event.target)) {
-				event.preventDefault();
-			}
-
-			// TODO: handbrake
-			return;
-		}
-
-		if (event.code === "KeyA") {
-			showAboutBox();
-			return;
-		}
-
-		const checkbox = checkboxesByKeyCode[event.code];
-
-		if (checkbox != null && !checkbox.disabled) {
-			checkbox.checked = !checkbox.checked;
-			updateSettings();
-		}
-	});
-
 	const location = data.locations.spawn;
 	// const location = data.locations.looking_at_monolith;
 	// const location = data.locations.credits;
@@ -211,7 +105,6 @@ document.body.onload = async () => {
 	// const location = data.locations.spikes;
 	Controls.goto(location);
 
-	updateSettings();
 	window.onresize = resize;
 	resize();
 
@@ -305,7 +198,7 @@ document.body.onload = async () => {
 		lastFrameTime = time;
 
 		try {
-			Controls.update(settings, terrain, deltaTime);
+			Controls.update(deltaTime);
 		} catch (error) {
 			raf.cancel();
 			throw error;
@@ -342,4 +235,4 @@ document.body.onload = async () => {
 			throw error;
 		}
 	});
-};
+})();
