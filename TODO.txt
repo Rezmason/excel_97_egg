@@ -6,6 +6,8 @@ Clean up code
 	Renderer module
 	Review the shader code
 
+Revisit the dark blue parts of the high resolution moonscape texture
+
 About box
 	https://jdan.github.io/98.css
 

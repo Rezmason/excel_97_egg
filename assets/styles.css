@@ -19,10 +19,15 @@ canvas {
 	image-rendering: pixelated;
 }
 
-toolbar {
+gui {
 	position: absolute;
-	top: 1vw;
-	left: 1vw;
+	top: 0;
+	left: 0;
+	padding: 1vw;
+	background: transparent;
+}
+
+toolbar {
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
 	font-size: 0.2vw;
