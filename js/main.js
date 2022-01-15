@@ -136,7 +136,7 @@ document.body.onload = async () => {
 	const texturePack = await loadTexturePack(data.texture_packs.standard);
 	let hiResTexturePack = null;
 
-	Controls.attach(canvas);
+	Controls.init(data, canvas);
 	const terrain = makeTerrain(data);
 	const camera = mat4.create();
 	let settings;
@@ -215,7 +215,7 @@ document.body.onload = async () => {
 	window.onresize = resize;
 	resize();
 
-	const drawBackground = regl({
+	const drawHorizon = regl({
 		vert: horizonVert,
 		frag: horizonFrag,
 
@@ -305,14 +305,14 @@ document.body.onload = async () => {
 		lastFrameTime = time;
 
 		try {
-			Controls.update(settings, terrain.clampAltitude, deltaTime);
+			Controls.update(settings, terrain, deltaTime);
 		} catch (error) {
 			raf.cancel();
 			throw error;
 		}
 		const textures = settings.hiResTextures ? hiResTexturePack : texturePack;
 		Object.assign(renderProperties, textures);
-		renderProperties.currentQuadID = terrain.currentQuadID;
+		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
 		renderProperties.time = (Date.now() - start) / 1000;
 
 		renderProperties.showSpotlight = settings.birdsEyeView ? 1 : 0;
@@ -323,7 +323,7 @@ document.body.onload = async () => {
 
 		try {
 			if (!settings.birdsEyeView) {
-				drawBackground(renderProperties);
+				drawHorizon(renderProperties);
 			}
 
 			if (renderProperties.lightingCutoff == 0) {

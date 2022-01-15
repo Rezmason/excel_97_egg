@@ -25,18 +25,23 @@ let braking = false;
 let useMouseJoystick = false;
 let birdsEyeView = false;
 
+let data;
+
 const coarse = (value, granularity = 1000) =>
 	smooth ? value : Math.round(value * granularity) / granularity;
 
 const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
 
-const attach = (element) => {
+const lerp = (a, b, t) => a + t * (b - a);
+
+const init = (d, el) => {
 	if (domElement != null) {
-		console.warn("You can't attach the controls twice.");
+		console.warn("You can't init the controls twice.");
 		return;
 	}
 
-	domElement = element;
+	data = d;
+	domElement = el;
 
 	document.addEventListener("keydown", async (event) => {
 		if (event.repeat) {
@@ -175,7 +180,7 @@ const updateForwardSpeed = (deltaTime) => {
 	const lastForwardSpeed = forwardSpeed;
 
 	if (braking) {
-		forwardSpeed *= 1 - deltaTime * 5;
+		forwardSpeed = lerp(forwardSpeed, 0, clamp(deltaTime * 5, 0, 1));
 	} else if (mouseButtonDown != null) {
 		const direction = mouseButtonDown === "primary" ? -1 : 1;
 		forwardSpeed += deltaTime * forwardAcceleration * direction;
@@ -214,7 +219,7 @@ const updateRotation = (deltaTime) => {
 	mat2.fromRotation(rollMat, -rotation[2] * degreesToRadians * 1.5);
 };
 
-const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
+const updatePosition = (deltaTime, smoothMotion) => {
 	smooth = smoothMotion;
 	const pitchRad = degreesToRadians * rotation[0];
 	const yawRad = degreesToRadians * rotation[1];
@@ -226,16 +231,27 @@ const updatePosition = (clampAltitude, deltaTime, smoothMotion) => {
 	);
 	vec3.scale(displacement, displacement, deltaTime * forwardSpeed);
 	vec3.add(position, position, displacement);
-
-	const lerpRatio = clamp(0.4 + deltaTime * 4, 0, 1);
-	position[2] =
-		position[2] * (1 - lerpRatio) + clampAltitude(...position) * lerpRatio;
 };
 
-const update = (settings, clampAltitude, deltaTime) => {
+const limitAltitude = (terrain, deltaTime) => {
+	const altitude = position[2];
+	const quad = terrain.getQuadAt(...position);
+	const clampedAltitude = Math.max(
+		quad.altitude + data.minHeightOffGround,
+		Math.min(data.maxAltitude, position[2])
+	);
+	position[2] = lerp(
+		position[2],
+		clampedAltitude,
+		clamp(0.4 + deltaTime * 4, 0, 1)
+	);
+};
+
+const update = (settings, terrain, deltaTime) => {
 	birdsEyeView = settings.birdsEyeView;
 	updateRotation(deltaTime);
-	updatePosition(clampAltitude, deltaTime);
+	updatePosition(deltaTime);
+	limitAltitude(terrain, deltaTime);
 	updateForwardSpeed(deltaTime);
 	updateTransform();
 };
@@ -243,7 +259,7 @@ const update = (settings, clampAltitude, deltaTime) => {
 updateTransform();
 
 export default {
-	attach,
+	init,
 	goto,
 	resize,
 	update,

@@ -1,16 +1,17 @@
-About box
-	https://jdan.github.io/98.css
-
 Clean up code
 	Data module
 		The other modules can import it
-		The data will also own and expose the terrain
-		The other modules can then get the quad from the terrain themselves
+			Organize data JSON into categories: controls, rendering, terrain
+		This module will also own the terrain
+		Move magic numbers (including consts) into data
+			 // TODO: move magic number to data
 	GUI module
 	Renderer module
-	Move as many magic numbers as possible into data
-		 // TODO: move magic number to data
 	Review the shader code
+
+About box
+	https://jdan.github.io/98.css
+
 Compare with reference some more
 
 Readme

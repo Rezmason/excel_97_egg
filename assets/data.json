@@ -80,8 +80,8 @@
 			"name": "credits",
 			"x": 48,
 			"y": 11,
-			"numColumns": 3,
-			"numRows": 3,
+			"width": 3,
+			"height": 3,
 			"texture": 2,
 			"brightnessMagnifier": 0
 		},
@@ -89,8 +89,8 @@
 			"name": "platform",
 			"x": 43,
 			"y": 8,
-			"numColumns": 13,
-			"numRows": 11,
+			"width": 13,
+			"height": 11,
 			"texture": 1,
 			"brightnessMagnifier": 1,
 			"brightness": [
@@ -111,8 +111,8 @@
 			"name": "pool",
 			"x": 40,
 			"y": 34,
-			"numColumns": 10,
-			"numRows": 10,
+			"width": 10,
+			"height": 10,
 			"texture": 0,
 			"brightnessMagnifier": 0.06
 		},
