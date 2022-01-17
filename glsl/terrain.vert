@@ -1,6 +1,6 @@
 precision mediump float;
 
-#define TWO_PI 6.2831853072
+#define PI 3.14159265359
 
 uniform highp float time;
 uniform mat4 camera, transform;
@@ -37,7 +37,7 @@ void main() {
 	}
 
 	vec4 position = vec4(aPosition + vec3(centroid, 0.0), 1);
-	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * TWO_PI);
+	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
 	position.z += wave;
 
 	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;

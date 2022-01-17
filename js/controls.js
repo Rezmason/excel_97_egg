@@ -35,10 +35,6 @@ export default (async () => {
 	const { data, terrain } = await Model;
 	const { settings } = await GUI;
 
-	const forwardAcceleration = 400;
-	const maxForwardSpeed = 1000;
-	const turnSpeed = 0.125;
-
 	document.addEventListener("keydown", async (event) => {
 		if (event.repeat) {
 			return;
@@ -104,19 +100,23 @@ export default (async () => {
 
 	canvas.addEventListener("touchmove", (event) => {
 		event.preventDefault();
+		const { sensitivity, minPitch, maxPitch } = data.controls.touch;
 		let { pageX, pageY } = event.touches.item(0);
 		const maxViewportDimension = Math.max(...viewportSize);
 		pageX /= maxViewportDimension;
 		pageY /= maxViewportDimension;
 		const pitch = clamp(
-			modifier(touchStartRotation[0] + (pageY - touchStart[1]) * -100),
-			-9,
-			18
+			modifier(
+				touchStartRotation[0] + (pageY - touchStart[1]) * sensitivity[0]
+			),
+			minPitch,
+			maxPitch
 		);
 		const roll = 0;
 		const flipYaw = settings.birdsEyeView ? -1 : 1;
 		const yaw =
-			touchStartRotation[1] + modifier(pageX - touchStart[0]) * -100 * flipYaw;
+			touchStartRotation[1] +
+			modifier(pageX - touchStart[0]) * sensitivity[1] * flipYaw;
 		vec3.set(rotation, pitch, yaw, roll);
 		if (event.touches.length > 1) {
 			handleSecondTouch(event.touches.item(1));
@@ -151,16 +151,21 @@ export default (async () => {
 
 	const updateTransform = () => {
 		if (settings.birdsEyeView) {
+			const { scale, tilt, drop } = data.controls.birdsEye;
 			mat4.identity(transform);
 			mat4.rotateX(transform, transform, Math.PI);
-			mat4.translate(transform, transform, vec3.fromValues(0, 0, 2000 / 26));
-			mat4.scale(transform, transform, vec3.fromValues(0.03, 0.03, 0.03));
-			mat4.rotateX(transform, transform, -Math.PI * 0.375);
+			mat4.translate(
+				transform,
+				transform,
+				vec3.fromValues(0, 0, terrain.size / data.rendering.fov)
+			);
+			mat4.scale(transform, transform, vec3.fromValues(scale, scale, scale));
+			mat4.rotateX(transform, transform, degreesToRadians * tilt);
 			mat4.rotateZ(transform, transform, degreesToRadians * -rotation[1]);
 			mat4.translate(
 				transform,
 				transform,
-				vec3.fromValues(position[0], position[1], -80)
+				vec3.fromValues(position[0], position[1], drop)
 			);
 		} else {
 			quat.fromEuler(rotQuat, ...rotation, "xzy");
@@ -171,6 +176,7 @@ export default (async () => {
 	};
 
 	const updateForwardSpeed = (deltaTime) => {
+		const { maxForwardSpeed, forwardAcceleration } = data.controls;
 		const lastForwardSpeed = forwardSpeed;
 
 		if (braking) {
@@ -204,14 +210,21 @@ export default (async () => {
 		);
 
 		if (useMouseJoystick) {
-			const pitch = clamp(modifier(-mouseJoystick[1] * 0.025), -9, 9);
-			const roll = modifier(turnSpeed * mouseJoystick[0]) * 0.2375;
+			const { sensitivity, minPitch, maxPitch } = data.controls.mouse;
+			const pitch = clamp(
+				modifier(sensitivity[1] * mouseJoystick[1]),
+				minPitch,
+				maxPitch
+			);
+			const roll =
+				modifier(sensitivity[0] * mouseJoystick[0]) *
+				data.controls.mouse.rollMultiplier;
 			const yaw =
-				rotation[1] + deltaTime * modifier(turnSpeed * mouseJoystick[0]);
+				rotation[1] + deltaTime * modifier(sensitivity[0] * mouseJoystick[0]);
 			vec3.set(rotation, pitch, yaw, roll);
 		}
 
-		mat2.fromRotation(rollMat, -rotation[2] * degreesToRadians * 1.5);
+		mat2.fromRotation(rollMat, rotation[2] * degreesToRadians * -1.5);
 	};
 
 	const updatePosition = (deltaTime, smoothMotion) => {
@@ -232,8 +245,8 @@ export default (async () => {
 		const altitude = position[2];
 		const quad = terrain.getQuadAt(...position);
 		const clampedAltitude = Math.max(
-			quad.altitude + data.minHeightOffGround,
-			Math.min(data.maxAltitude, position[2])
+			quad.altitude + data.controls.minHeightOffGround,
+			Math.min(data.controls.maxAltitude, position[2])
 		);
 		position[2] = lerp(
 			position[2],
@@ -250,11 +263,11 @@ export default (async () => {
 		updateTransform();
 	};
 
-	const location = data.locations.spawn;
-	// const location = data.locations.looking_at_monolith;
-	// const location = data.locations.credits;
-	// const location = data.locations.poolside;
-	// const location = data.locations.spikes;
+	const { locations } = data.controls;
+	let location = locations[settings.location];
+	if (location == null) {
+		location = locations.spawn;
+	}
 
 	vec3.set(position, ...location.position);
 	vec3.set(rotation, ...location.rotation, 0);

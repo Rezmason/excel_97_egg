@@ -1,9 +1,7 @@
-Clean up code
-	Renderer module
-	Organize data JSON into categories: controls, rendering, terrain
-	Move magic numbers (including consts) into data
-		 // TODO: move magic number to data
-	Review the shader code
+Fix roll
+	Has to account for screen ratio apparently
+	Just use the normal transform somehow
+	Multiply height of terrain by zero in shader to help test
 
 Revisit the dark blue parts of the high resolution moonscape texture
 

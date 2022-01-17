@@ -9,7 +9,9 @@ const makeEventTarget = () => {
 };
 
 export default (async () => {
-	const settings = {};
+	const settings = {
+		location: new URLSearchParams(window.location.search).get("location"),
+	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
 

@@ -1,29 +1,29 @@
 const modulo = (a, n) => ((a % n) + n) % n;
 
 export default (data) => {
-	const { elevations } = data;
+	const elevations = data.terrain.z;
 	const [numColumns, numRows, size] = [
 		elevations[0].length,
 		elevations.length,
-		data.size,
+		data.terrain.size,
 	];
 
-	const defaultZone = data.zones[data.zones.length - 1];
+	const defaultRegion = data.terrain.regions[data.terrain.regions.length - 1];
 
-	const getZone = (x, y, minOffset, maxOffset) => {
-		const zone = data.zones.find(
-			(zone) =>
-				x >= zone.x + minOffset &&
-				x < zone.x + zone.width - maxOffset &&
-				y >= zone.y + minOffset &&
-				y < zone.y + zone.height - maxOffset
+	const getRegion = (x, y, minOffset, maxOffset) => {
+		const region = data.terrain.regions.find(
+			(region) =>
+				x >= region.x + minOffset &&
+				x < region.x + region.width - maxOffset &&
+				y >= region.y + minOffset &&
+				y < region.y + region.height - maxOffset
 		);
 
-		if (zone == null) {
-			return defaultZone;
+		if (region == null) {
+			return defaultRegion;
 		}
 
-		return zone;
+		return region;
 	};
 
 	const quadCornerOffsets = [
@@ -52,7 +52,7 @@ export default (data) => {
 				[nx, ny],
 			];
 			const vertices = [tl, bl, tr, tr, bl, br];
-			const zone = getZone(
+			const region = getRegion(
 				modulo(x + 0.5, numColumns),
 				modulo(y + 0.5, numRows),
 				0,
@@ -71,21 +71,21 @@ export default (data) => {
 							-elevations[y][x],
 						])
 						.flat(),
-					whichTexture: vertices.map((_) => zone.texture).flat(),
+					whichTexture: vertices.map((_) => region.texture).flat(),
 					uv:
-						zone.name === "credits"
+						region.name === "credits"
 							? quadCornerOffsets
 									.map(([u, v]) => [
-										(u + 0.5 + x - zone.x) / (zone.width - 1) - 0.5,
-										(v + 0.5 + y - zone.y) / (zone.height - 1) - 0.5,
+										(u + 0.5 + x - region.x) / (region.width - 1) - 0.5,
+										(v + 0.5 + y - region.y) / (region.height - 1) - 0.5,
 									])
 									.flat()
 							: quadCornerOffsets.flat(),
 					brightness: vertices
 						.map(([x, y]) => {
 							let brightness;
-							if (zone.brightness != null) {
-								brightness = zone.brightness[y - zone.y][x - zone.x];
+							if (region.brightness != null) {
+								brightness = region.brightness[y - region.y][x - region.x];
 							} else {
 								const elevation = elevations[y][x];
 								const north = elevations[modulo(y - 1, numRows)][x];
@@ -93,15 +93,16 @@ export default (data) => {
 								const west = elevations[y][modulo(x - 1, numColumns)];
 								const east = elevations[y][modulo(x + 1, numColumns)];
 								brightness = (north + south + east + west) / 2 - elevation * 2;
-								brightness = (brightness - 1) * zone.brightnessMagnifier + 1;
+								brightness = (brightness - 1) * region.brightnessMagnifier + 1;
 							}
 							return Math.max(0, Math.min(1, brightness));
 						})
 						.flat(),
 					waveAmplitude: vertices
 						.map(([x, y]) =>
-							zone.name === "pool" && getZone(x, y, 1, 1).name === zone.name
-								? data.waveAmplitude
+							region.name === "pool" &&
+							getRegion(x, y, 1, 1).name === region.name
+								? data.terrain.waveAmplitude
 								: 0
 						)
 						.flat(),

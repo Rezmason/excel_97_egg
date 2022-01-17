@@ -10,7 +10,6 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder, birdsEyeView;
 
-
 uniform vec3 creditColor1;
 uniform vec3 creditColor2;
 uniform vec3 creditColor3;
@@ -23,8 +22,6 @@ varying float vFogFactor, vBrightness, vSpotlight;
 void main() {
 
 	int whichTexture = int(vWhichTexture);
-
-	float borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
 
 	if (whichTexture == 0) {
 		gl_FragColor = texture2D(moonscapeTexture, vUV);
@@ -61,32 +58,33 @@ void main() {
 
 	gl_FragColor.rgb *= vBrightness;
 
-	float quadBorder = quadBorder;
+	float quadBorder = quadBorder * (1.0 + vFogFactor * 2.0);
 	if (birdsEyeView == 1.0) {
 		quadBorder *= 3.0;
 	}
 
 	if (quadBorder == 0.0) {
-		gl_FragColor.rg += vSpotlight;
-	}
-
-	if (vSpotlight == 1.0 && borderDistance - quadBorder * 3.0 < 0.0) {
-		gl_FragColor = mix(
-			vec4(1.0, 1.0, 0.0, 1.0),
-			gl_FragColor,
-			smoothstep(quadBorder - 0.02, quadBorder, borderDistance - quadBorder * 3.0)
-		);
+		gl_FragColor.rgb += vec3(1.0, 0.8, 0.2) * vSpotlight;
 	} else {
-		vec4 borderColor = mix(
-			vec4(1.0, 0.0, 0.5, 1.0),
-			vec4(1.0, 0.5, 0.0, 1.0),
-			vFogFactor
-		);
-		gl_FragColor = mix(
-			borderColor,
-			gl_FragColor,
-			smoothstep(quadBorder * 0.5, quadBorder, borderDistance - quadBorder)
-		);
-	}
+		float borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
 
+		if (vSpotlight == 1.0 && borderDistance - quadBorder * 3.0 < 0.0) {
+			gl_FragColor = mix(
+				vec4(1.0, 0.8, 0.0, 1.0),
+				gl_FragColor,
+				smoothstep(quadBorder - 0.02, quadBorder, borderDistance - quadBorder * 3.0)
+			);
+		} else {
+			vec4 borderColor = mix(
+				vec4(1.0, 0.0, 0.5, 1.0),
+				vec4(1.0, 0.5, 0.0, 1.0),
+				vFogFactor
+			);
+			gl_FragColor = mix(
+				borderColor,
+				gl_FragColor,
+				smoothstep(quadBorder * 0.5, quadBorder, borderDistance - quadBorder)
+			);
+		}
+	}
 }
