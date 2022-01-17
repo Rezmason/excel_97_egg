@@ -1,6 +1,6 @@
 import Model from "./model.js";
 import GUI from "./gui.js";
-const { mat2, mat4, vec2, vec3, quat } = glMatrix;
+const { mat4, vec2, vec3, quat } = glMatrix;
 
 const coarseModifier = (value, granularity = 1000) =>
 	Math.round(value * granularity) / granularity;
@@ -20,9 +20,9 @@ export default (async () => {
 	const goalMouseJoystick = vec2.create();
 	const viewportSize = vec2.create();
 	const transform = mat4.create();
+	const horizonTransform = mat4.create();
 	const position = vec3.create();
 	const rotation = vec3.create();
-	const rollMat = mat2.create();
 	const touchStartRotation = vec3.create();
 	const rotQuat = quat.create();
 	const touchStart = vec2.create();
@@ -173,6 +173,10 @@ export default (async () => {
 			mat4.rotateX(transform, transform, Math.PI / 2);
 			mat4.translate(transform, transform, position);
 		}
+
+		quat.fromEuler(rotQuat, rotation[0], 270, rotation[2], "xzy");
+		mat4.fromQuat(horizonTransform, rotQuat);
+		mat4.rotateX(horizonTransform, horizonTransform, Math.PI / 2);
 	};
 
 	const updateForwardSpeed = (deltaTime) => {
@@ -223,8 +227,6 @@ export default (async () => {
 				rotation[1] + deltaTime * modifier(sensitivity[0] * mouseJoystick[0]);
 			vec3.set(rotation, pitch, yaw, roll);
 		}
-
-		mat2.fromRotation(rollMat, rotation[2] * degreesToRadians * -1.5);
 	};
 
 	const updatePosition = (deltaTime, smoothMotion) => {
@@ -276,8 +278,8 @@ export default (async () => {
 	return {
 		update,
 		transform,
+		horizonTransform,
 		position,
 		rotation,
-		rollMat,
 	};
 })();

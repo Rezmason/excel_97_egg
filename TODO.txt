@@ -1,8 +1,3 @@
-Fix roll
-	Has to account for screen ratio apparently
-	Just use the normal transform somehow
-	Multiply height of terrain by zero in shader to help test
-
 Revisit the dark blue parts of the high resolution moonscape texture
 
 About box

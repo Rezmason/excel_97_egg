@@ -6,7 +6,8 @@ const { mat4, vec2 } = glMatrix;
 export default (async () => {
 	const { events, settings } = await GUI;
 	const { data, terrain } = await Model;
-	const { update, transform, position, rotation, rollMat } = await Controls;
+	const { update, transform, horizonTransform, position, rotation } =
+		await Controls;
 
 	const canvas = document.querySelector("canvas");
 
@@ -73,8 +74,8 @@ export default (async () => {
 
 	const renderProperties = {
 		camera,
-		rollMat,
 		transform,
+		horizonTransform,
 		position,
 		rotation,
 		repeatOffset: vec2.create(),
@@ -106,7 +107,7 @@ export default (async () => {
 		frag: horizonFrag,
 
 		attributes: {
-			aPosition: [-4, -4, 4, -4, 0, 4],
+			aPosition: [-1000, -1, 1000, -1, 0, 1],
 		},
 		count: 3,
 
@@ -115,7 +116,9 @@ export default (async () => {
 			horizonHeight: texturePack.horizonTexture.height,
 			showSindogs: regl.prop("showSindogs"),
 			rotation: regl.prop("rotation"),
-			rollMat: regl.prop("rollMat"),
+
+			camera: regl.prop("camera"),
+			horizonTransform: regl.prop("horizonTransform"),
 		},
 
 		depth: { enable: false },
@@ -137,10 +140,10 @@ export default (async () => {
 		uniforms: {
 			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
+			transform: regl.prop("transform"),
 			airplanePosition: regl.prop("position"),
 			terrainSize: terrain.size,
 			maxDrawDistance: data.rendering.maxDrawDistance,
-			transform: regl.prop("transform"),
 			currentQuadID: regl.prop("currentQuadID"),
 			birdsEyeView: regl.prop("birdsEyeView"),
 			lightingCutoff: regl.prop("lightingCutoff"),
