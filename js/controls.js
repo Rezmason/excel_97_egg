@@ -229,6 +229,12 @@ export default (async () => {
 		}
 	};
 
+	const sanitizePosition = () => {
+		const size = data.terrain.size;
+		position[0] = ((position[0] % size) + size) % size;
+		position[1] = ((position[1] % size) + size) % size;
+	};
+
 	const updatePosition = (deltaTime, smoothMotion) => {
 		modifier = smoothMotion ? smoothModifier : coarseModifier;
 		const pitchRad = degreesToRadians * rotation[0];
@@ -241,6 +247,7 @@ export default (async () => {
 		);
 		vec3.scale(displacement, displacement, deltaTime * forwardSpeed);
 		vec3.add(position, position, displacement);
+		sanitizePosition();
 	};
 
 	const limitAltitude = (deltaTime) => {
@@ -273,6 +280,7 @@ export default (async () => {
 
 	vec3.set(position, ...location.position);
 	vec3.set(rotation, ...location.rotation, 0);
+	sanitizePosition();
 	resize();
 
 	return {
