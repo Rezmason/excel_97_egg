@@ -15,14 +15,18 @@ export default (async () => {
 		passive: false,
 	});
 
-	events.addEventListener("settingsChanged", async (event) => {
+	events.addEventListener("settingsChanged", (event) => {
+		deferredHiResLoad();
+		resize();
+	});
+
+	const deferredHiResLoad = async () => {
 		if (settings.hiResTextures && hiResTexturePack == null) {
 			hiResTexturePack = await loadTexturePack(
 				data.rendering.texture_packs.hi_res
 			);
 		}
-		resize();
-	});
+	};
 
 	const regl = createREGL({
 		canvas,
@@ -69,6 +73,7 @@ export default (async () => {
 		data.rendering.texture_packs.standard
 	);
 	let hiResTexturePack = null;
+	await deferredHiResLoad();
 
 	const camera = mat4.create();
 
@@ -198,7 +203,10 @@ export default (async () => {
 
 		update(deltaTime);
 
-		const textures = settings.hiResTextures ? hiResTexturePack : texturePack;
+		const textures =
+			settings.hiResTextures && hiResTexturePack != null
+				? hiResTexturePack
+				: texturePack;
 		Object.assign(renderProperties, textures);
 		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
 		renderProperties.time = (Date.now() - start) / 1000;

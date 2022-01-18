@@ -9,8 +9,9 @@ const makeEventTarget = () => {
 };
 
 export default (async () => {
+	const urlParams = new URLSearchParams(window.location.search);
 	const settings = {
-		location: new URLSearchParams(window.location.search).get("location"),
+		location: urlParams.get("location"),
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
@@ -29,7 +30,7 @@ export default (async () => {
 
 	const checkboxesByKeyCode = Object.fromEntries(
 		checkboxes.map((checkbox) => [
-			checkbox.getAttribute("data-keycode"),
+			"Key" + checkbox.getAttribute("data-key").toUpperCase(),
 			checkbox,
 		])
 	);
@@ -43,10 +44,20 @@ export default (async () => {
 	};
 
 	const updateSettings = () => {
-		checkboxes.forEach(({ id, checked }) => {
-			id = id.replace(/(_[a-z])/g, (s) => s.substr(1).toUpperCase());
-			settings[id] = checked;
+		let options = "";
+
+		checkboxes.forEach((checkbox) => {
+			const id = checkbox.id.replace(/(_[a-z])/g, (s) =>
+				s.substr(1).toUpperCase()
+			);
+			settings[id] = checkbox.checked;
+			if (checkbox.checked) {
+				options += checkbox.getAttribute("data-key");
+			}
 		});
+
+		urlParams.set("o", options);
+		history.replaceState({}, "", "?" + urlParams.toString());
 
 		if (settings.fullscreen) {
 			if (document.fullscreenEnabled) {
@@ -133,6 +144,25 @@ export default (async () => {
 			event.preventDefault();
 		}
 	});
+
+	let options = urlParams.get("o");
+	switch (options) {
+		case null:
+		case "original":
+			options = "crs";
+			break;
+		case "deluxe":
+			options = "tg";
+			break;
+		case "vaporwave":
+			options = "qtg";
+			break;
+	}
+
+	checkboxes.forEach(
+		(checkbox) =>
+			(checkbox.checked = options.includes(checkbox.getAttribute("data-key")))
+	);
 
 	updateSettings();
 
