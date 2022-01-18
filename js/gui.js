@@ -17,6 +17,7 @@ export default (async () => {
 
 	const toolbar = document.querySelector("toolbar");
 	const aboutButton = toolbar.querySelector("button#about");
+	const aboutBox = document.querySelector("iframe#about_box");
 	const fullscreenCheckbox = toolbar.querySelector("input#fullscreen");
 	fullscreenCheckbox.disabled = !(
 		document.fullscreenEnabled || document.webkitFullscreenEnabled
@@ -33,7 +34,7 @@ export default (async () => {
 	);
 
 	const showAboutBox = () => {
-		// TODO: about box
+		aboutBox.classList.remove("hidden");
 	};
 
 	const updateSettings = () => {

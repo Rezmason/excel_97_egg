@@ -1,6 +1,3 @@
-About box
-	https://jdan.github.io/98.css
-
 Readme
 	Link and explanation of controls
 	"faithful reproduction"

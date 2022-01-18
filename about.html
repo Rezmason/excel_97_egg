@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Excel 97 Egg — About</title>
+		<link rel="stylesheet" type="text/css" href="assets/98/style.css" />
+		<style>
+			body {
+				padding-top: 10%;
+				image-rendering: optimizeSpeed; /* revisit; no browser is using this */
+				image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
+				text-align: center;
+			}
+
+			div.window {
+				display: inline-block;
+				text-align: left;
+				font-size: max(1em, 0.875vw);
+			}
+
+			div.window-body {
+				display: flex;
+				gap: 1em;
+			}
+
+			div#author_info {
+				padding: 1em 0;
+				display: flex;
+				gap: 1em;
+			}
+
+			#title {
+				font-size: 2em;
+			}
+
+			div#content {
+				max-width: 50em;
+			}
+
+			img#about_banner {
+				align-self: flex-start;
+				width: calc(65px * 2);
+			}
+
+			img#self_portrait {
+				width: calc(21px * 3);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="window">
+			<div class="title-bar">
+				<div class="title-bar-text">About This Web Site</div>
+			</div>
+			<div class="window-body">
+				<img id="about_banner" src="assets/ui/about_banner.png" />
+				<div id="content">
+					<span id="title">Excel 97 Egg</span><br />
+					<div id="author_info">
+						<div>
+							<img id="self_portrait" src="assets/ui/self_portrait.png" />
+						</div>
+						<div>
+							programmed by Jeremy Sachs<br />
+							<strong>Rez-Mason Software</strong><br />
+							Vallejo, California
+							<p style="font-size: 0.8em">
+								<em>Visit us on the World Wide Web!</em><br />
+								<a target="_parent" href="https://www.rezmason.net/"
+									>https://www.rezmason.net/</a
+								>
+							</p>
+						</div>
+					</div>
+					<p>
+						Artists and craftspeople often like to leave their mark on what they
+						make. Computer programmers are no different.
+					</p>
+					<p>
+						The basic flight simulator you see here is an example of an
+						<a target="_parent" href="https://eeggs.com/items/718.html">
+							"easter egg"
+						</a>
+						— a game, image or message hidden in a creative work, which in this
+						case is Microsoft Excel 97.
+					</p>
+					<p>
+						Users who performed a secret sequence of unlikely actions in an
+						empty spreadsheet whisked away to this lavender lunar landscape,
+						created by members of its "Charting Team", beside a scrolling stele
+						glorifying the program and listing everyone who worked on it.
+					</p>
+					<p>
+						This HTML port is meant to be a
+						<strong>faithful reproduction</strong> of the actual easter egg. At
+						first, its frame rate and drawing resolution are artificially
+						constrained to the conventional limitations in 1997, but this can be
+						toggled in the toolbar, along with additional visual embellishments.
+					</p>
+					<p>
+						This project is
+						<a target="_parent" href="https://github.com/Rezmason/excel_97_egg"
+							>open source</a
+						>
+						and
+						<a
+							target="_parent"
+							href="https://github.com/Rezmason/excel_97_egg/blob/main/LICENSE"
+							>MIT licensed</a
+						>.
+					</p>
+					<div class="field-row" style="justify-content: flex-end">
+						<button
+							class="ok"
+							onclick="parent.document.querySelector('iframe#about_box').classList.add('hidden')"
+						>
+							OK
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
