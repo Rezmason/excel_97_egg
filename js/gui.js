@@ -18,6 +18,7 @@ export default (async () => {
 	const toolbar = document.querySelector("toolbar");
 	const aboutButton = toolbar.querySelector("button#about");
 	const aboutBox = document.querySelector("iframe#about_box");
+	const canvas = document.querySelector("canvas");
 	const fullscreenCheckbox = toolbar.querySelector("input#fullscreen");
 	fullscreenCheckbox.disabled = !(
 		document.fullscreenEnabled || document.webkitFullscreenEnabled
@@ -35,6 +36,10 @@ export default (async () => {
 
 	const showAboutBox = () => {
 		aboutBox.classList.remove("hidden");
+	};
+
+	const hideAboutBox = () => {
+		aboutBox.classList.add("hidden");
 	};
 
 	const updateSettings = () => {
@@ -102,6 +107,11 @@ export default (async () => {
 			}
 
 			// TODO: handbrake
+			return;
+		}
+
+		if (event.code === "Escape") {
+			hideAboutBox();
 			return;
 		}
 

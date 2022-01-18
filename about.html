@@ -5,14 +5,20 @@
 		<title>Excel 97 Egg — About</title>
 		<link rel="stylesheet" type="text/css" href="assets/98/style.css" />
 		<style>
+			html,
 			body {
-				padding-top: 10%;
+				height: 100%;
+				margin: 0;
+			}
+
+			body {
 				image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 				image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
 				text-align: center;
 			}
 
 			div.window {
+				margin-top: 10%;
 				display: inline-block;
 				text-align: left;
 				font-size: max(1em, 0.875vw);
@@ -47,7 +53,9 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body
+		onclick="if (event.target === this) parent.document.querySelector('iframe#about_box').classList.add('hidden')"
+	>
 		<div class="window">
 			<div class="title-bar">
 				<div class="title-bar-text">About This Web Site</div>
@@ -81,8 +89,8 @@
 						<a target="_parent" href="https://eeggs.com/items/718.html">
 							"easter egg"
 						</a>
-						— a game, image or message hidden in a creative work, which in this
-						case is Microsoft Excel 97.
+						— a game, image, sound, or written message hidden in a creative
+						work, which in this case is Microsoft Excel 97.
 					</p>
 					<p>
 						Users who performed a secret sequence of unlikely actions in an
@@ -96,6 +104,16 @@
 						first, its frame rate and drawing resolution are artificially
 						constrained to the conventional limitations in 1997, but this can be
 						toggled in the toolbar, along with additional visual embellishments.
+					</p>
+					<p>
+						<strong>On pointer-equipped devices:</strong> move your pointer to
+						control your heading, left-click and right-click to accelerate and
+						decelerate, and hold the spacebar to brake.
+					</p>
+					<p>
+						<strong>On touch-enabled devices:</strong> use one finger to control
+						your heading, and hold another at the top, bottom, or middle of the
+						screen to accelerate, decelerate or brake.
 					</p>
 					<p>
 						This project is
