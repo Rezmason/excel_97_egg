@@ -15,7 +15,7 @@ void main() {
 	if (y < 1.0) {
 		float brightness = 1.0;
 		if (showSindogs == 1.0) {
-			brightness += (sin((rotation.y + uv.x * 2.0 * 26.0) * PI / 180.0 * 15.0) - (uv.y) + 1.0) * 0.5;
+			brightness += (sin((rotation.y + uv.x * 26.0) * PI / 180.0 * 15.0) - (uv.y) + 1.0) * 0.5;
 		}
 		color = texture2D(horizonTexture, vec2(uv.x, y)).rgb * brightness;
 	}
