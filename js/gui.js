@@ -108,7 +108,13 @@ export default (async () => {
 	});
 
 	document.addEventListener("keydown", async (event) => {
-		if (event.repeat) {
+		if (
+			event.repeat ||
+			event.ctrlKey ||
+			event.altKey ||
+			event.metaKey ||
+			event.shiftKey
+		) {
 			return;
 		}
 
