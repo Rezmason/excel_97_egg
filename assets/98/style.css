@@ -67,6 +67,11 @@ button,
 	font-size: 11px;
 }
 
+u {
+	text-decoration: none;
+	border-bottom: 1px solid #222222;
+}
+
 button {
 	box-sizing: border-box;
 	border: none;
