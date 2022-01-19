@@ -30,12 +30,12 @@
 			}
 
 			div#author_info {
-				padding: 1em 0;
 				display: flex;
 				gap: 1em;
 			}
 
 			#title {
+				margin-top: 0;
 				font-size: 2em;
 			}
 
@@ -51,6 +51,44 @@
 			img#self_portrait {
 				width: calc(21px * 3);
 			}
+
+			div.legend_icon {
+				display: block;
+				width: 46px;
+				height: 44px;
+
+				--sprite-y: 1;
+
+				background-size: calc(100% * 207 / 23) calc(100% * 132 / 22);
+				background-image: url("assets/ui/icon_spritesheet.png");
+				background-position: calc(-46px * var(--sprite-x))
+					calc(-44px * var(--sprite-y));
+			}
+
+			div.legend_icon#birds_eye_view {
+				--sprite-x: 1;
+			}
+			div.legend_icon#lighting_cutoff {
+				--sprite-x: 2;
+			}
+			div.legend_icon#show_quad_edges {
+				--sprite-x: 3;
+			}
+			div.legend_icon#hi_res_textures {
+				--sprite-x: 4;
+			}
+			div.legend_icon#limit_draw_resolution {
+				--sprite-x: 5;
+			}
+			div.legend_icon#limit_draw_speed {
+				--sprite-x: 6;
+			}
+			div.legend_icon#show_sindogs {
+				--sprite-x: 7;
+			}
+			div.legend_icon#fullscreen {
+				--sprite-x: 8;
+			}
 		</style>
 	</head>
 	<body
@@ -63,14 +101,14 @@
 			<div class="window-body">
 				<img id="about_banner" src="assets/ui/about_banner.png" />
 				<div id="content">
-					<span id="title">Excel 97 Egg</span><br />
+					<p id="title">Excel 97 Egg</p>
 					<div id="author_info">
 						<div>
 							<img id="self_portrait" src="assets/ui/self_portrait.png" />
 						</div>
 						<div>
 							programmed by Jeremy Sachs<br />
-							<strong>Rez-Mason Software</strong><br />
+							<strong>Rez-Mason Retrographic Services</strong><br />
 							Vallejo, California
 							<p style="font-size: 0.8em">
 								<em>Visit us on the World Wide Web!</em><br />
@@ -80,6 +118,7 @@
 							</p>
 						</div>
 					</div>
+					<h3>What is all this?</h3>
 					<p>
 						Artists and craftspeople often like to leave their mark on what they
 						make. Computer programmers are no different.
@@ -96,7 +135,7 @@
 						Users who performed a secret sequence of unlikely actions in an
 						empty spreadsheet whisked away to this lavender lunar landscape,
 						created by members of its "Charting Team", beside a scrolling stele
-						glorifying the program and listing everyone who worked on it.
+						glorifying the program and crediting everyone who worked on it.
 					</p>
 					<p>
 						This HTML port is meant to be a
@@ -105,6 +144,7 @@
 						constrained to the conventional limitations in 1997, but this can be
 						toggled in the toolbar, along with additional visual embellishments.
 					</p>
+					<h3>Instructions</h3>
 					<p>
 						<strong>On pointer-equipped devices:</strong> move your pointer to
 						control your heading, left-click and right-click to accelerate and
@@ -115,6 +155,80 @@
 						your heading, and hold another at the top, bottom, or middle of the
 						screen to accelerate, decelerate or brake.
 					</p>
+					<h3>Legend</h3>
+					<table>
+						<tbody>
+							<tr>
+								<td><div class="legend_icon" id="birds_eye_view"></div></td>
+								<td><strong>(B)</strong></td>
+								<td>Bird's Eye View</td>
+								<td>
+									A third person perspective to help navigate and understand the
+									terrain.
+								</td>
+							</tr>
+							<tr>
+								<td><div class="legend_icon" id="lighting_cutoff"></div></td>
+								<td><strong>(C)</strong></td>
+								<td>Lighting Cutoff</td>
+								<td>
+									Changes the maximum distance of the fog and drawn terrain.
+								</td>
+							</tr>
+							<tr>
+								<td><div class="legend_icon" id="show_quad_edges"></div></td>
+								<td><strong>(Q)</strong></td>
+								<td>Show Quad Edges</td>
+								<td>
+									Highlights the boundaries of the tiled terrain geometry.
+								</td>
+							</tr>
+							<tr>
+								<td><div class="legend_icon" id="hi_res_textures"></div></td>
+								<td><strong>(T)</strong></td>
+								<td>Hi Res Textures</td>
+								<td>
+									Loads replacement textures with 8x the original resolution.
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="legend_icon" id="limit_draw_resolution"></div>
+								</td>
+								<td><strong>(R)</strong></td>
+								<td>Limit Draw Resolution</td>
+								<td>
+									Constrains the dimensions of the rendered scene to 800 x 600.
+								</td>
+							</tr>
+							<tr>
+								<td><div class="legend_icon" id="limit_draw_speed"></div></td>
+								<td><strong>(S)</strong></td>
+								<td>Limit Draw Speed</td>
+								<td>Constrains the frame rate to approximately 15 FPS.</td>
+							</tr>
+							<tr>
+								<td><div class="legend_icon" id="show_sindogs"></div></td>
+								<td><strong>(G)</strong></td>
+								<td>Show Sindogs</td>
+								<td>
+									In place of a sunset, gives the horizon texture a sinusoidal
+									glow.<br />
+									<a href="https://youtu.be/0XllTdSi5hY?t=2709">
+										( Named after an old, notorious Excel bug )
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td><div class="legend_icon" id="fullscreen"></div></td>
+								<td><strong>(F)</strong></td>
+								<td>Fullscreen</td>
+								<td>
+									Expands to fill the entire screen, like the original did.
+								</td>
+							</tr>
+						</tbody>
+					</table>
 					<p>
 						This project is
 						<a target="_parent" href="https://github.com/Rezmason/excel_97_egg"
