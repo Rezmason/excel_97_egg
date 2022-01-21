@@ -7,8 +7,11 @@
 		<style>
 			html,
 			body {
-				height: 100%;
 				margin: 0;
+			}
+
+			html {
+				height: 100%;
 			}
 
 			body {
@@ -46,6 +49,8 @@
 
 			img#about_banner {
 				align-self: flex-start;
+				position: sticky;
+				top: 8px;
 				width: calc(65px * 2);
 			}
 
@@ -54,9 +59,15 @@
 			}
 
 			img#palette {
-				width: 20%;
+				width: 10em;
 				float: right;
 				padding: 0 0 1em 1em;
+			}
+
+			img#heightmap {
+				width: 10em;
+				float: left;
+				padding: 0 1em 1em 0;
 			}
 
 			table#toolbar_legend {
@@ -141,7 +152,7 @@
 							</p>
 						</div>
 					</div>
-					<h3>What is all this?</h3>
+					<h2>What is all this?</h2>
 					<p>
 						Artists and craftspeople often leave their mark on what they make.
 						Programmers are no different.
@@ -171,7 +182,10 @@
 						your information won't contain any surprises that may compromise
 						your computer's performance, stability or security.
 					</p>
-					<h3>What's it doing here?</h3>
+					<h2>What's it doing here?</h2>
+					<a target="_blank" href="assets/ui/palette_larger.png">
+						<img id="palette" src="assets/ui/palette.png" />
+					</a>
 					<p>
 						This HTML port is intended to be a
 						<strong>faithful reproduction</strong> of the original easter egg,
@@ -194,7 +208,6 @@
 							MIT licensed </a
 						>.
 					</p>
-					<img id="palette" src="assets/textures/palette.png" />
 					<p>
 						To reverse engineer the original program, its memory was recorded
 						with
@@ -209,8 +222,8 @@
 							Virtual Box
 						</a>
 						and inspected with
-						<a target="_parent" href="https://hexfiend.com/"> Hex Fiend </a>.
-						This was how the credit text, terrain geometry, and textures were
+						<a target="_parent" href="https://hexfiend.com/">Hex Fiend</a>. This
+						was how the credit text, terrain geometry, and textures were
 						recovered. A custom Win32 program was written to collect the color
 						palette, though it went mostly unused.
 					</p>
@@ -218,7 +231,7 @@
 						For authenticity, this port's frame rate and drawing resolution are
 						throttled at first to match the hardware limitations of conventional
 						office equipment from 1997, but this can be toggled in the toolbar,
-						along with additional visual embellishments:
+						along with some additional visual embellishments:
 					</p>
 					<table id="toolbar_legend">
 						<tbody>
@@ -293,7 +306,7 @@
 							</tr>
 						</tbody>
 					</table>
-					<h3>Flight instruction</h3>
+					<h2>Flight instruction</h2>
 					<p>
 						<strong>On pointer-equipped devices:</strong> move your pointer to
 						control your heading, left-click and right-click to accelerate and
@@ -304,7 +317,41 @@
 						your heading, and hold another at the top, bottom, or middle of the
 						screen to accelerate, decelerate or brake.
 					</p>
-					<h3>Acknowledgements</h3>
+					<h2>Torus Trap</h2>
+
+					<a target="_blank" href="assets/ui/utf16.png">
+						<img id="heightmap" src="assets/ui/heightmap_colorized.png" />
+					</a>
+					<p>
+						After a few minutes of flying around, most users come to realize
+						that the world is like the surface of a torus— in other words, it
+						<em>repeats in every direction</em>— which is concealed by a short
+						draw distance. But it may still surprise some to hear this whole
+						world is "charted" from a square "spreadsheet"
+						<em>only 64 cells wide.</em>
+						So how is it so easy to get lost?
+					</p>
+					<p>
+						Several design decisions work in tandem to make this small world
+						feel like an endless expanse. The original provides no navigational
+						aids, and has few landmarks to help you get your bearings. In fact,
+						many features of the terrain loop around its edge and join back with
+						themselves, thereby appearing endless.
+					</p>
+					<p>
+						Most importantly, the camera is tightly zoomed in, with a
+						<a
+							target="_parent"
+							href="https://en.wikipedia.org/wiki/Field_of_view"
+						>
+							field of view
+						</a>
+						of only around <em>26 degrees</em>. That is like seeing the world
+						through a porthole the size of a dinner plate two feet away from
+						your face. All combined, these choices helped make the easter egg
+						low-profile, responsive and intriguing.
+					</p>
+					<h2>Acknowledgements</h2>
 					<p>
 						WIP. For now I'll quickly thank Hank Chien, retrodev,
 						ridiculous_fish and @kurtruslfanclub for the help they provided on

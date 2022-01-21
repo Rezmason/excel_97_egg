@@ -134,10 +134,10 @@ button::-moz-focus-inner {
 	align-items: center;
 }
 
-a {
+p a {
 	color: var(--link-blue);
 }
 
-a:focus {
+p a:focus {
 	outline: 1px dotted var(--link-blue);
 }
