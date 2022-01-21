@@ -127,7 +127,7 @@ export default (data) => {
 	const numVerticesPerQuad = 6;
 	const numVertices = numVerticesPerQuad * numColumns * numRows;
 
-	const getQuadAt = (x, y, altitude) => {
+	const getQuadAt = (x, y) => {
 		const column = modulo(Math.round((-x * numColumns) / size), numColumns);
 		const row = modulo(Math.round((-y * numRows) / size), numRows);
 		return quads[row][column];
@@ -136,6 +136,8 @@ export default (data) => {
 	const terrain = {
 		attributes,
 		numVertices,
+		numColumns,
+		numRows,
 		size,
 		getQuadAt,
 	};

@@ -11,7 +11,7 @@ const makeEventTarget = () => {
 export default (async () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const settings = {
-		location: urlParams.get("location"),
+		location: urlParams.get("l"),
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
@@ -57,7 +57,7 @@ export default (async () => {
 		});
 
 		urlParams.set("o", options);
-		history.replaceState({}, "", "?" + urlParams.toString());
+		history.replaceState({}, "", "?" + unescape(urlParams.toString()));
 
 		if (settings.fullscreen) {
 			if (document.fullscreenEnabled) {
@@ -170,10 +170,16 @@ export default (async () => {
 			(checkbox.checked = options.includes(checkbox.getAttribute("data-key")))
 	);
 
+	const reportPosition = (x, y) => {
+		urlParams.set("l", `${x},${y}`);
+		history.replaceState({}, "", "?" + unescape(urlParams.toString()));
+	};
+
 	updateSettings();
 
 	return {
 		events,
 		settings,
+		reportPosition,
 	};
 })();

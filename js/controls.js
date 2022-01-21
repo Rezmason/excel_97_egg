@@ -26,6 +26,7 @@ export default (async () => {
 	const touchStartRotation = vec3.create();
 	const rotQuat = quat.create();
 	const touchStart = vec2.create();
+	const lastReportedPosition = vec2.create();
 	let mouseButtonDown = null;
 	let forwardSpeed = 0;
 	let modifier = coarseModifier;
@@ -33,7 +34,7 @@ export default (async () => {
 	let useMouseJoystick = false;
 
 	const { data, terrain } = await Model;
-	const { settings } = await GUI;
+	const { settings, reportPosition } = await GUI;
 
 	document.addEventListener("keydown", async (event) => {
 		if (event.repeat) {
@@ -235,6 +236,17 @@ export default (async () => {
 		position[1] = ((position[1] % size) + size) % size;
 	};
 
+	const reportPositionToGUI = () => {
+		const reportedPosition = [
+			Math.floor((position[0] * terrain.numColumns) / terrain.size),
+			Math.floor((position[1] * terrain.numRows) / terrain.size),
+		];
+		if (!vec2.equals(lastReportedPosition, reportedPosition)) {
+			vec2.copy(lastReportedPosition, reportedPosition);
+			reportPosition(...reportedPosition);
+		}
+	};
+
 	const updatePosition = (deltaTime, smoothMotion) => {
 		modifier = smoothMotion ? smoothModifier : coarseModifier;
 		const pitchRad = degreesToRadians * rotation[0];
@@ -248,6 +260,7 @@ export default (async () => {
 		vec3.scale(displacement, displacement, deltaTime * forwardSpeed);
 		vec3.add(position, position, displacement);
 		sanitizePosition();
+		reportPositionToGUI();
 	};
 
 	const limitAltitude = (deltaTime) => {
@@ -273,14 +286,31 @@ export default (async () => {
 	};
 
 	const { locations } = data.controls;
-	let location = locations[settings.location];
-	if (location == null) {
-		location = locations.spawn;
+	let location;
+	if (settings.location in locations) {
+	} else {
+		let coordString = settings.location;
+		if (coordString == null) {
+			coordString = "";
+		}
+		const coord = coordString.split(",").map((f) => parseInt(f));
+		coord[0] = ((coord[0] + 0.5) * terrain.size) / terrain.numColumns;
+		coord[1] = ((coord[1] + 0.5) * terrain.size) / terrain.numRows;
+
+		if (coord.length < 2 || coord.includes(NaN)) {
+			location = locations.spawn;
+		} else {
+			location = {
+				position: [...coord, data.controls.maxAltitude / 2],
+				rotation: [0, 225],
+			};
+		}
 	}
 
 	vec3.set(position, ...location.position);
 	vec3.set(rotation, ...location.rotation, 0);
 	sanitizePosition();
+	reportPositionToGUI();
 	resize();
 
 	return {
