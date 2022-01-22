@@ -1,39 +1,22 @@
-Readme
-	Link and explanation of controls
-	"faithful reproduction"
-	Reverse engineering
-		Running the egg in virtualization
-		Whittling down the scope (DLL deletion, etc)
-		Memory dump comparison
-		Data and texture extraction
-		Reference images/video and observations
-	ThreeJS process
-		Build off of terrain example
-		(look at git history for the rest)
-	regl process
-		Reduce the ThreeJS project to a reference
-		Set up a basic render pipeline for textured geometries
-		Build out zoned terrain that separates geometry into quads with centroids
-		Expand shader support for water and scrolling, fading credit texture
-		Teleport centroids to airplane position
-		Work out the math for positioning and rotating the scene
-		Replace ThreeJS-based math from old controls module with glMatrix operations
-		Wire up horizon position and rotation to controls
-		Add "bird's eye view" to help illustrate how the demo works
-		Test touch controls
-	Acknowledgements
-		Charting team
-			Jason Allen
-			Andy Verprauskus
-			Hank Chien
-		Help from
-			retrodev - reverse engineer
-			ridiculous_fish - developer of Hex Fiend
-			@kurtruslfanclub — making SDFs in Photoshop
+Goal roll
+Acknowledgements in about box
+Essay based on interviews
+	Charting team
+		Jason Allen
+		Andy Verprauskus
+		Previously Matt Bamberger
+	Folks you actually got to talk to
+		Hank Chien
+		Ed Fries
 
-Interview and technical explanation
+Repo readme
+	Keep it simple
+	Link to egg
+	Basic explanation of controls
+	Link to the about box
+	Link to essay
+	Link to regl
 
-Procedural terrain
-goal roll
+Procedural terrain?
 
 XENIUM/XENIOLUM LUNENSIS
