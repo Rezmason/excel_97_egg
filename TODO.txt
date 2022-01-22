@@ -37,4 +37,3 @@ Procedural terrain
 goal roll
 
 XENIUM/XENIOLUM LUNENSIS
-	Endless Column, by Blue Man Group
