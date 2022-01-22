@@ -288,6 +288,7 @@ export default (async () => {
 	const { locations } = data.controls;
 	let location;
 	if (settings.location in locations) {
+		location = locations[settings.location];
 	} else {
 		let coordString = settings.location;
 		if (coordString == null) {
