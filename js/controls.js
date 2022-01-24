@@ -33,6 +33,9 @@ export default (async () => {
 	let braking = false;
 	let useMouseJoystick = false;
 
+	let rotationTouchID = null;
+	let movementTouchID = null;
+
 	const { data, terrain } = await Model;
 	const { settings, reportPosition } = await GUI;
 
@@ -84,60 +87,49 @@ export default (async () => {
 		}
 	});
 
-	canvas.addEventListener("touchstart", (event) => {
+	const handleTouchStart = (event) => {
 		event.preventDefault();
-		let { pageX, pageY } = event.touches.item(0);
-		const maxViewportDimension = Math.max(...viewportSize);
-		pageX /= maxViewportDimension;
-		pageY /= maxViewportDimension;
 		useMouseJoystick = false;
-		vec2.set(touchStart, pageX, pageY);
-		vec3.set(touchStartRotation, ...rotation);
 
-		if (event.touches.length > 1) {
-			handleSecondTouch(event.touches.item(1));
+		for (const touch of event.changedTouches) {
+			if (rotationTouchID == null) {
+				vec2.set(touchStart, touch.pageX, touch.pageY);
+				vec3.set(touchStartRotation, ...rotation);
+
+				rotationTouchID = touch.identifier;
+				processRotationTouch(touch);
+			} else if (movementTouchID == null) {
+				movementTouchID = touch.identifier;
+				processMovementTouch(touch);
+			}
 		}
-	});
+	};
 
-	canvas.addEventListener("touchmove", (event) => {
+	const handleTouchMove = (event) => {
 		event.preventDefault();
-		const { sensitivity, minPitch, maxPitch } = data.controls.touch;
-		let { pageX, pageY } = event.touches.item(0);
-		const maxViewportDimension = Math.max(...viewportSize);
-		pageX /= maxViewportDimension;
-		pageY /= maxViewportDimension;
-		const pitch = clamp(
-			modifier(
-				touchStartRotation[0] + (pageY - touchStart[1]) * sensitivity[0]
-			),
-			minPitch,
-			maxPitch
-		);
-		const roll = 0;
-		const flipYaw = settings.birdsEyeView ? -1 : 1;
-		const yaw =
-			touchStartRotation[1] +
-			modifier(pageX - touchStart[0]) * sensitivity[1] * flipYaw;
-		vec3.set(rotation, pitch, yaw, roll);
-		if (event.touches.length > 1) {
-			handleSecondTouch(event.touches.item(1));
+		for (const touch of event.changedTouches) {
+			if (touch.identifier === rotationTouchID) {
+				processRotationTouch(touch);
+			} else if (touch.identifier === movementTouchID) {
+				processMovementTouch(touch);
+			}
 		}
-	});
+	};
 
-	canvas.addEventListener("touchend", (event) => {
+	const handleTouchEnd = (event) => {
 		event.preventDefault();
-		if (event.touches.length < 2) {
-			mouseButtonDown = null;
-			braking = false;
+		for (const touch of event.changedTouches) {
+			if (touch.identifier === rotationTouchID) {
+				rotationTouchID = null;
+			} else if (touch.identifier === movementTouchID) {
+				movementTouchID = null;
+				mouseButtonDown = null;
+				braking = false;
+			}
 		}
-	});
+	};
 
-	const resize = () =>
-		vec2.set(viewportSize, window.innerWidth, window.innerHeight);
-
-	window.addEventListener("resize", (event) => resize());
-
-	const handleSecondTouch = (touch) => {
+	const processMovementTouch = (touch) => {
 		const verticalFraction = touch.pageY / viewportSize[1] - 0.5;
 		braking = false;
 		if (verticalFraction < -1 / 6) {
@@ -149,6 +141,38 @@ export default (async () => {
 			braking = true;
 		}
 	};
+
+	const processRotationTouch = (touch) => {
+		const { sensitivity, minPitch, maxPitch } = data.controls.touch;
+		const maxViewportDimension = Math.max(...viewportSize);
+		const pitch = clamp(
+			touchStartRotation[0] +
+				modifier(
+					((touch.pageY - touchStart[1]) / maxViewportDimension) *
+						sensitivity[0]
+				),
+			minPitch,
+			maxPitch
+		);
+		const roll = 0;
+		const flipYaw = settings.birdsEyeView ? -1 : 1;
+		const yaw =
+			touchStartRotation[1] +
+			modifier((touch.pageX - touchStart[0]) / maxViewportDimension) *
+				sensitivity[1] *
+				flipYaw;
+		vec3.set(rotation, pitch, yaw, roll);
+	};
+
+	canvas.addEventListener("touchstart", handleTouchStart);
+	canvas.addEventListener("touchmove", handleTouchMove);
+	canvas.addEventListener("touchend", handleTouchEnd);
+	canvas.addEventListener("touchcancel", handleTouchEnd);
+
+	const resize = () =>
+		vec2.set(viewportSize, window.innerWidth, window.innerHeight);
+
+	window.addEventListener("resize", (event) => resize());
 
 	const updateTransform = () => {
 		if (settings.birdsEyeView) {
