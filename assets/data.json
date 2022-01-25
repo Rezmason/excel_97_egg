@@ -16,7 +16,7 @@
 			"minPitch": -9,
 			"maxPitch": 18
 		},
-		"forwardAcceleration": 400,
+		"forwardSensitivity": 400,
 		"maxForwardSpeed": 1000,
 		"minHeightOffGround": 3,
 		"maxAltitude": 104,

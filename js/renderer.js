@@ -105,6 +105,7 @@ export default (async () => {
 	};
 
 	window.addEventListener("resize", (event) => resize());
+	screen.orientation.addEventListener("change", (event) => resize());
 	resize();
 
 	const drawHorizon = regl({

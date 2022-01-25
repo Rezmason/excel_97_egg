@@ -27,7 +27,7 @@ export default (async () => {
 	const rotQuat = quat.create();
 	const touchStart = vec2.create();
 	const lastReportedPosition = vec2.create();
-	let mouseButtonDown = null;
+	let forwardAcceleration = 0;
 	let forwardSpeed = 0;
 	let modifier = coarseModifier;
 	let braking = false;
@@ -73,12 +73,12 @@ export default (async () => {
 
 	canvas.addEventListener("mousedown", (event) => {
 		event.preventDefault();
-		mouseButtonDown = event.button === 0 ? "primary" : "secondary";
+		forwardAcceleration = event.button === 0 ? -1 : 1;
 	});
 
 	canvas.addEventListener("mouseup", (event) => {
 		event.preventDefault();
-		mouseButtonDown = null;
+		forwardAcceleration = 0;
 	});
 
 	canvas.addEventListener("mouseleave", (event) => {
@@ -123,7 +123,7 @@ export default (async () => {
 				rotationTouchID = null;
 			} else if (touch.identifier === movementTouchID) {
 				movementTouchID = null;
-				mouseButtonDown = null;
+				forwardAcceleration = 0;
 				braking = false;
 			}
 		}
@@ -133,11 +133,11 @@ export default (async () => {
 		const verticalFraction = touch.pageY / viewportSize[1] - 0.5;
 		braking = false;
 		if (verticalFraction < -1 / 6) {
-			mouseButtonDown = "primary";
+			forwardAcceleration = -1;
 		} else if (verticalFraction > 1 / 6) {
-			mouseButtonDown = "secondary";
+			forwardAcceleration = 1;
 		} else {
-			mouseButtonDown = null;
+			forwardAcceleration = 0;
 			braking = true;
 		}
 	};
@@ -205,14 +205,13 @@ export default (async () => {
 	};
 
 	const updateForwardSpeed = (deltaTime) => {
-		const { maxForwardSpeed, forwardAcceleration } = data.controls;
+		const { maxForwardSpeed, forwardSensitivity } = data.controls;
 		const lastForwardSpeed = forwardSpeed;
 
 		if (braking) {
 			forwardSpeed = lerp(forwardSpeed, 0, clamp(deltaTime * 5, 0, 1));
-		} else if (mouseButtonDown != null) {
-			const direction = mouseButtonDown === "primary" ? -1 : 1;
-			forwardSpeed += deltaTime * forwardAcceleration * direction;
+		} else {
+			forwardSpeed += deltaTime * forwardAcceleration * forwardSensitivity;
 		}
 
 		forwardSpeed = modifier(forwardSpeed, 10);
