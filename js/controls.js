@@ -26,12 +26,14 @@ export default (async () => {
 	const touchStartRotation = vec3.create();
 	const rotQuat = quat.create();
 	const touchStart = vec2.create();
+	const touchLast = vec2.create();
 	const lastReportedPosition = vec2.create();
 	let forwardAcceleration = 0;
 	let forwardSpeed = 0;
 	let modifier = coarseModifier;
 	let braking = false;
 	let useMouseJoystick = false;
+	let touchRollAccum = 0;
 
 	let rotationTouchID = null;
 	let movementTouchID = null;
@@ -94,6 +96,7 @@ export default (async () => {
 		for (const touch of event.changedTouches) {
 			if (rotationTouchID == null) {
 				vec2.set(touchStart, touch.pageX, touch.pageY);
+				vec2.copy(touchLast, touchStart);
 				vec3.set(touchStartRotation, ...rotation);
 
 				rotationTouchID = touch.identifier;
@@ -110,6 +113,7 @@ export default (async () => {
 		for (const touch of event.changedTouches) {
 			if (touch.identifier === rotationTouchID) {
 				processRotationTouch(touch);
+				vec2.set(touchLast, touch.pageX, touch.pageY);
 			} else if (touch.identifier === movementTouchID) {
 				processMovementTouch(touch);
 			}
@@ -154,14 +158,14 @@ export default (async () => {
 			minPitch,
 			maxPitch
 		);
-		const roll = 0;
+		touchRollAccum += (touch.pageX - touchLast[0]) / maxViewportDimension;
 		const flipYaw = settings.birdsEyeView ? -1 : 1;
 		const yaw =
 			touchStartRotation[1] +
 			modifier((touch.pageX - touchStart[0]) / maxViewportDimension) *
 				sensitivity[1] *
 				flipYaw;
-		vec3.set(rotation, pitch, yaw, roll);
+		vec3.set(rotation, pitch, yaw, rotation[2]);
 	};
 
 	canvas.addEventListener("touchstart", handleTouchStart);
@@ -250,6 +254,13 @@ export default (async () => {
 			const yaw =
 				rotation[1] + deltaTime * modifier(sensitivity[0] * mouseJoystick[0]);
 			vec3.set(rotation, pitch, yaw, roll);
+		} else {
+			touchRollAccum = lerp(touchRollAccum, 0, clamp(deltaTime * 5, 0, 1));
+			rotation[2] = lerp(
+				rotation[2],
+				touchRollAccum * data.controls.touch.sensitivity[0],
+				clamp(0.5 + deltaTime, 0, 1)
+			);
 		}
 	};
 

@@ -1,6 +1,43 @@
-Goal roll
+Ed Fries interview
+	Write outline
+	Update about page
+		Acknowledgements
+		New information
+		Reread everything
+	Convert to HTML
+	Add to repo
+
 Acknowledgements in about box
+
+Repo readme
+	Keep it simple
+	Link to egg
+	Basic explanation of controls
+	Link to the about box
+	Link to regl
+
+Keyboard controls discovered!
+	0x1b ESCAPE or 0x7b f12
+		Quit the easter egg
+	0x26 UP or 0x68 numeric 8
+		Nudge the altitude up
+	0x28 DOWN or 0x62 numeric 2
+		Nudge the altitude down
+
 Essay based on interviews
+
+	Interview topics
+		The culture of Microsoft, Applications Group and Excel over time
+		The prevalence of easter eggs in software over time
+		Specific Easter eggs
+			Excel 97 flight simulator
+			Word 97 pinball
+			Excel 95 DOOM-inspired egg
+			Excel 4.0 and the buggy Lotus 1-2-3 icon
+		Creativity and self expression in the tech industry
+		The joy of restoring, recovering, preserving something
+		Spreadsheet software and digital imaging
+
 	Charting team
 		Jason Allen
 		Andy Verprauskus
@@ -9,13 +46,7 @@ Essay based on interviews
 		Hank Chien
 		Ed Fries
 
-Repo readme
-	Keep it simple
-	Link to egg
-	Basic explanation of controls
-	Link to the about box
-	Link to essay
-	Link to regl
+Add link to essay to readme file
 
 Procedural terrain?
 
