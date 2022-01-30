@@ -15,6 +15,8 @@ uniform vec3 creditColor2;
 uniform vec3 creditColor3;
 uniform vec3 creditColor4;
 
+uniform vec2 creditOffset;
+
 varying float vWhichTexture;
 varying vec2 vUV;
 varying float vFogFactor, vBrightness, vSpotlight;
@@ -29,7 +31,7 @@ void main() {
 		gl_FragColor = texture2D(platformTexture, vUV);
 	} else if (whichTexture == 2) {
 		highp vec2 uv = vUV;
-		uv.y = fract(time * -0.006 + uv.y * 0.03 - 0.0225);
+		uv.y = fract((time + creditOffset.y) * -0.006 + uv.y * 0.03 - 0.0225);
 
 		uv.y *= 0.92;
 		uv.y += 0.076;
@@ -37,6 +39,7 @@ void main() {
 		uv.y *= 5.0;
 		uv.x = uv.x / 5.0 + (1.0 - 1.0 / 5.0);
 		uv.x += 1.0 / 5.0 * (1.0 + floor(uv.y));
+		uv.y = fract(uv.y);
 
 		uv = vec2(1.0) - uv;
 		vec4 credits = texture2D(creditsTexture, fract(uv));
@@ -49,6 +52,8 @@ void main() {
 			amount = credits.g;
 			creditColor = mix(creditColor4, creditColor3, abs(vUV.y - 0.5) * 2.0);
 		}
+
+		amount = clamp(amount, 0.0, 1.0);
 
 		float radius = 0.4;
 		amount = clamp(smoothstep(radius - fwidth(amount), radius, amount), 0.0, 1.0);

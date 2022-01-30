@@ -9,7 +9,8 @@
 			"sensitivity": [0.125, -0.025],
 			"rollMultiplier": 0.2,
 			"minPitch": -9,
-			"maxPitch": 9
+			"maxPitch": 9,
+			"scrollSpeed": 0.005
 		},
 		"touch": {
 			"sensitivity": [-60, -60],

@@ -6,8 +6,14 @@ const { mat4, vec2 } = glMatrix;
 export default (async () => {
 	const { events, settings } = await GUI;
 	const { data, terrain } = await Model;
-	const { update, transform, horizonTransform, position, rotation } =
-		await Controls;
+	const {
+		update,
+		transform,
+		horizonTransform,
+		position,
+		rotation,
+		creditOffset,
+	} = await Controls;
 
 	const canvas = document.querySelector("canvas");
 
@@ -83,6 +89,7 @@ export default (async () => {
 		horizonTransform,
 		position,
 		rotation,
+		creditOffset,
 		repeatOffset: vec2.create(),
 		birdsEyeView: 0,
 		lightingCutoff: 1,
@@ -166,6 +173,8 @@ export default (async () => {
 			creditColor2: creditColors[1],
 			creditColor3: creditColors[2],
 			creditColor4: creditColors[3],
+
+			creditOffset: regl.prop("creditOffset"),
 		},
 	});
 

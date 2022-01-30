@@ -36,9 +36,9 @@ void main() {
 		return;
 	}
 
-	vec4 position = vec4(aPosition + vec3(centroid, 0.0), 1);
+	vec4 localPosition = vec4(aPosition + vec3(centroid, 0.0), 1);
 	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
-	position.z += wave;
+	localPosition.z += wave;
 
 	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
 	if (aQuadID == currentQuadID) {
@@ -49,15 +49,15 @@ void main() {
 		vSpotlight = 0.0;
 	}
 
-	position = transform * position;
+	vec4 worldPosition = transform * localPosition;
 
 	vBrightness = aBrightness + wave * 0.08;
-	float fogDepth = -position.z;
+	float fogDepth = -worldPosition.z;
 	float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
 	vFogFactor = fogFactor;
 	// vBrightness *= (1.0 - fogFactor);
 	vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
 
-	position = camera * position;
-	gl_Position = position;
+	vec4 screenPosition = camera * worldPosition;
+	gl_Position = screenPosition;
 }
