@@ -20,6 +20,13 @@
 				text-align: center;
 			}
 
+			body.standalone {
+				background: url("assets/textures/horizon_screenshot.png") fixed black;
+				background-repeat: repeat-x;
+				background-position: 0 30%;
+				background-size: 1em 5em;
+			}
+
 			div.window {
 				margin: 10% 0;
 				display: inline-block;
@@ -46,6 +53,24 @@
 			div#content {
 				max-width: 50em;
 				text-align: justify;
+			}
+
+			img#get_egg {
+				width: calc(176rem);
+			}
+
+			a#link_to_egg {
+				display: none;
+				text-align: center;
+				margin-top: 40rem;
+			}
+
+			a#link_to_egg.standalone {
+				display: inline-block;
+			}
+
+			a#link_to_egg:hover img#get_egg {
+				box-shadow: blueviolet 0 0 20rem;
 			}
 
 			img#about_banner {
@@ -127,8 +152,13 @@
 		</style>
 	</head>
 	<body
+		class="standalone"
+		onload="if (parent.document !== document) Array.from(document.querySelectorAll('.standalone')).forEach(el => el.classList.remove('standalone'))"
 		onclick="if (event.target === this) parent.document.querySelector('iframe#about_box').classList.add('hidden')"
 	>
+		<a id="link_to_egg" class="standalone" href="index.html"
+			><img id="get_egg" src="assets/ui/get_egg.png"
+		/></a>
 		<div class="window">
 			<div class="title-bar">
 				<div class="title-bar-text">About This Web Site</div>
@@ -136,7 +166,7 @@
 			<div class="window-body">
 				<img id="about_banner" src="assets/ui/about_banner.png" />
 				<div id="content">
-					<p id="title">Excel 97 Egg</p>
+					<p id="title">Excel&nbsp;97 Egg</p>
 					<div id="author_info">
 						<div>
 							<img id="self_portrait" src="assets/ui/self_portrait.png" />
@@ -161,27 +191,73 @@
 					<p>
 						The basic flight simulator you see here is an example of an
 						<a target="_blank" href="https://eeggs.com/items/718.html"
-							>"easter egg"</a
-						>
-						— a game, image, sound, or written message hidden in a creative
-						work, which in this case is Microsoft Excel 97.
+							>"easter&nbsp;egg"</a
+						>— a game, image, sound, or written message hidden in a creative
+						work, which in this case is
+						<a
+							target="_blank"
+							href="https://en.wikipedia.org/wiki/Microsoft_Excel#Excel_97_(v8.0)"
+							>Microsoft&nbsp;Excel&nbsp;97</a
+						>.
 					</p>
 					<p>
 						Users who performed a secret sequence of unlikely actions in an
 						empty spreadsheet were whisked away to this lavender lunar
 						landscape, created by members of Excel's "Charting Team", beside a
 						scrolling stele glorifying the program and crediting everyone who
-						worked on it. It hid in every copy of Excel 97 ever sold, whether
-						you knew it or not.
+						worked on it. It hid in every copy of Excel&nbsp;97 ever sold,
+						whether you knew it or not.
+					</p>
+					<h2>How and why did someone hide this in Excel?</h2>
+					<p>
+						In the 80s and 90s, Microsoft's engineers had a lot of time on their
+						hands while their large codebases compiled and linked. Many games
+						they later bundled with Windows or sold in "Entertainment Packs"
+						were originally the side projects of engineers learning new APIs and
+						one-upping each other as they waited for builds to complete. Some of
+						them chose to use their projects to secretly shine a spotlight on
+						the teams they worked on.
 					</p>
 					<p>
-						Before the advent of the Web, the security implications of
-						concealing undocumented functionality in software didn't overly
-						concern the tech industry. Nowadays easter eggs are rarer and less
-						sophisticated, to uphold an unspoken agreement that's emerged
-						between author and user, that a program you trust with access to
-						your information won't contain any surprises that may compromise
-						your computer's performance, stability or security.
+						In my opinion, it's likely that the flight simulator easter&nbsp;egg
+						began as a way for someone to learn
+						<a target="_blank" href="https://en.wikipedia.org/wiki/DirectDraw"
+							>DirectDraw</a
+						>, and took inspiration from either the video game
+						<a
+							target="_blank"
+							href="https://en.wikipedia.org/wiki/Descent_(1995_video_game)"
+							>Descent</a
+						>, which was released during Excel&nbsp;97's development, or from
+						<a
+							target="_blank"
+							href="https://en.wikipedia.org/wiki/Microsoft_Flight_Simulator"
+							>Flight&nbsp;Simulator</a
+						>, which Microsoft had recently acquired.
+					</p>
+					<p>
+						Astonishingly, from Excel's first version through the nineties,
+						Microsoft software engineers
+						<em>were allowed to add easter&nbsp;eggs to products</em>, as long
+						as they weren't referenced from the main application. It's possible
+						that this stipulation gave the company plausible deniability, in
+						case some hidden code caused a problem. It also meant that the
+						authors needed to work out an innocuous method to run the
+						easter&nbsp;egg without directly referencing it— by overwriting a
+						function pointer when certain keys were held down at once, for
+						instance.
+					</p>
+					<p>
+						Outside the game industry, this leniency around easter&nbsp;eggs is
+						almost unheard of today. Before the advent of the Web, the security
+						implications of concealing undocumented functionality in software
+						didn't overly concern the tech industry, but as wariness of software
+						bugs and vulnerabilities grew more common, an unspoken agreement
+						emerged between publishers and users that a program you grant access
+						to your computer shouldn't contain surprises that may compromise its
+						performance, stability or security— and that the programmers who
+						write it prioritize these things over self expression and
+						recognition.
 					</p>
 					<h2>What's it doing here?</h2>
 					<a target="_blank" href="assets/ui/palette_larger.png"
@@ -189,14 +265,15 @@
 					</a>
 					<p>
 						This HTML port is intended to be a
-						<strong>faithful reproduction</strong> of the original easter egg,
-						as a way to preserve an important piece of computer history. Most
-						computers that still support Excel 97 run the easter egg too fast to
-						properly function. Virtual machines are up to the task, but require
-						a lot of work to prepare and configure. Converting it to a web-based
-						experience eliminates all barriers to entry, so more people can
-						marvel at what a small team of imaginative engineers managed to once
-						conceal in the world's foremost spreadsheet application.
+						<strong>faithful reproduction</strong> of the original
+						easter&nbsp;egg, as a way to preserve an important piece of computer
+						history. Most computers that still support Excel&nbsp;97 run the
+						easter&nbsp;egg too fast to properly function. Virtual machines are
+						up to the task, but require a lot of work to prepare and configure.
+						Converting it to a web-based experience eliminates all barriers to
+						entry, so more people can marvel at what a small team of imaginative
+						engineers managed to once conceal in the world's foremost
+						spreadsheet application.
 					</p>
 					<p>
 						This project is also
@@ -231,7 +308,7 @@
 						decompiling the program, but that proved to be unnecessary.
 					</p>
 					<p>
-						A simple port of the easter egg was thrown together in
+						A simple port of the easter&nbsp;egg was thrown together in
 						<a target="_blank" href="https://threejs.org">Three.js</a>, before
 						this more detailed port was made in
 						<a target="_blank" href="http://regl.party">regl</a>.
@@ -247,12 +324,12 @@
 							vertex lighting</a
 						>
 						was resource intensive. To lend their terrain some definition, the
-						authors of the easter egg chose to bake a varying brightness into
-						the ground's <em>vertices</em>, or points, derived from how far they
-						extended from the surrounding surface. (It's a similar effect to the
-						browning on a toasted english muffin.) This likely prompted them to
-						cover the landscape in sharp hills and spikes, which also served as
-						an allusion to the charts their team was responsible for.
+						authors of the easter&nbsp;egg chose to bake a varying brightness
+						into the ground's <em>vertices</em>, or points, derived from how far
+						they extended from the surrounding surface. (It's a similar effect
+						to the browning on a toasted english muffin.) This likely prompted
+						them to cover the landscape in sharp hills and spikes, which also
+						served as an allusion to the charts their team was responsible for.
 					</p>
 					<h2>Why does it feel clunky?</h2>
 					<p>That's an option you can disable.</p>
@@ -365,11 +442,10 @@
 						So how is it so easy to get lost?
 					</p>
 					<p>
-						Several design decisions work in tandem to make this small world
-						feel like an endless expanse. The original provides no navigational
-						aids, and has few landmarks to help you get your bearings. In fact,
-						many features of the terrain loop around its edge and join back with
-						themselves, thereby appearing endless.
+						There are several design decisions at work here. The original easter
+						egg provides no navigational aids, and has few landmarks to help you
+						get your bearings. In fact, many features of the terrain loop around
+						its edge and join back with themselves, thereby appearing endless.
 					</p>
 					<p>
 						Most importantly, the camera is tightly zoomed in, with a
@@ -381,29 +457,50 @@
 						>
 						of only around <em>26 degrees</em>. That is like seeing the world
 						through a porthole the size of a dinner plate two feet away from
-						your face. All combined, these choices helped make the easter egg
+						your face.
+					</p>
+					<p>
+						These choices worked in tandem to make the easter&nbsp;egg
 						low-profile, responsive and intriguing.
 					</p>
 					<h2>Acknowledgements</h2>
 					<p>
-						WIP. For now I'll quickly thank
+						Thank you
+						<a target="_blank" href="https://edfries.wordpress.com/"
+							>Ed Fries</a
+						>
+						for providing insight into the culture at early Microsoft, and
 						<a target="_blank" href="https://en.wikipedia.org/wiki/Hank_Chien"
-							>Hank Chien </a
-						>,
-						<a target="_blank" href="https://www.retrodev.com/"> Mike Pavone </a
-						>,
-						<a target="_blank" href="https://hexfiend.com/"> Peter Ammon </a>,
+							>Hank Chien</a
+						>
+						for describing the charting team and pointing me in the right
+						direction.
+					</p>
+					<p>
+						<a target="_blank" href="https://hexfiend.com/">Peter Ammon</a>'s
+						tool was (and is) indispensible, as was (and is)
+						<a target="_blank" href="https://www.retrodev.com/"
+							>Mike Pavone's</a
+						>
+						expertise in matters of reverse engineering and general camaraderie.
+					</p>
+					<p>
 						<a target="_blank" href="https://thatjdanisso.cool/98-dot-css"
 							>Jordan Scales</a
 						>
-						and
+						provided the excellent CSS and web font basis for this about page.
 						<a
 							target="_blank"
 							href="https://twitter.com/kurtruslfanclub/status/1080620576547303424"
+							>Mike Blackney</a
 						>
-							Mike Blackney</a
-						>
-						for the help they provided on this project.
+						demonstrated a technique for generating SDFs in Photoshop, which
+						saved me the hassle of buying a specialized tool.
+					</p>
+					<p>
+						Thank you
+						<a target="_blank" href="https://bohemianalibi.com/">Tyler Lyn</a>
+						for your continued love and support. 🥰
 					</p>
 					<div class="field-row" style="justify-content: flex-end">
 						<button

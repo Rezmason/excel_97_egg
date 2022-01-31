@@ -1,13 +1,6 @@
 Ed Fries interview
-	Write outline
-	Update about page
-		Acknowledgements
-		New information
-		Reread everything
-	Convert to HTML
+	Convert transcript to HTML
 	Add to repo
-
-Acknowledgements in about box
 
 Repo readme
 	Keep it simple
