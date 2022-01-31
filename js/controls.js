@@ -34,7 +34,7 @@ export default (async () => {
 	const touchStart = vec2.create();
 	const touchLast = vec2.create();
 	const lastReportedPosition = vec2.create();
-	const creditOffset = vec2.create();
+	const timeOffset = vec2.create();
 	let forwardAcceleration = 0;
 	let forwardSpeed = 0;
 	let modifier = coarseModifier;
@@ -250,8 +250,8 @@ export default (async () => {
 	};
 
 	const updateCreditOffset = (deltaTime) => {
-		creditOffset[1] = lerp(
-			creditOffset[1],
+		timeOffset[1] = lerp(
+			timeOffset[1],
 			mouseWheelAccum,
 			clamp(deltaTime * 5, 0, 1)
 		);
@@ -379,6 +379,6 @@ export default (async () => {
 		horizonTransform,
 		position,
 		rotation,
-		creditOffset,
+		timeOffset,
 	};
 })();

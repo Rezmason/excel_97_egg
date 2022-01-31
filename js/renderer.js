@@ -12,7 +12,7 @@ export default (async () => {
 		horizonTransform,
 		position,
 		rotation,
-		creditOffset,
+		timeOffset,
 	} = await Controls;
 
 	const canvas = document.querySelector("canvas");
@@ -89,7 +89,7 @@ export default (async () => {
 		horizonTransform,
 		position,
 		rotation,
-		creditOffset,
+		timeOffset,
 		repeatOffset: vec2.create(),
 		birdsEyeView: 0,
 		lightingCutoff: 1,
@@ -134,7 +134,7 @@ export default (async () => {
 			horizonTransform: regl.prop("horizonTransform"),
 
 			time: regl.prop("time"),
-			creditOffset: regl.prop("creditOffset"),
+			timeOffset: regl.prop("timeOffset"),
 		},
 
 		depth: { enable: false },
@@ -177,7 +177,7 @@ export default (async () => {
 			creditColor3: creditColors[2],
 			creditColor4: creditColors[3],
 
-			creditOffset: regl.prop("creditOffset"),
+			timeOffset: regl.prop("timeOffset"),
 		},
 	});
 

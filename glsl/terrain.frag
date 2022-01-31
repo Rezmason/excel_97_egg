@@ -15,7 +15,7 @@ uniform vec3 creditColor2;
 uniform vec3 creditColor3;
 uniform vec3 creditColor4;
 
-uniform vec2 creditOffset;
+uniform vec2 timeOffset;
 
 varying float vWhichTexture;
 varying vec2 vUV;
@@ -31,7 +31,7 @@ void main() {
 		gl_FragColor = texture2D(platformTexture, vUV);
 	} else if (whichTexture == 2) {
 		highp vec2 uv = vUV;
-		uv.y = fract((time + creditOffset.y) * -0.006 + uv.y * 0.03 - 0.0225);
+		uv.y = fract((time + timeOffset.y) * -0.006 + uv.y * 0.03 - 0.0225);
 
 		uv.y *= 0.92;
 		uv.y += 0.076;
