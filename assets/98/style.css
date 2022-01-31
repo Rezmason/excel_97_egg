@@ -49,8 +49,8 @@
 
 @font-face {
 	font-family: "Pixelated MS Sans Serif";
-	src: url("fonts/converted/ms_sans_serif_bold.woff") format("woff");
-	src: url("fonts/converted/ms_sans_serif_bold.woff2") format("woff2");
+	src: url("fonts/converted/ms_sans_serif_bold_fixed.woff") format("woff");
+	src: url("fonts/converted/ms_sans_serif_bold_fixed.woff2") format("woff2");
 	font-weight: bold;
 	font-style: normal;
 }
