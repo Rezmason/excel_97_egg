@@ -27,7 +27,7 @@ gui {
 	background: transparent;
 }
 
-toolbar {
+command-bar {
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
 	font-size: 0.2vw;
@@ -42,14 +42,14 @@ toolbar {
 	border-image-slice: calc(100% * 3 / var(--svg-height))
 		calc(100% * 2 / var(--svg-width)) calc(100% * 3 / var(--svg-height))
 		calc(100% * 11 / var(--svg-width)) fill;
-	border-image-source: url("ui/toolbar_background.svg");
+	border-image-source: url("ui/command_bar_background.svg");
 	border-image-width: 3em 2em 3em 11em;
 
 	cursor: pointer;
 }
 
-toolbar divider {
-	background-image: url("ui/toolbar_divider.png");
+command-bar divider {
+	background-image: url("ui/command_bar_divider.png");
 	background-size: cover;
 	width: 6em;
 	height: 22em;
