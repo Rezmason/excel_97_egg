@@ -132,6 +132,9 @@ export default (async () => {
 
 			camera: regl.prop("camera"),
 			horizonTransform: regl.prop("horizonTransform"),
+
+			time: regl.prop("time"),
+			creditOffset: regl.prop("creditOffset"),
 		},
 
 		depth: { enable: false },
