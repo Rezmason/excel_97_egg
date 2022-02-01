@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id="top">
 	<head>
 		<meta charset="utf-8" />
 		<title>Excel 97 Egg — About</title>
@@ -47,6 +47,7 @@
 			}
 
 			html {
+				scroll-behavior: smooth;
 				height: 100%;
 			}
 
@@ -184,6 +185,20 @@
 			}
 			div.legend_icon#fullscreen {
 				--sprite-x: 8;
+			}
+
+			p#jump_to_top {
+				display: none;
+				text-align: center;
+				padding-top: 2em;
+			}
+
+			p#jump_to_top.standalone {
+				display: block;
+			}
+
+			button.ok.standalone {
+				display: none;
 			}
 		</style>
 	</head>
@@ -538,9 +553,12 @@
 						<a target="_blank" href="https://bohemianalibi.com/">Tyler Lyn</a>
 						for your continued love and support. 🥰
 					</p>
+					<p id="jump_to_top" class="standalone">
+						<a href="#top">Jump to top of page</a>
+					</p>
 					<div class="field-row" style="justify-content: flex-end">
 						<button
-							class="ok"
+							class="ok standalone"
 							onclick="parent.document.querySelector('iframe#about_box').classList.add('hidden')"
 						>
 							OK
