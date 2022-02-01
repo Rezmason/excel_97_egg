@@ -80,6 +80,7 @@ input[type="checkbox"].mso:disabled {
 
 button.mso,
 input[type="checkbox"].mso {
+	cursor: pointer;
 	--sprite-y: 0;
 }
 button.mso:hover,
@@ -101,6 +102,7 @@ input[type="checkbox"].mso:checked:active {
 }
 
 button#about {
+	cursor: help;
 	--sprite-x: 0;
 }
 input#birds_eye_view {

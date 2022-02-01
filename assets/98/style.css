@@ -75,6 +75,7 @@ u {
 }
 
 button {
+	cursor: pointer;
 	box-sizing: border-box;
 	border: none;
 	background: var(--surface);
