@@ -30,9 +30,18 @@ export default (data) => {
 		[-0.5, -0.5],
 		[-0.5, 0.5],
 		[0.5, -0.5],
+		[0.5, 0.5],
 		[0.5, -0.5],
 		[-0.5, 0.5],
-		[0.5, 0.5],
+	];
+
+	const barycentrics = [
+		[1, 0, 0],
+		[0, 1, 0],
+		[0, 0, 1],
+		[1, 0, 0],
+		[0, 1, 0],
+		[0, 0, 1],
 	];
 
 	const quads = elevations.map((row, y) =>
@@ -51,19 +60,26 @@ export default (data) => {
 				[x, ny],
 				[nx, ny],
 			];
-			const vertices = [tl, bl, tr, tr, bl, br];
+			const vertices = [tl, bl, tr, br, tr, bl];
 			const region = getRegion(
 				modulo(x + 0.5, numColumns),
 				modulo(y + 0.5, numRows),
 				0,
 				1
 			);
+
+			const quadElevations = vertices.map(([x, y]) => elevations[y][x]);
+			const pointy = Math.abs(
+				Math.abs(quadElevations[0] - quadElevations[2]) -
+					Math.abs(quadElevations[1] - quadElevations[3])
+			);
 			return {
 				id,
-				altitude: Math.max(...vertices.map(([x, y]) => elevations[y][x])),
+				altitude: Math.max(...quadElevations),
 				vertexData: {
 					id: vertices.map((_) => id).flat(),
 					centroid: vertices.map((_) => centroid).flat(),
+					pointy: vertices.map((_) => pointy).flat(),
 					position: vertices
 						.map(([x, y], index) => [
 							(quadCornerOffsets[index][0] * size) / numColumns,
@@ -71,6 +87,7 @@ export default (data) => {
 							-elevations[y][x],
 						])
 						.flat(),
+					barycentrics,
 					whichTexture: vertices.map((_) => region.texture).flat(),
 					uv:
 						region.name === "credits"
@@ -115,6 +132,8 @@ export default (data) => {
 	const attributes = {
 		aQuadID: allQuads.map((quad) => quad.vertexData.id).flat(),
 		aCentroid: allQuads.map((quad) => quad.vertexData.centroid).flat(),
+		aPointyQuad: allQuads.map((quad) => quad.vertexData.pointy).flat(),
+		aBarycentrics: allQuads.map((quad) => quad.vertexData.barycentrics).flat(),
 		aPosition: allQuads.map((quad) => quad.vertexData.position).flat(),
 		aWhichTexture: allQuads.map((quad) => quad.vertexData.whichTexture).flat(),
 		aUV: allQuads.map((quad) => quad.vertexData.uv).flat(),

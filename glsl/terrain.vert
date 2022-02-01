@@ -14,17 +14,23 @@ uniform vec2 repeatOffset;
 attribute float aQuadID;
 attribute vec2 aCentroid;
 attribute vec3 aPosition;
+attribute vec3 aBarycentrics;
 attribute float aWhichTexture;
 attribute vec2 aUV;
 attribute float aBrightness;
 attribute float aWaveAmplitude, aWavePhase;
+attribute float aPointyQuad;
 
 varying float vWhichTexture;
 varying vec2 vUV;
+varying vec3 vBarycentrics;
 varying float vFogFactor, vBrightness, vSpotlight;
+varying float vPointyQuad;
 
 void main() {
 	vWhichTexture = aWhichTexture;
+	vBarycentrics = aBarycentrics;
+	vPointyQuad = aPointyQuad;
 	vUV = aUV + 0.5;
 
 	vec2 centroid = (fract((aCentroid + airplanePosition.xy) / terrainSize + 0.5) - 0.5) * terrainSize - airplanePosition.xy;

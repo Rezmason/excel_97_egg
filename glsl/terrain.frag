@@ -20,6 +20,8 @@ uniform vec2 timeOffset;
 varying float vWhichTexture;
 varying vec2 vUV;
 varying float vFogFactor, vBrightness, vSpotlight;
+varying vec3 vBarycentrics;
+varying float vPointyQuad;
 
 void main() {
 
@@ -63,32 +65,42 @@ void main() {
 
 	gl_FragColor.rgb *= vBrightness;
 
-	float quadBorder = quadBorder * (1.0 + vFogFactor * 2.0);
+	float quadBorder = quadBorder;
 	if (birdsEyeView == 1.0) {
-		quadBorder *= 3.0;
+		quadBorder *= 2.0;
 	}
 
 	if (quadBorder == 0.0) {
 		gl_FragColor.rgb += vec3(1.0, 0.8, 0.2) * vSpotlight;
 	} else {
-		float borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
+		float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
 
-		if (vSpotlight == 1.0 && borderDistance - quadBorder * 3.0 < 0.0) {
+		if (vPointyQuad > 24.0) {
+			borderDistance = min(borderDistance, vBarycentrics.r);
+		}
+
+		if (whichTexture == 2) {
+			borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
+		}
+
+		borderDistance = smoothstep(0.03, quadBorder * (2.0 + vFogFactor), borderDistance);
+
+		if (vSpotlight == 1.0) {
 			gl_FragColor = mix(
 				vec4(1.0, 0.8, 0.0, 1.0),
 				gl_FragColor,
-				smoothstep(quadBorder - 0.02, quadBorder, borderDistance - quadBorder * 3.0)
+				borderDistance
 			);
 		} else {
 			vec4 borderColor = mix(
 				vec4(1.0, 0.0, 0.5, 1.0),
 				vec4(1.0, 0.5, 0.0, 1.0),
-				vFogFactor
+				pow(vFogFactor, 2.0)
 			);
 			gl_FragColor = mix(
 				borderColor,
 				gl_FragColor,
-				smoothstep(quadBorder * 0.5, quadBorder, borderDistance - quadBorder)
+				borderDistance
 			);
 		}
 	}
