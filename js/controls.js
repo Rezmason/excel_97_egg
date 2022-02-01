@@ -13,6 +13,8 @@ const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
 
 const lerp = (a, b, t) => a + t * (b - a);
 
+const minReportedPositionTime = 1000;
+
 const wheelDeltaMagnifiers = {
 	[0]: 1,
 	[1]: 40,
@@ -34,6 +36,7 @@ export default (async () => {
 	const touchStart = vec2.create();
 	const touchLast = vec2.create();
 	const lastReportedPosition = vec2.create();
+	let lastReportedPositionTime = 0;
 	const timeOffset = vec2.create();
 	let forwardAcceleration = 0;
 	let forwardSpeed = 0;
@@ -299,7 +302,12 @@ export default (async () => {
 			Math.floor((position[0] * terrain.numColumns) / terrain.size),
 			Math.floor((position[1] * terrain.numRows) / terrain.size),
 		];
-		if (!vec2.equals(lastReportedPosition, reportedPosition)) {
+		const now = Date.now();
+		if (
+			!vec2.equals(lastReportedPosition, reportedPosition) &&
+			now - lastReportedPositionTime > minReportedPositionTime
+		) {
+			lastReportedPositionTime = now;
 			vec2.copy(lastReportedPosition, reportedPosition);
 			reportPosition(...reportedPosition);
 		}
