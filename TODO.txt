@@ -1,14 +1,3 @@
-Ed Fries interview
-	Convert transcript to HTML
-	Add to repo
-
-Repo readme
-	Keep it simple
-	Link to egg
-	Basic explanation of controls
-	Link to the about box
-	Link to regl
-
 Keyboard controls discovered!
 	0x1b ESCAPE or 0x7b f12
 		Quit the easter egg

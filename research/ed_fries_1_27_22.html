@@ -1,0 +1,950 @@
+<html>
+	<head>
+		<title>Excel 97 Egg — Microsoft Easter Egg Discussion with Ed Fries</title>
+		<meta charset="utf-8" />
+		<style type="text/css">
+			body {
+				padding: 10vw;
+				font-size: 1.5em;
+			}
+
+			.jeremy {
+				font-style: italic;
+				font-size: 0.9em;
+				color: #660000;
+			}
+
+			.ed {
+				color: #006666;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="text-align: center">
+			<h1>Microsoft Easter Egg Discussion with Ed Fries</h1>
+			<h5>January 27, 2022</h5>
+		</div>
+		<p class="jeremy">
+			Here are my goals from a top-down level: I hope I can learn about— and
+			then accurately portray— the culture where the easter eggs came from: the
+			<a target="_blank" href="https://rezmason.github.io/excel_97_egg"
+				>flight simulator</a
+			>
+			and DOOM-clone in mid-90s Excel, the pinball game in Word, and other eggs
+			from the applications group.
+		</p>
+		<p class="jeremy">
+			I'm preaching to the choir here: specific circumstances often motivate the
+			creation of an easter egg, and form a narrative shedding light on who made
+			them. It's my hope that when people see this interesting experience and
+			learn that it was
+			<a target="_blank" href="https://eeggs.com/items/718.html"
+				>embedded in Microsoft Excel</a
+			>
+			twenty-five years ago—
+		</p>
+		<p class="ed">Even thirty-five years!</p>
+		<p class="jeremy">
+			—they'll also have answers to some of the questions I've had since then.
+		</p>
+		<p class="jeremy">
+			Beyond that, I'm eager to listen to anything that you'd like to talk
+			about. It's exciting that you yourself have
+			<a target="_blank" href="https://edfries.wordpress.com/"
+				>taken an interest</a
+			>
+			in this subject of computer history.
+		</p>
+		<p class="jeremy">
+			One of the first questions anyone has about an easter egg is, "How the
+			heck did this get discovered?" There's often a story there; some people
+			crack open the software decades later, seeking something no one had found
+			before. But in the case of the easter egg in Excel 97, it was found as
+			early as 1999.
+		</p>
+		<p class="jeremy">
+			How do you think it was found? Was it leaked, or discovered? Did someone
+			[at Microsoft] look through the code after it shipped and see this thing
+			someone snuck in?
+		</p>
+		<h3>Ed's beginnings at Excel</h3>
+		<p class="ed">
+			I don't know how this easter egg was found or why. Most of my experience
+			is more on the inside, at least when it comes to Excel, and it might be
+			more fruitful for me to talk about how and why we made them.
+		</p>
+		<p class="ed">
+			After we'd ship a version, we were kind of on to the next version, and I
+			don't remember thinking about [our easter eggs] beyond that. If someone
+			found it later, great! Because we put it there for someone to find. But I
+			personally don't remember thinking about it after they were in the
+			product. That's one thing.
+		</p>
+		<p class="ed">
+			Second thing, I basically worked on Excel from '86 when I joined the
+			company to about '91, so when you're talking about the Flight Simulator
+			easter egg or the DOOM easter egg, those were after my time.
+		</p>
+		<p class="ed">
+			In the summer of '86, when I joined the company, seven of us just got
+			started working on the first version of Excel for Windows. They had
+			shipped a Macintosh version before that. Ours was going to be called Excel
+			2.0, both because it was technically the second version of Excel, but also
+			because it was going to ship with Windows 2 and required it to run.
+		</p>
+		<p class="ed">
+			I just remember there being a culture of easter eggs even then! In fact I
+			think
+			<a target="_blank" href="https://eeggs.com/tree/279.html"
+				>there were easter eggs in all the Windows Excel versions</a
+			>.
+		</p>
+		<p class="jeremy">Really!</p>
+		<p class="ed">
+			When I worked on Excel 2 for Windows, we made the code portable. We knew
+			we'd have to do a version for Macintosh, a version for
+			<a
+				target="_blank"
+				href="https://en.wikipedia.org/wiki/Presentation_Manager"
+				>OS/2 Presentation Manager</a
+			>
+			(which was kind of the IBM version of Windows), and a Windows version. We
+			created a kind of hardware abstraction layer, and we ported Excel to it
+			and added more features. That was the Excel 2.2 series.
+		</p>
+		<h3>Ed's first Excel easter egg</h3>
+		<p class="ed">
+			Then we did Excel 3. By then I was the lead programmer on the project, and
+			I had more influence over what happened. And I believe it was that version
+			that I worked on the easter egg, which was based on a dream that I had.
+			Back then the easter eggs were simpler, for sure!
+		</p>
+		<p class="ed">
+			Lotus 1-2-3 was our main competitor at the time, and was kind of our
+			reason to exist. (In fact, I had applied to Lotus when I graduated, and
+			they sent me a rejection letter. That letter always had a proud place over
+			my desk when I was working on Excel.) In my dream, there was a box of
+			Lotus 1-2-3, which started to shake, then broke apart. Bugs then kind of
+			crawled all over it—
+		</p>
+		<p class="jeremy">
+			<strong>You</strong> made the Lotus bugs easter egg, where Excel ran up
+			and
+			<a target="_blank" href="https://www.youtube.com/watch?v=fAhSFXSXRM8"
+				>booted it off the screen!</a
+			>
+		</p>
+		<p class="ed">
+			Exactly, yeah! I can't remember if I did that alone, or if multiple people
+			worked on it, but it was definitely my dream that it was based on!
+		</p>
+		<h3>Microsoft's easter egg policy</h3>
+		<p class="ed">
+			Anyway, I would say we had a kind of weird rule about easter eggs, which
+			was that they were perfectly fine to include in the code, as long as there
+			was no code that actually executed the easter egg!
+		</p>
+		<p class="ed">
+			It was like plausible deniability by management— "Oh, you know, they put
+			all kinds of code in there, but we made sure there was nothing that
+			actually called the easter egg"— I assume that's why; I never had this
+			conversation with upper management. It's weird in retrospect! But at the
+			time, that was the rule. So you'd be able to find the easter egg very
+			easily in the source code, but there'd be nothing that called it.
+		</p>
+		<p class="ed">
+			So in these early versions, most of the tricky stuff had to do with the
+			way an obscure set of key sequences or other actions would
+			<a
+				target="_blank"
+				href="http://gcc.gnu.org/onlinedocs/gcc-4.8.0/gcc/Pointer-Arith.html"
+				>cause changes</a
+			>
+			to some location in memory that would somehow point to the easter egg— and
+			then a call that looks like it's going to one function would actually jump
+			to the easter egg instead. From a programmer's point of view, it was super
+			clever how these things got called! Maybe more effort went into hiding the
+			way they were executed than actually making them look cool, in those early
+			days.
+		</p>
+		<h3>Excel 1.0's copy protection file</h3>
+		<p class="ed">
+			I don't know if there was an easter egg in the very first version of
+			Excel— the Mac version that was before my time— but there was an easter
+			egg of sorts that you may have heard about: a very weak sort of
+			<a target="_blank" href="https://en.wikipedia.org/wiki/Copy_protection"
+				>copy protection.</a
+			>
+		</p>
+		<p class="ed">
+			When it installed on the Mac, Excel would create a hidden file, and when
+			it started, it would check and see if that hidden file existed. If not, it
+			wouldn't open. The filename they chose for that file was the initials of
+			several of the programmers appended together. I believe they were Bill,
+			Bob and Steve. Stuck together, the letters came out to something like
+			"Bostbeval". They weren't trying to make it sound like anything, though.
+		</p>
+		<p class="ed">
+			At the time I joined as an intern, a complaint letter to the company was
+			being passed around the office, written by a preacher from somewhere in
+			Africa. In it, he said that he had been poking around the files on his
+			Mac, and he found this hidden file named "boss be evil"— why was there
+			this evil file on his Mac? He renamed it "Bestbgood"— and then couldn't
+			run Excel anymore! So Microsoft was clearly trying to spread these evil,
+			hidden files around, and he was going to tell everyone in his parish to
+			not buy Microsoft products unless this was immediately removed. That's
+			basically the threat of the letter.
+		</p>
+		<p class="ed">
+			So in that example, the programmers put their initials on a hidden file,
+			but whether it qualified as an "easter egg" gets into what makes something
+			an easter egg or not. But it's a good story!
+		</p>
+		<p class="jeremy">
+			It also harkens back to that era when
+			<a target="_blank" href="https://en.wikipedia.org/wiki/8.3_filename"
+				>filenames could only be so long</a
+			>, and so lots of files installed as part of common software had
+			conspicuous names that drew suspicion and inspired rumors. Which dovetails
+			in an interesting way with easter eggs, because these are tech folk tales.
+			When most people think of tech, they think of what was marketed to them,
+			and maybe the success stories from the industry that end up in business
+			magazines.
+		</p>
+		<h3>90s-era misperceptions about Microsoft and "Swing around the Wing"</h3>
+		<p class="jeremy">
+			Speaking personally, one of the most interesting things about discovering
+			the easter eggs that most captured my imagination was that they showed
+			<a
+				target="_blank"
+				href="https://www.economist.com/christmas-specials/1999/12/16/messages-from-the-hall-of-tortured-souls"
+				>a very personal, human side to software development</a
+			>. I'm sure you're intimately aware of how Microsoft was regarded in the
+			nineties, before basically you and your team [the Microsoft Games
+			Division] blew those misconceptions out of the water. But until I saw that
+			easter egg in the late nineties, I suffered under those common
+			misapprehensions about Microsoft employees— about how you were all
+			serious, maybe business-centric people. Self expression and passion never
+			really worked their way into this notion about who software engineers are
+			on consumer products— except those easter eggs! They show that human side,
+			don't they?
+		</p>
+		<p class="ed">
+			Yeah! It's funny! It was really weird to me to see that view of Microsoft
+			evolve. It was almost 180 degrees from the way we viewed ourselves. First
+			of all, when I joined the company in the mid-80s, as an intern in '85 and
+			then full-time in '86, we were the underdogs. Lotus was the largest
+			personal consumer software company in the world. We were trying to battle
+			them. But we were also the anti-IBM; to us,
+			<a
+				target="_blank"
+				href="https://www.ivy-style.com/brave-new-world-ibm-style-encore.html"
+				>IBM were the guys in suits and ties!</a
+			>
+			That became more emphasized when we started to work on OS/2 stuff. Like I
+			said, there was a version of Windows called Presentation Manager that we
+			were building for IBM. Fortunately, I almost never had to deal with them
+			(though I have a few stories about dealing with them). But the Windows
+			group had to deal with these IBM programmers, and they were like how you
+			were describing!
+		</p>
+		<p class="ed">
+			I mean, at Microsoft, I used to run a golf tournament in the hallway, you
+			know? Every Friday for several years, I would get about fifty, sixty
+			people coming out, I'd organize them into little groups, and we would play
+			what was called
+			<a
+				target="_blank"
+				href="https://vault.si.com/vault/1998/08/17/the-byte-stuff-what-happens-when-the-biggest-name-in-the-computer-industry-interfaces-with-golf"
+				>"Swing around the Wing"</a
+			>, where we would just hit golf balls with putters as hard as we could, to
+			try to get them all the way down the hallways of this long building,
+			around the corners— it was like an X-shaped building, you'd go down one
+			arm of the X and then swing back around and come back the other way— and
+			the rule was you had to play it where it lied. We'd be under or even on
+			top of people's desks, if that's where the ball landed. The ball could go
+			down the stairs and we'd be trying to chip it up the stairs. We were
+			leaving golf ball sized divets in the walls!
+		</p>
+		<p class="ed">
+			But it was totally allowed by management. Several times, security tried to
+			shut me down, and I would just ask them who their boss was, and then just
+			keep asking until I got up to a high enough level where they'd say "Oh
+			yeah, that's okay".
+		</p>
+		<h3>Microsoft's culture and pranks</h3>
+		<p class="ed">
+			They would let us do what we wanted. Look at pictures of us back then!
+			Half the people there didn't wear shoes and were walking around with long
+			hair. I had long hair! It was a very "Hacker" kind of culture, I would
+			say— as in the book
+			<a
+				target="_blank"
+				href="https://www.goodreads.com/book/show/56829.Hackers"
+				>"Hackers"</a
+			>— not at all an IBM-type culture. So later when I saw that description of
+			Microsoft, it was totally not the way we were back then. We were sort of
+			the underdog hackers fighting people who we saw as bigger than us. We were
+			trying to change the world, and ultimately we did.
+		</p>
+		<p class="ed">
+			It's too bad later, with
+			<a
+				target="_blank"
+				href="https://en.wikipedia.org/wiki/United_States_v._Microsoft_Corp."
+				>the Department of Justice and all that stuff</a
+			>. But pre-1995, almost nobody knew where I worked. I could be in an
+			airplane, I could go wherever, maybe wearing the Microsoft logo on my
+			shirt or something, and nobody would even know what that meant. It was
+			really weird. It really changed when Windows 95 came out, and we went from
+			pretty unknown to VERY known. By then if I wore a Microsoft shirt, people
+			would ask me to fix their laptop! It changed a lot, from an outside
+			perspective.
+		</p>
+		<p class="ed">
+			I was probably more this way than most people in the company. I don't know
+			why I attracted attention, or trouble. But there was a big thing about
+			<a target="_blank" href="https://www.exmsft.com/~hanss/pranks.htm"
+				>pranking me</a
+			>
+			whenever I went on vacation. My office got trashed many times in many
+			different, creative ways. You can find this on YouTube—
+			<a target="_blank" href="https://www.youtube.com/watch?v=19Jf09-3QCE"
+				>they covered the entire floor of my office</a
+			>
+			with little dixie cups full of water that made a fish mosaic. Because I'd
+			created this fish screensaver that everybody ran.
+		</p>
+		<p class="jeremy">
+			...My preschool class "LARP"ed that Macintosh screensaver. I wasn't going
+			to admit that, but you brought it up...
+		</p>
+		<p class="ed">
+			That's funny! I made the Mac version with a work buddy of mine named Tom
+			Saxton, and so we had a little company called "Tom and Ed's Bogus
+			Software", and we made screensavers on the side.
+		</p>
+		<p class="ed">
+			As I was saying, we were playing golf, we were trashing each other's
+			offices, we were having a good time. It was a very lighthearted culture,
+			and very much went around trying to be the smartest programmers and doing
+			cool stuff.
+		</p>
+		<p class="jeremy">
+			That raises an interesting question. I've never personally experienced the
+			<a target="_blank" href="https://www.youtube.com/watch?v=kK0M74E8PS4"
+				>"Hall of Tortured Souls"</a
+			>
+			DOOM-clone easter egg in Excel 95, but it does seem like the Excel 97
+			flight simulator is a continuation of the previous easter egg. I think
+			Jason Allen played a role in producing both. It seems as though there is a
+			level of technical skill being demonstrated here— first by hiding the
+			DOOM-clone in Excel, which is impressive enough, and then by running that
+			3D experience on fairly standard office hardware. By Excel 97, the easter
+			egg required early version of
+			<a target="_blank" href="https://en.wikipedia.org/wiki/DirectDraw"
+				>DirectDraw</a
+			>. It does seem like the experience of building one easter egg contributed
+			to the next one.
+		</p>
+		<p class="jeremy">
+			It's difficult to track down Microsoft alumni who'd rather be left alone,
+			but I wonder if part of the motivation was showing they're the smartest
+			programmer, or like "Let's see the Word team try to respond to our flight
+			simulator, this time!"
+		</p>
+		<p class="ed">
+			There was some rivalry between the Word and Excel team. You know how some
+			sports rivalries are like, the #2 guys will say "our rivals are the #1
+			guys", but the #1 guys won't acknowledge them? That's basically the way it
+			was between Word and Excel. And I went from Excel to Word, and I tried to
+			get the Word guys to have more of an Excel type attitude about being the
+			best. We made some progress. There's some stories about that, if you want
+			to hear.
+		</p>
+		<p class="jeremy">If you'd like!</p>
+		<h3>Fixing the Windows scroll bar</h3>
+		<p class="ed">
+			I first wanted to react to something else you were saying, though. A
+			couple things— one, about the culture. One thing to remember about back
+			then is, we were working on pretty slow equipment and a pretty big project
+			for that era. We had custom compilers and linkers that were written by
+			other people just down the hall, and even the Windows team wasn't that far
+			away. I was a video game programmer when I came in. One of the first
+			things I did on Excel 2.0 was I sped up scrolling, because I thought it
+			was too slow and I was used to making things go fast for games. I got to
+			the point where I couldn't make scrolling any faster, because the slowest
+			thing was drawing the scroll bar on the side of windows. So I asked [the
+			Windows team] if I could rewrite the scrollbar code, and back then they
+			said, "Sure, here's the project." And I went into the Windows code and
+			rewrote the scrollbar— which was terrible, actually! And I made it smart
+			about how it drew itself.
+		</p>
+		<p class="jeremy">
+			I have to admit, when I first read about that, I asked myself, "How poorly
+			written could a scrollbar possibly be??"
+		</p>
+		<p class="ed">You'd be surprised! You would be surprised!</p>
+		<h3>Compile-and-link downtime and Solitaire</h3>
+		<p class="ed">
+			But beyond that, what I was trying to say about how our environment was
+			slow, is that we had a LOT of spare time, okay? You would make as many
+			changes to the code as you felt comfortable making, and just do a big
+			compile and link. And it would take about ten minutes. So you had ten
+			minutes to kill. What are you going to do for ten minutes?
+		</p>
+		<p class="ed">
+			That's actually why I brought my putter in, originally, which is what
+			started the Swing around the Wing. I said, "I'm a bad golfer, so I'm going
+			to work on my putting while I have this time." We also took up
+			lockpicking, for example. We figured out how we could buy lockpicks, so
+			we'd sit around with our locks, working on our lockpicking skills, which
+			is a fun thing to do. Most programmers could juggle for the same reason,
+			it's something you'd learn to do as you sit around waiting for this thing
+			to compile.
+		</p>
+		<p class="ed">
+			So there was always time for special projects. When I called that
+			<em>Fish!</em>
+			program "Tom and Ed's Bogus Software", when we wanted to make it a
+			company, that name is long and complicated because we were part of this
+			looser, bigger group that was called "Bogus Software". So we were "Tom and
+			Ed's Bogus Software" to differentiate itself from the larger virtual
+			entity of "Bogus Software", which was other people around the company
+			making fun stuff just because!
+		</p>
+		<p class="ed">
+			Take
+			<a
+				target="_blank"
+				href="https://www.theverge.com/2017/4/13/15285780/windows-solitaire-original-bored-intern"
+				>Microsoft Solitaire</a
+			>, for example. Why does Microsoft Solitaire exist? We had an intern named
+			Wes Cherry, and that summer when he was there, in our many "spare ten
+			minutes", we were writing little networked poker bots to compete against
+			each other, and we were trying to see who could write the best poker AI to
+			compete with each other. One of the guys, Darrell Plank, had created this
+			dynamically linked library that had a bunch of card backs and faces in it
+			for our poker thing, to display their hands of cards on the screen as they
+			played each other. Wes just took that and used it to make Solitaire.
+			That's how it came into being.
+		</p>
+		<p class="jeremy">This was Wes Cherry?</p>
+		<p class="ed">Wes Cherry, yeah.</p>
+		<p class="jeremy">
+			Interesting. He was credited as being on "Team Wes" in the credits in the
+			Excel 97 easter egg.
+		</p>
+		<p class="ed">
+			Well, he worked in the group for a long time, starting originally as an
+			intern, and that's where Solitaire came from.
+		</p>
+		<p class="jeremy">
+			By the way— have you done an adaptation of the Swing around the Wing since
+			the Wrecking Ball Reunion?
+		</p>
+		<h3>How campus has changed</h3>
+		<p class="ed">
+			Hah! That was the last Swing around the Wing, and probably will be the
+			last one. That was right before they tore the buildings down. It was very
+			fun to go back there and see a lot of my old coworkers to play.
+		</p>
+		<p class="jeremy">
+			I guess they don't make X-shaped buildings that often. Although maybe the
+			XBox team will one day!
+		</p>
+		<p class="ed">
+			I like that idea. I haven't been back to the campus since that reunion, to
+			see the new buildings. It's a little weird. It feels a little like when
+			they tear down your high school. The place where you made all these
+			memories is gone.
+		</p>
+		<p class="jeremy">The software remains! The easter eggs remain.</p>
+		<p class="ed">
+			It does, it does! I'm just saying why I haven't felt the urge to go back
+			there.
+		</p>
+		<p class="jeremy">That's fair.</p>
+		<p class="jeremy">
+			I'm curious about Bogus Software! I don't know how much has been written
+			or shared about it over the years. How large a group in Microsoft was
+			this, more or less? And what things might they have been responsible for?
+		</p>
+		<h3>Bogus Software and <em>Fish!</em></h3>
+		<p class="ed">
+			There was a thing on Facebook about this, where a bunch of Bogus people
+			were trying to explain... I wonder if I can find that? Basically, there
+			were two main instigators of Bogus Software, separate from me. One was
+			David Norris. He did Taipei, that solitaire game played with Mahjong
+			tiles. Hans Spiller was the other guy. And what was Hans's game?... I'll
+			have to get back to you on that.
+		</p>
+		<p class="ed">
+			Anyway, those were the guys who first came up with this name, "Bogus
+			Software" as far as I know.
+		</p>
+		<p class="ed">
+			Actually, I wrote the very first version of <em>Fish!</em> as an intern.
+			That was a character-based version. When I came on full-time and got put
+			on Excel, I decided I would write a Windows version of it, because I was
+			learning what Windows is. That's when they approached me. At that point I
+			think I just put "Bogus Software" on it, because that's what they were
+			putting on their apps. These were very early Windows apps, when very few
+			people in the world were writing Windows apps at that time!
+		</p>
+		<p class="ed">
+			After Windows Excel shipped, I started to work on the Macintosh for the
+			first time, and was learning about the Mac— and that's when I met Tom, who
+			was a Word programmer. We teamed up to do the Macintosh version of Fish.
+			Then we got approached by
+			<a
+				target="_blank"
+				href="https://lowendmac.com/2007/aggressively-stupid-the-story-behind-after-dark/"
+				>Berkley Systems</a
+			>, who made
+			<a target="_blank" href="https://www.youtube.com/watch?v=ANnYbX54oU4"
+				>After Dark</a
+			>, the first successful commercial screensaver. They didn't want to just
+			rip us off; they tracked us down and said, "Will you do the
+			<em>Fish!</em> screensaver for us?", which was nice of them. They could
+			have easily written it for themseslves, it's not that hard.
+		</p>
+		<p class="ed">
+			Bogus Softare was fun. I ran it with Tom for a bunch of years. At first,
+			we put it out for free, but we included an address and asked people to
+			send us their fish. The feature Tom added to the screensaver was a fish
+			editor, which we both brought to the Macintosh and Windows versions.
+		</p>
+		<p class="jeremy">That's a very early "user-generated content" system!</p>
+		<p class="ed">
+			I guess. So people started to send us their fish, but some people also
+			started to send us checks written out to "Tom and Ed's Bogus Software",
+			because that's what we wrote in it. So we had these checks we couldn't
+			cash. How do you go to a bank with a check that goes to "Tom and Ed's
+			Bogus Software"? "I'm Ed!", you know? "I'm right there on the check!"
+		</p>
+		<p class="ed">
+			So, we decided we had to make a company, and decided we might as well make
+			<em>Fish!</em>
+			shareware, so the fish editor would unlock once you sent us the five bucks
+			or whatever it was. And we got ourselves a little post office box, and
+			instead of calling it a "P.O. Box A3334", we said "Suite A3334". We felt
+			that gave us more gravitas, if there was any gravitas that would apply to
+			Tom and Ed's Bogus Software.
+		</p>
+		<p class="ed">
+			One day I went to pick up the mail, and there was a note in the mailbox
+			that said, "I came to visit you guys in person, but discovered that your
+			'suite' is best measured in inches!"
+		</p>
+		<p class="ed">
+			We got letters from all over the world. Timbuktu, all over the world! It
+			was super fun to go get the mail and see who was writing us and what they
+			were saying. We'd receive weird currencies we couldn't cash. People would
+			write about their experience with the program, or send pictures of all the
+			things they created with it. It was a fun thing to do at the time.
+		</p>
+		<p class="jeremy">
+			It's a testament to how any act of creativity you put out there can
+			connect people in a meaningful way.
+		</p>
+		<p class="ed">
+			It's true. It always feels like trouble at the time to make something and
+			share it. And I always feel like I get rewarded ten times more than I
+			expect, or deserve. It's probably what keeps me going, making new stuff
+			and trying new things.
+		</p>
+		<h3>Easter egg responses</h3>
+		<p class="jeremy">
+			Let me shift gears, just to cover two specific questions. Let's say you're
+			back there working at Microsoft. You learn from somewhere that an easter
+			egg has been newly discovered in some other team's product. What was the
+			general reaction?
+		</p>
+		<p class="ed">
+			Like I said, I honestly don't remember ever thinking about them once we
+			shipped them. I don't remember ever hearing much about them, or anything.
+			It was just a thing we would do. We kind of hoped that someone would find
+			it. We'd make it hard but we hoped they would find it, because otherwise
+			it was kind of a waste, all the work we did on it. But we worked on a lot
+			of silly stuff just for fun.
+		</p>
+		<p class="jeremy">
+			My other question involves secrecy. I don't know if you ever worked in an
+			open office. I'm curious, was there some level of privacy and having space
+			to oneself at that time in the organization so that somebody would feel...
+		</p>
+		<p class="jeremy">...this is a leading question.</p>
+		<p class="ed">Heh.</p>
+		<p class="jeremy">
+			It just seems to me that maybe someone felt more comfortable about
+			inserting something into the software because they had a cubicle or office
+			to themselves, or sat in some corner where no one would bother them.
+		</p>
+		<h3>Excel's team work ethic</h3>
+		<p class="ed">
+			Hmm. I get what you're asking. And I don't think so. What I would say is,
+			it was a very free environment for us to be ourselves, as long as we got
+			done what we were doing.
+		</p>
+		<p class="ed">
+			We in the Excel group took a lot of pride in shipping on time. Sometimes
+			that meant we had to work really hard, but we got to own our own schedule.
+			Everyone scheduled their own features. If you got it wrong, you might work
+			late one night because you scheduled it wrong, you know? It was your own
+			fault. It's not like somebody said, "You have to have this done by
+			Thursday". That's one of the first things my boss Chris Peters taught us
+			when I joined— that we do our own schedule, and why.
+		</p>
+		<p class="ed">
+			So it was definitely an environment where you could be yourself and do
+			what you want, as long as you were getting your stuff done. You could
+			dress the way you wanted. As long as it wasn't bothering other people you
+			could do a golf tournament in the hallway, make a fish screensaver,
+			whatever! On our schedule, we had to check off forty hours every week; as
+			long as you were doing that, nobody was going to hassle you about anything
+			unimportant, like how you looked or anything like that. It was a very free
+			environment.
+		</p>
+		<p class="ed">
+			As far as the easter eggs go, like I said it was built into the culture
+			from as early as I can remember that they were okay to do—
+		</p>
+		<p class="jeremy">—As long as they weren't directly executed.</p>
+		<p class="ed">
+			—right, we'd just hide how they were run. But yeah, we did one every
+			version. I don't remember us ever getting hassled by upper management, as
+			it was, or anyone else.
+		</p>
+		<p class="jeremy">
+			Do you remember when the
+			<a
+				target="_blank"
+				href="https://www.wired.com/2002/01/bill-gates-trustworthy-computing/"
+				>Trustworthy Computing Initiative</a
+			>
+			was sent out in 2002?
+		</p>
+		<p class="ed">
+			No, no. That was way after my time. I mean, I went over to run
+			<a target="_blank" href="https://en.wikipedia.org/wiki/Xbox_Game_Studios"
+				>the games group</a
+			>
+			in '96, and I left in '04. So that would have come out while I was doing
+			games. But games were like the last place where they were worrying about
+			security. It was first the operating system, then the applications, then
+			us.
+		</p>
+		<h3>Doug Klunder</h3>
+		<p class="ed">
+			I do remember, the first programmer was a guy named
+			<a
+				target="_blank"
+				href="https://www.technologyreview.com/2015/12/22/164348/doug-klunder-81/"
+				>Doug Klunder</a
+			>, the main programmer who made Excel 1.0 from scratch. He basically took
+			<a target="_blank" href="https://en.wikipedia.org/wiki/Multiplan"
+				>Multiplan</a
+			>, which he'd also worked on, and wrote Excel for the Macintosh. He was,
+			and still is, a very interesting guy. Doug had quit the company several
+			times, and came back. For me, he was the legendary first programmer on
+			Excel when I was working on it, and I was porting a lot of that Macintosh
+			code to Windows when I first started full-time. I'd see his name and code
+			a lot— and it was some pretty amazing code.
+		</p>
+		<p class="ed">
+			Most of the time, Doug didn't wear shoes; he had hair down to maybe his
+			waist. He liked to wear a kind of shawl around. He looked a lot like Jesus
+			Christ, is one way to summarize it. And he was the smartest guy in the
+			room: a self-taught programmer, like most of us were back then, but just
+			brilliant. It was people like him who created a hippie-like culture, you
+			know, to what we had.
+		</p>
+		<p class="ed">
+			There are a lot of Doug stories. At the time, he was super anti-authority.
+			He didn't have a driver's license, because he didn't want to have his
+			picture on a card, or any kind of ID card. Originally when I joined
+			Microsoft we had these special magnetic coded keys, but then they rolled
+			out these magnetic cards that was supposed to have your picture on it.
+			Doug did not want his picture on the card, so they made a special blank
+			one for him.
+		</p>
+		<p class="ed">
+			Doug didn't want to put his name on documents to send to the IRS to pay
+			his income tax, which was a real problem for him, because he still had to
+			pay the tax. What he ended up doing was, he would figure out how much
+			money he owed, and he would send them that amount in cash, along with his
+			name, but with no documentation. He lost a lawsuit with the IRS, which
+			stopped him from being able to do that! But his argument was, "I paid my
+			amount."
+		</p>
+		<p class="ed">
+			He was just an interesting guy in that way. By the way, after he left
+			Microsoft he went to law school, got a law degree, and then
+			<a
+				target="_blank"
+				href="https://alum.mit.edu/slice/heres-why-creator-microsoft-excel-left-software-career-work-civil-liberties"
+				>he joined the ACLU</a
+			>. Up until recently, he's done computer privacy kinds of issues for them.
+		</p>
+		<p class="ed">
+			In light of all this stuff, it's frustrating to me to see the image of
+			what Microsoft is now, or what people thought it was in the mid-90s,
+			because that wasn't my experience at all. For me it was a bunch of young,
+			talented, nutty, hippie-type people having a good time making software
+			that kind of changed the world. Not at all guys sitting in suits!
+		</p>
+		<p class="jeremy">I'm very glad to hear that!</p>
+		<h3>Microsoft's relationship with Apple</h3>
+		<p class="jeremy">
+			If I can just inject something personal— I was raised on Macs, the
+			<a target="_blank" href="https://www.wired.com/1997/06/apple-3/"
+				>perceived underdogs</a
+			>
+			at the time, and I've gravitated toward underdogs ever since. This
+			conversation is like "Mohammed coming to the mountain"; you're somebody
+			who's made a career out of creative expression through programming, at a
+			company I was very happy to
+			<a
+				target="_blank"
+				href="https://www.escapistmagazine.com/from-borg-to-boss/"
+				>equate with the Borg</a
+			>
+			for the first half of my life.
+		</p>
+		<p class="jeremy">
+			There is a perception of early Apple as
+			<a target="_blank" href="https://www.folklore.org/"
+				>an organization with roots in the hacker ethos</a
+			>— a culture of anti-establishment people who saw computing as an
+			extension of the mind, or as a domain where they could comfortably
+			contribute something— and it sounds like the same things can be said about
+			early Microsoft.
+		</p>
+		<p class="jeremy">
+			Considering how Apple has transformed from that underdog period, the
+			parallels I can now draw between these two companies provides valuable
+			perspective. We take for granted that tech companies often start from
+			humble beginnings. Microsoft existed for years before you joined, but your
+			arrival coincided with a beginning for the company: the development of
+			Windows applications. So I'm grateful for your perspective.
+		</p>
+		<p class="ed">
+			I think people want to simplify history, and boil it down to
+			good-versus-evil. You know? This group versus that group. Of course, the
+			reality is much more complicated. People who want to turn this big "war"
+			into Apple-versus-Microsoft forget how closely
+			<a target="_blank" href="https://www.youtube.com/watch?v=WxOp5mBY9IY"
+				>Bill and Steve worked together</a
+			>. Bill was there, visiting Steve on his deathbed.
+		</p>
+		<p class="ed">
+			By the way— the only reason Apple's here today is that
+			<a
+				target="_blank"
+				href="https://www.cultofmac.com/567497/microsoft-investment-saves-apple/"
+				>Microsoft lent them $150 million</a
+			>
+			when they were about to go out of business [in 1997], right around the
+			time Steve came back to the company. These are just a couple examples.
+		</p>
+		<p class="ed">
+			The first version of Excel was made for the Macintosh, to help Apple,
+			before it was made on the PC! A bunch of the people who worked on that
+			worked really closely with Apple to help make their operating system
+			better, so they could make Excel in the first place. They changed the user
+			interface; they came up with a bunch of ideas that ended up going into the
+			Macintosh.
+		</p>
+		<p class="ed">So, you know, whatever.</p>
+		<p class="jeremy">Whatever!</p>
+		<p class="ed">
+			The whole time I was at Office— which was ten years— we made Windows
+			versions, and we made Macintosh versions of everything we were doing. We
+			tried different strategies— sometimes we tried making them from the same
+			codebase, and that had pluses and minuses, whereas other times we tried
+			having different groups, and sort of porting features back and forth, and
+			that had its own pluses and minuses. Right now, they're back to that
+			strategy; I was one of the people who tried to move them to the other
+			strategy, but each one has pluses and minuses.
+		</p>
+		<p class="ed">
+			It's getting a little late; I can probably do one or two more questions,
+			but that's it.
+		</p>
+		<p class="jeremy">
+			I think that's all of my questions. Thank you for taking the time to
+			answer my questions and provide your insight!
+		</p>
+		<p class="jeremy">
+			Before I share one personal anecdote that might amuse you, I'd like to
+			say: I've read
+			<a target="_blank" href="https://edfries.wordpress.com/"
+				>your entire blog</a
+			>
+			about restoring classic arcade games and hunting old easter eggs yourself.
+			It's a great read, and captures the meaningful and engaging story of
+			recovering something. I hope you add more stories, just as long as you're
+			still restoring and hunting!
+		</p>
+		<p class="jeremy">
+			I'd also like to say, if you have any questions or concerns about this
+			transcript, my project, or my portrayal of what we've discussed, I'm an
+			open book and my door's open. Thank you again.
+		</p>
+		<p class="ed">Yeah, all right.</p>
+		<p class="jeremy">
+			Now for my anecdote: as a kid raised on Macs, I once had a playdate whose
+			sole premise, it turned out, was for my host to
+			<a target="_blank" href="https://www.youtube.com/watch?v=zTULMXC1Guw"
+				>flaunt Halo on his XBox</a
+			>—
+		</p>
+		<p class="ed">Heh!</p>
+		<p class="jeremy">
+			—because it was
+			<a target="_blank" href="https://www.youtube.com/watch?v=6eZ2yvWl9nQ"
+				>shown at Macworld</a
+			>
+			before Microsoft acquired Bungie and made it a console exclusive. He said,
+			"How's it feel to have this cool game canceled for the Mac?"
+		</p>
+		<p class="jeremy">
+			And I said, "It's fine, it'll work out in the end." And as you know,
+			<a
+				target="_blank"
+				href="http://web.archive.org/web/20190618102100/http://www.insidemacgames.com/reviews/view.php?ID=460"
+				>it did</a
+			>!
+		</p>
+		<p class="ed">I have a story about that, too, if you want to hear it.</p>
+		<p class="jeremy">By all means!</p>
+		<h3>Calling Steve Jobs after buying Halo and the Bungie devs</h3>
+		<p class="ed">
+			I've told this a few times publicly. In the Spring of 2000, XBox had been
+			approved, and I was trying really hard to pull together all the content
+			for something that was going to ship in eighteen months, which is a really
+			short amount of time. I got a call from Peter Tamte, the business manager
+			at Bungie who I knew, and he said they were going out of business and had
+			to sell the company. I ended up buying them, moving them out from Chicago
+			[to Redmond], to write the first Halo.
+		</p>
+		<p class="ed">
+			Then one day, I walk into the office and I have an email waiting from
+			Steve Ballmer— which was unusual! The email said, "You bought this company
+			and pissed off Steve Jobs. Can you call him and calm him down? He's
+			basically"—
+		</p>
+		<p class="jeremy">HA ha!</p>
+		<p class="ed">
+			So I'm just sitting there, staring at this email on my screen that's got
+			this number to call, blinking at me, right? And the email's from Steve
+			Ballmer, the #2 guy in the company. I'm like, "Well, I guess I'm dialing
+			that number and calling Steve Jobs!" But I take a minute to think about
+			what I'm going to say to him.
+		</p>
+		<p class="ed">
+			I want to tell him that I don't have anything against the Macintosh, that
+			I'd worked on a bunch of Macintosh stuff. But I also saw this as an
+			opportunity for a couple things: one, my department had a big PC games
+			portfolio, including Age of Empires and Flight Simulator; maybe I could
+			make more money by getting those onto the Macintosh. I also knew that
+			Peter Tamte was kind of the only guy who didn't come out of the purchase
+			with a job, because we didn't need him— he kind of got screwed in the end—
+			but I knew he wanted to start a Mac porting company.
+		</p>
+		<p class="ed">
+			And so, to me, these two things kind of clicked in my mind, and so I
+			dialed the number. Steve Jobs answered. I told him— well, I was nervous,
+			like how you were nervous at the beginning of this conversation— I mean
+			I'm talking to <em>Steve Jobs</em>. I was used to working with Bill Gates
+			to some degree, that was a little scary, but Steve Jobs...
+		</p>
+		<p class="ed">
+			Well, I told him how I felt about the Mac, and that I thought there was an
+			opportunity for us to work together; I knew just the right guy to do it,
+			Peter Tamte; if they would support his new company, we'd give them the
+			rights to our intellectual property in exchange for royalty, so they could
+			make ports of our games. Not just Halo, but a bunch of other games.
+		</p>
+		<p class="jeremy">
+			Was this MacPlay? [Edit: No, it was
+			<a target="_blank" href="http://macsoftgames.com/">MacSoft</a>.]
+		</p>
+		<p class="ed">
+			You'd have to look up the name of the company, but it was Peter Tamte's.
+		</p>
+		<p class="ed">
+			So it was a relatively short conversation, something like three to five
+			minutes. He was friendly when he picked up; then I told him who I was,
+			then launched into this whole pitch, and his response was "Yeah, that
+			sounds interesting, I'm going to have so-and-so who works for me follow up
+			with you and we'll work on that." They funded Peter Tamte, and that caused
+			several games to be created from Microsoft Games.
+		</p>
+		<p class="ed">
+			But the one hitch to it was that they wanted me and Alex Seropian, one of
+			the two cofounders of Bungie, to be
+			<a target="_blank" href="https://youtu.be/QRQdOYtVTOI?t=2517"
+				>on-stage with Steve Jobs</a
+			>
+			at the next Mac..Macworld? One of the big Mac events they had, that was in
+			New York City. We had to fly out there and be on-stage with him in front
+			of ten thousand screaming Mac fans.
+		</p>
+		<p class="ed">
+			As a Microsoft guy, it was a little scary to walk up on that stage. I
+			thought the knives or sniper rifles would come out!
+		</p>
+		<p class="jeremy">I might have been there!</p>
+		<p class="ed">
+			It was in New York City, and it would have been the Fall of 2000. What
+			Jobs wanted from us on-stage was to reassure people that Halo wasn't going
+			away permanently from the Mac, that here they were with Microsoft, the
+			guys who bought it, pledging to do a Mac port of it.
+		</p>
+		<p class="jeremy">
+			Isn't it thanks to you that Halo's here at all? I'm not sure who else
+			would have bought it.
+		</p>
+		<p class="ed">
+			It's hard to say.
+			<a
+				target="_blank"
+				href="https://www.ign.com/articles/2000/06/20/microsoft-buys-bungie-take-two-buys-oni-ps2-situation-unchanged"
+				>Take Two already owned a third of their company.</a
+			>
+			What would have happened was, it would have all gone to Take Two. When I
+			went to buy the company, I negotiated with Ryan Brandt, the CEO of Take
+			Two at the time. I told him he could have Bungie's whole back catalog, and
+			that we would finish the game "Oni" for them, that they were developing in
+			California at Bungie West.
+		</p>
+		<p class="ed">
+			All I wanted was the whole development team, and Halo. I just wanted that
+			one game, and that team, and that was worth X million dollars. That was
+			the deal we struck; we kind of split the company up between us. But I got
+			all the people, and I got Halo, which is, in the end, what mattered! It
+			was a good deal for Microsoft.
+		</p>
+		<p class="jeremy">And a good story.</p>
+		<p class="ed">A good story is almost as valuable.</p>
+		<p class="jeremy">
+			Your time is also valuable. Thank you again! I greatly appreciate your
+			time and insight. I hope you have a great rest of your night and week!
+			Please, feel free to reach out if you have any questions.
+		</p>
+		<p class="ed">
+			Awesome, Jeremy. Good luck with your project— I think this stuff is really
+			important. That's why I do some of it myself, too. I really appreciate
+			what you're doing.
+		</p>
+		<p class="jeremy">Likewise!</p>
+		<p class="ed">Hopefully these stories will be remembered in the future.</p>
+		<p class="jeremy">
+			Here's hoping! Keep up the good work on that front, too! Take care!
+		</p>
+		<p class="ed">All right. Take it easy, man.</p>
+		<div style="text-align: center"><h1>🥚</h1></div>
+	</body>
+</html>
