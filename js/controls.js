@@ -292,6 +292,9 @@ export default (async () => {
 	};
 
 	const sanitizePosition = () => {
+		if (!settings.sanitizePosition) {
+			return;
+		}
 		const size = data.terrain.size;
 		position[0] = ((position[0] % size) + size) % size;
 		position[1] = ((position[1] % size) + size) % size;
