@@ -1,3 +1,48 @@
+Indexed color game plan
+	Cut a branch
+	Lower the resolution, if necessary, for debug purposes
+	Create indexed color textures as indexed BMPs
+		Create 64x64 indexed color BMPs
+		Set their palettes to the colors in the second-to-last column of the full palette
+		Paste in the image data, it ought to look correct
+		Load them in as files, grab the array buffer from their responses and create indexed textures
+			REGL ought to support making textures from arrays of numbers
+	Add 16x16 color palette texture PNG to the project
+	Duplicate the render pass
+		One is true color - pass it high resolution PNG textures
+		The other is indexed color - pass it indexed textures
+	Pass the palette texture into the indexed color fragment shader
+	Reproduce the reference frame's texture index components
+		Should just be the ordinary texture lookup
+	Map the indices to the color palette
+		Should look like an unlit ordinary terrain
+	Reproduce the reference frame's brightness index components
+		Simplify brightness value for debugging purposes
+		Use x = int(floor(x * c) / c) to sort values into sixteen buckets
+			Maybe fifteen, you be the judge
+		Then stripe it
+			Change c to c*2
+			Every other fragment should ceil instead of floor
+				For now, "every other fragment" uses gl_FragCoord.x
+			Then * 0.5 before the int
+		Change "every other fragment" to (distance to start of raster) % 2
+			Something something corners barycenters
+				https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation
+		Don't stripe it if you're too close to the edge of a quad
+			You've already got quad border math, just use it again
+		Revisit the brightness and fog calculation in BOTH vertex shaders
+	Grid lines should index the magenta colors along the right edge of the palette
+	You can still lerp the spotlight if it still looks good
+	Now do the horizon
+	And make this stuff data driven
+		Including whatever got added to the shaders
+	And consider changing the icons
+		What about their labels? What about the URL params? Hope that's a non-issue
+	Now test all permutations, comparing before and after side by side
+	And update the essay
+	Merge branch
+
+
 Keyboard controls discovered!
 	0x1b ESCAPE or 0x7b f12
 		Quit the easter egg
