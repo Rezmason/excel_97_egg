@@ -1,16 +1,11 @@
 Indexed color game plan
-	Cut a branch
-	Lower the resolution, if necessary, for debug purposes
-	Create indexed color textures as indexed BMPs
-		Create 64x64 indexed color BMPs
-		Set their palettes to the colors in the second-to-last column of the full palette
-		Paste in the image data, it ought to look correct
-		Load them in as files, grab the array buffer from their responses and create indexed textures
-			REGL ought to support making textures from arrays of numbers
-	Add 16x16 color palette texture PNG to the project
+	Load in BMPs as files, grab the array buffer from their responses and create indexed textures
+		palette data @54 1024
+		image data @1078 4096
+		REGL ought to support making textures from arrays of numbers
 	Duplicate the render pass
-		One is true color - pass it high resolution PNG textures
-		The other is indexed color - pass it indexed textures
+		Rename the original true color
+		Name the other indexed color
 	Pass the palette texture into the indexed color fragment shader
 	Reproduce the reference frame's texture index components
 		Should just be the ordinary texture lookup
@@ -31,17 +26,23 @@ Indexed color game plan
 		Don't stripe it if you're too close to the edge of a quad
 			You've already got quad border math, just use it again
 		Revisit the brightness and fog calculation in BOTH vertex shaders
-	Grid lines should index the magenta colors along the right edge of the palette
-	You can still lerp the spotlight if it still looks good
-	Now do the horizon
+	Grid and spotlight can stay as they are, if they still look good
 	And make this stuff data driven
 		Including whatever got added to the shaders
 	And consider changing the icons
 		What about their labels? What about the URL params? Hope that's a non-issue
+	Recolor everything, you moron.
+		The reference texture colors should be the last column in the corrected palette.
+			Recolor the stele text
+			Recolor the high res textures
+			Recolor the the about banner
+			Recolor the icons, maybe. Jeez louise.
 	Now test all permutations, comparing before and after side by side
 	And update the essay
 	Merge branch
 
+Spherical distortion could be neat
+	How do those Minecraft shaders do it?
 
 Keyboard controls discovered!
 	0x1b ESCAPE or 0x7b f12
