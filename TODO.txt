@@ -1,8 +1,4 @@
 Indexed color game plan
-	Load in BMPs as files, grab the array buffer from their responses and create indexed textures
-		palette data @54 1024
-		image data @1078 4096
-		REGL ought to support making textures from arrays of numbers
 	Duplicate the render pass
 		Rename the original true color
 		Name the other indexed color
@@ -32,6 +28,9 @@ Indexed color game plan
 	And consider changing the icons
 		What about their labels? What about the URL params? Hope that's a non-issue
 	Recolor everything, you moron.
+		Base it on the loaded palette
+			Load this first; move colorLookupTable out of the texture packs
+			Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
 		The reference texture colors should be the last column in the corrected palette.
 			Recolor the stele text
 			Recolor the high res textures
@@ -40,6 +39,9 @@ Indexed color game plan
 	Now test all permutations, comparing before and after side by side
 	And update the essay
 	Merge branch
+
+Atlas the textures, instead of whichTexture
+The shaders could probably be cleaned up a bit
 
 Spherical distortion could be neat
 	How do those Minecraft shaders do it?

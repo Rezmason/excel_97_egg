@@ -12,7 +12,9 @@ export default (async () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const settings = {
 		location: urlParams.get("l"),
-		sanitizePosition: !urlParams.has("sanitizePosition") || urlParams.get("sanitizePosition").toLowerCase() !== "false"
+		sanitizePosition:
+			!urlParams.has("sanitizePosition") ||
+			urlParams.get("sanitizePosition").toLowerCase() !== "false",
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");

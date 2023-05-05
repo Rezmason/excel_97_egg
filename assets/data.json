@@ -61,20 +61,22 @@
 		],
 		"texture_packs": {
 			"standard": {
-				"horizonTexture": { "url": "assets/textures/horizon_screenshot.png", "hi_res": false },
-				"moonscapeTexture": { "url": "assets/textures/moonscape.bmp", "hi_res": false },
-				"platformTexture": { "url": "assets/textures/platform.bmp", "hi_res": false },
-				"creditsTexture": { "url": "assets/textures/credits_wrapped.bmp", "hi_res": false },
-				"colorLookupTable": { "url": "assets/textures/palette.bmp", "hi_res": false }
+				"horizonTexture": { "url": "assets/textures/horizon.bmp", "type": "indexed_color" },
+				"moonscapeTexture": { "url": "assets/textures/moonscape.bmp", "type": "indexed_color" },
+				"platformTexture": { "url": "assets/textures/platform.bmp", "type": "indexed_color" },
+				"creditsTexture": { "url": "assets/textures/credits_wrapped.bmp", "type": "indexed_color" }
 			},
 			"hi_res": {
-				"horizonTexture": { "url": "assets/textures/hi_res/horizon_hi_res.png", "hi_res": true },
-				"moonscapeTexture": { "url": "assets/textures/hi_res/moonscape_hi_res.png", "hi_res": true },
-				"platformTexture": { "url": "assets/textures/hi_res/platform_hi_res.png", "hi_res": true },
-				"creditsTexture": { "url": "assets/textures/hi_res/credits_sdf_wrapped.png", "hi_res": true },
-				"colorLookupTable": { "url": "assets/textures/palette.bmp", "hi_res": false }
+				"horizonTexture": { "url": "assets/textures/hi_res/horizon_hi_res.png", "type": "mipmapped_true_color" },
+				"moonscapeTexture": { "url": "assets/textures/hi_res/moonscape_hi_res.png", "type": "mipmapped_true_color" },
+				"platformTexture": { "url": "assets/textures/hi_res/platform_hi_res.png", "type": "mipmapped_true_color" },
+				"creditsTexture": { "url": "assets/textures/hi_res/credits_sdf_wrapped.png", "type": "sdf" }
 			}
-		}
+		},
+		"color_table": "assets/textures/palette.bmp"
+	},
+	"horizon": {
+		"height": 40
 	},
 	"terrain": {
 		"size": 2000,
