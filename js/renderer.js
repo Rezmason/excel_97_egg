@@ -43,10 +43,10 @@ export default (async () => {
 	const [horizonVert, horizonFrag, terrainVert, terrainFrag] =
 		await Promise.all(
 			[
-				"glsl/horizon.vert",
-				"glsl/horizon.frag",
-				"glsl/terrain.vert",
-				"glsl/terrain.frag",
+				"glsl/true_color/horizon.vert",
+				"glsl/true_color/horizon.frag",
+				"glsl/true_color/terrain.vert",
+				"glsl/true_color/terrain.frag",
 			].map((url) => fetch(url).then((response) => response.text()))
 		);
 
