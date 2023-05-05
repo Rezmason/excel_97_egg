@@ -16,11 +16,14 @@ void main() {
 	float y = (0.5 - uv.y) * 480. / horizonHeight + 1.0;
 	vec3 color = vec3(0.0);
 	if (y < 1.0) {
+		color = texture2D(horizonTexture, vec2(uv.x, y)).rgb;
+
 		float brightness = 1.0;
 		if (showSindogs == 1.0) {
 			brightness += (sin((rotation.y + uv.x * 26.0 + (time + timeOffset.y)) * PI / 180.0 * 15.0) - (uv.y) + 1.0) * 0.5;
 		}
-		color = texture2D(horizonTexture, vec2(uv.x, y)).rgb * brightness;
+
+		color *= brightness;
 	}
 
 	gl_FragColor = vec4(color, 1.0);

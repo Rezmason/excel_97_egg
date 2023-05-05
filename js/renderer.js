@@ -236,6 +236,9 @@ export default (async () => {
 			showSindogs: regl.prop("showSindogs"),
 			rotation: regl.prop("rotation"),
 
+			colorTableTexture: regl.prop("colorTableTexture"),
+			colorTableWidth: regl.prop("colorTableWidth"),
+
 			camera: regl.prop("camera"),
 			horizonTransform: regl.prop("horizonTransform"),
 

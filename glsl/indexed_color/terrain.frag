@@ -10,6 +10,9 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder, birdsEyeView;
 
+uniform float colorTableWidth;
+uniform sampler2D colorTableTexture;
+
 uniform vec3 creditColor1;
 uniform vec3 creditColor2;
 uniform vec3 creditColor3;
@@ -46,8 +49,9 @@ void main() {
 		creditUV.y = fract(creditUV.y);
 
 		creditUV = vec2(1.0) - creditUV;
-		vec4 credits = texture2D(creditsTexture, fract(creditUV));
+		vec3 credits = texture2D(creditsTexture, fract(creditUV)).rgb;
 
+		/*
 		vec3 creditColor = vec3(0.0);
 		float amount = 0.0;
 		if (credits.b > 0.0 && credits.b > credits.g) {
@@ -64,7 +68,19 @@ void main() {
 		amount = clamp(smoothstep(radius - fwidth(amount), radius, amount), 0.0, 1.0);
 
 		color = creditColor * amount;
+		*/
+
+		color = credits;
 	}
+
+	int index = int(color.r * (colorTableWidth * colorTableWidth - 1.0));
+	int numColumns = int(colorTableWidth);
+	int row = index / numColumns;
+	int column = index - row * numColumns;
+	// column = numColumns - 1;
+	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
+	color = texture2D(colorTableTexture, colorTableUV).rgb;
+
 
 	color *= vBrightness;
 
