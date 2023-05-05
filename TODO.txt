@@ -1,12 +1,4 @@
 Indexed color game plan
-	Duplicate the render pass
-		Rename the original true color
-		Name the other indexed color
-	Pass the palette texture into the indexed color fragment shader
-	Reproduce the reference frame's texture index components
-		Should just be the ordinary texture lookup
-	Map the indices to the color palette
-		Should look like an unlit ordinary terrain
 	Reproduce the reference frame's brightness index components
 		Simplify brightness value for debugging purposes
 		Use x = int(floor(x * c) / c) to sort values into sixteen buckets

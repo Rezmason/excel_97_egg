@@ -40,15 +40,33 @@ export default (async () => {
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
-	const [horizonVert, horizonFrag, terrainVert, terrainFrag] =
-		await Promise.all(
-			[
-				"glsl/true_color/horizon.vert",
-				"glsl/true_color/horizon.frag",
-				"glsl/true_color/terrain.vert",
-				"glsl/true_color/terrain.frag",
-			].map((url) => fetch(url).then((response) => response.text()))
-		);
+	const [
+		horizonIndexedVert,
+		horizonIndexedFrag,
+		terrainIndexedVert,
+		terrainIndexedFrag,
+	] = await Promise.all(
+		[
+			"glsl/indexed_color/horizon.vert",
+			"glsl/indexed_color/horizon.frag",
+			"glsl/indexed_color/terrain.vert",
+			"glsl/indexed_color/terrain.frag",
+		].map((url) => fetch(url).then((response) => response.text()))
+	);
+
+	const [
+		horizonTrueColorVert,
+		horizonTrueColorFrag,
+		terrainTrueColorVert,
+		terrainTrueColorFrag,
+	] = await Promise.all(
+		[
+			"glsl/true_color/horizon.vert",
+			"glsl/true_color/horizon.frag",
+			"glsl/true_color/terrain.vert",
+			"glsl/true_color/terrain.frag",
+		].map((url) => fetch(url).then((response) => response.text()))
+	);
 
 	const loadImage = async (url, isSDF) => {
 		const image = new Image();
@@ -204,8 +222,8 @@ export default (async () => {
 	resize();
 
 	const drawHorizon = regl({
-		vert: horizonVert,
-		frag: horizonFrag,
+		vert: regl.prop("horizonVert"),
+		frag: regl.prop("horizonFrag"),
 
 		attributes: {
 			aPosition: [-1000, -1, 1000, -1, 0, 1],
@@ -235,8 +253,8 @@ export default (async () => {
 			enable: true,
 			face: "back",
 		},
-		vert: terrainVert,
-		frag: terrainFrag,
+		vert: regl.prop("terrainVert"),
+		frag: regl.prop("terrainFrag"),
 
 		attributes: terrain.attributes,
 		count: terrain.numVertices,
@@ -272,10 +290,26 @@ export default (async () => {
 		},
 	});
 
+	const indexedShaders = {
+		horizonVert: horizonIndexedVert,
+		horizonFrag: horizonIndexedFrag,
+		terrainVert: terrainIndexedVert,
+		terrainFrag: terrainIndexedFrag,
+	};
+
+	const trueColorShaders = {
+		horizonVert: horizonTrueColorVert,
+		horizonFrag: horizonTrueColorFrag,
+		terrainVert: terrainTrueColorVert,
+		terrainFrag: terrainTrueColorFrag,
+	};
+
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
 	const start = Date.now();
 	const raf = regl.frame(({ viewportWidth, viewportHeight, time, tick }) => {
+		// raf.cancel();
+
 		const deltaTime = time - lastFrameTime;
 
 		let mustResize =
@@ -307,11 +341,11 @@ export default (async () => {
 
 		update(deltaTime);
 
-		const textures =
-			settings.hiResTextures && hiResTexturePack != null
-				? hiResTexturePack
-				: texturePack;
+		const hiRes = settings.hiResTextures && hiResTexturePack != null;
+		const textures = hiRes ? hiResTexturePack : texturePack;
 		Object.assign(renderProperties, textures);
+		const shaders = hiRes ? trueColorShaders : indexedShaders;
+		Object.assign(renderProperties, shaders);
 
 		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
 		renderProperties.time = (Date.now() - start) / 1000;
