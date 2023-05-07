@@ -21,6 +21,9 @@ varying float vFogFactor, vBrightness, vSpotlight;
 varying vec3 vBarycentrics;
 varying float vPointyQuad;
 
+varying vec2 vLeftVertex;
+varying float vTopLeftSlope, vBottomLeftSlope;
+
 void main() {
 
 	int whichTexture = int(vWhichTexture);
@@ -58,7 +61,12 @@ void main() {
 	int column = int(amount);
 
 	if (fract(amount) >= 0.5) {
-		float hDist = gl_FragCoord.x; // TODO: change to polygon thing
+
+		vec2 fragTriangleCoord = gl_FragCoord.xy - vLeftVertex;
+		float slope = fragTriangleCoord.y < 0.0 ? vTopLeftSlope : vBottomLeftSlope;
+		float startX = floor(fragTriangleCoord.y / slope + 0.5); // round(x) = floor(x + 0.5)
+		float hDist = gl_FragCoord.x - startX;
+
 		bool everyOtherPixel = fract(hDist / 2.0) > 0.5;
 		bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
 		if (everyOtherPixel || nearBorder) {

@@ -21,11 +21,16 @@ attribute float aBrightness;
 attribute float aWaveAmplitude, aWavePhase;
 attribute float aPointyQuad;
 
+attribute vec3 aPosition0, aPosition1, aPosition2;
+
 varying float vWhichTexture;
 varying vec2 vUV;
 varying vec3 vBarycentrics;
 varying float vFogFactor, vBrightness, vSpotlight;
 varying float vPointyQuad;
+
+varying vec2 vLeftVertex;
+varying float vTopLeftSlope, vBottomLeftSlope;
 
 void main() {
 	vWhichTexture = aWhichTexture;
@@ -42,9 +47,8 @@ void main() {
 		return;
 	}
 
-	vec4 localPosition = vec4(aPosition + vec3(centroid, 0.0), 1);
 	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
-	localPosition.z += wave;
+	vec3 offset = vec3(centroid, wave);
 
 	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
 	if (aQuadID == currentQuadID) {
@@ -55,7 +59,11 @@ void main() {
 		vSpotlight = 0.0;
 	}
 
+	vec4 localPosition = vec4(aPosition + offset, 1.0);
 	vec4 worldPosition = transform * localPosition;
+	vec4 screenPosition = camera * worldPosition;
+
+	gl_Position = screenPosition;
 
 	vBrightness = aBrightness + wave * 0.08;
 	float fogDepth = -worldPosition.z;
@@ -64,6 +72,22 @@ void main() {
 	// vBrightness *= (1.0 - fogFactor);
 	vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
 
-	vec4 screenPosition = camera * worldPosition;
-	gl_Position = screenPosition;
+
+	vec2 pos0 = (camera * transform * vec4(aPosition0 + offset, 1.0)).xy;
+	vec2 pos1 = (camera * transform * vec4(aPosition1 + offset, 1.0)).xy;
+	vec2 pos2 = (camera * transform * vec4(aPosition2 + offset, 1.0)).xy;
+
+	bool less01 = pos0.x < pos1.x;
+	bool less12 = pos1.x < pos2.x;
+	bool less20 = pos2.x < pos0.x;
+
+	vec2 posP, posQ;
+	if (less01 && !less20) vLeftVertex = pos0, posP = pos1, posQ = pos2;
+	if (less12 && !less01) vLeftVertex = pos1, posP = pos2, posQ = pos0;
+	if (less20 && !less12) vLeftVertex = pos2, posP = pos0, posQ = pos1;
+
+	float slopeP = (posP.y - vLeftVertex.y) / (posP.x - vLeftVertex.x);
+	float slopeQ = (posQ.y - vLeftVertex.y) / (posQ.x - vLeftVertex.x);
+	vTopLeftSlope = abs(max(slopeP, slopeQ));
+	vBottomLeftSlope = abs(min(slopeP, slopeQ));
 }

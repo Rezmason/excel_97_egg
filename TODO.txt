@@ -1,18 +1,4 @@
 Indexed color game plan
-
-	Replace dither's Compute start of "scanline"
-		Give each vertex all three positions
-		Vertex shader
-			Compute the screen positions of all three vertices
-			pass to fragment shader
-				vec2 leftmostVertexScreenPos
-				float topLeftSlope
-				float bottomLeftSlope
-		Fragment shader
-			vec2 fragTriangleCoord = fragCoord - leftmostVertexScreenPos
-			float slope = fragTriangleCoord.y < 0 ? topSlope : bottomSlope
-			float startX = round(fragTriangleCoord.y / slope)
-
 	Fix distance brightness in both terrain vert shaders to better match reference
 	Put all magic numbers in the data.rendering object
 	Before continuing, compare to BMP in all browsers
@@ -26,14 +12,20 @@ Indexed color game plan
 	Rename the high res texture option to true color
 	Now test all permutations, comparing before and after side by side
 	Update the essay
+		reread the whole thing just to be sure
+		revise/remove the part about the color palette
+		color lookup table
+		scanline space dithering
 	Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
 	Merge branch
 
-Atlas the textures, instead of whichTexture
-The shaders could probably be cleaned up a bit
+Maybe some texture wobble wouldn't be so bad
 
 Spherical distortion could be neat
 	How do those Minecraft shaders do it?
+
+ATI TruForm type tesselation option, aka NPatches
+	N for NPatches
 
 Keyboard controls discovered!
 	0x1b ESCAPE or 0x7b f12
