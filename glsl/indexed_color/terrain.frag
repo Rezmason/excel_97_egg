@@ -13,11 +13,6 @@ uniform float quadBorder, birdsEyeView;
 uniform float colorTableWidth;
 uniform sampler2D colorTableTexture;
 
-uniform vec3 creditColor1;
-uniform vec3 creditColor2;
-uniform vec3 creditColor3;
-uniform vec3 creditColor4;
-
 uniform vec2 timeOffset;
 
 varying float vWhichTexture;
@@ -28,14 +23,17 @@ varying float vPointyQuad;
 
 void main() {
 
-	vec3 color = vec3(0.0);
-
 	int whichTexture = int(vWhichTexture);
 
+	float src = 0.0;
+	float amount = 0.0;
+
 	if (whichTexture == 0) {
-		color = texture2D(moonscapeTexture, vUV).rgb;
+		src = texture2D(moonscapeTexture, vUV).r;
+		amount = vBrightness;
 	} else if (whichTexture == 1) {
-		color = texture2D(platformTexture, vUV).rgb;
+		src = texture2D(platformTexture, vUV).r;
+		amount = vBrightness;
 	} else if (whichTexture == 2) {
 		highp vec2 creditUV = vUV;
 		creditUV.y = fract((time + timeOffset.y) * -0.006 + creditUV.y * 0.03 - 0.0225);
@@ -49,40 +47,29 @@ void main() {
 		creditUV.y = fract(creditUV.y);
 
 		creditUV = vec2(1.0) - creditUV;
-		vec3 credits = texture2D(creditsTexture, fract(creditUV)).rgb;
+		src = texture2D(creditsTexture, fract(creditUV)).r;
 
-		/*
-		vec3 creditColor = vec3(0.0);
-		float amount = 0.0;
-		if (credits.b > 0.0 && credits.b > credits.g) {
-			amount = credits.b;
-			creditColor = mix(creditColor2, creditColor1, abs(vUV.y - 0.5) * 2.0);
-		} else if (credits.g > 0.0) {
-			amount = credits.g;
-			creditColor = mix(creditColor4, creditColor3, abs(vUV.y - 0.5) * 2.0);
-		}
-
-		amount = clamp(amount, 0.0, 1.0);
-
-		float radius = 0.4;
-		amount = clamp(smoothstep(radius - fwidth(amount), radius, amount), 0.0, 1.0);
-
-		color = creditColor * amount;
-		*/
-
-		color = credits;
+		amount = 1.0 - abs(vUV.y - 0.5) * 2.0;
 	}
 
-	int index = int(color.r * (colorTableWidth * colorTableWidth - 1.0));
-	int numColumns = int(colorTableWidth);
-	int row = index / numColumns;
-	int column = index - row * numColumns;
-	// column = numColumns - 1;
+	int row = int(src * colorTableWidth);
+
+	amount = (colorTableWidth - 1.0) * amount;
+	int column = int(amount);
+
+	if (fract(amount) >= 0.5) {
+		float hDist = gl_FragCoord.x; // TODO: change to polygon thing
+		bool everyOtherPixel = fract(hDist / 2.0) > 0.5;
+		bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
+		if (everyOtherPixel || nearBorder) {
+			column += 1;
+		}
+	}
+
+	// row = int(colorTableWidth) - 1;
+
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
-	color = texture2D(colorTableTexture, colorTableUV).rgb;
-
-
-	color *= vBrightness;
+	vec3 color = texture2D(colorTableTexture, colorTableUV).rgb;
 
 	float quadBorder = quadBorder;
 	if (birdsEyeView == 1.0) {
@@ -92,6 +79,7 @@ void main() {
 	if (quadBorder == 0.0) {
 		color += vec3(1.0, 0.8, 0.2) * vSpotlight;
 	} else {
+
 		float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
 
 		if (vPointyQuad > 24.0) {

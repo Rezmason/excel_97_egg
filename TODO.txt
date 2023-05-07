@@ -1,35 +1,21 @@
 Indexed color game plan
-	Reproduce the reference frame's brightness index components
-		Simplify brightness value for debugging purposes
-		Use x = int(floor(x * c) / c) to sort values into sixteen buckets
-			Maybe fifteen, you be the judge
-		Then stripe it
-			Change c to c*2
-			Every other fragment should ceil instead of floor
-				For now, "every other fragment" uses gl_FragCoord.x
-			Then * 0.5 before the int
-		Change "every other fragment" to (distance to start of raster) % 2
-			Something something corners barycenters
-				https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation
-		Don't stripe it if you're too close to the edge of a quad
-			You've already got quad border math, just use it again
-		Revisit the brightness and fog calculation in BOTH vertex shaders
-	Grid and spotlight can stay as they are, if they still look good
-	And make this stuff data driven
-		Including whatever got added to the shaders
-	And consider changing the icons
-		What about their labels? What about the URL params? Hope that's a non-issue
+	Expand bucket "resolution" with dithering
+		Alternate on distance-to-start-of-raster
+			https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html
+	Fix distance brightness in both terrain vert shaders to better match reference
+	Put all magic numbers in the data.rendering object
+	Before continuing, compare to BMP in all browsers
+		Confirm from screenshots that colors are correct
 	Recolor everything, you moron.
-		Base it on the loaded palette
-			Load this first; move colorLookupTable out of the texture packs
-			Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
-		The reference texture colors should be the last column in the corrected palette.
-			Recolor the stele text
-			Recolor the high res textures
-			Recolor the the about banner
-			Recolor the icons, maybe. Jeez louise.
+		Base it all on the last column in the palette
+		Recolor the high res textures
+		Base the SDF text colors on the loaded palette
+		Convert UI images to indexed bitmaps
+		Maybe recolor the the about banner
+	Rename the high res texture option to true color
 	Now test all permutations, comparing before and after side by side
-	And update the essay
+	Update the essay
+	Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
 	Merge branch
 
 Atlas the textures, instead of whichTexture
