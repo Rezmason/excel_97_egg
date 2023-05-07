@@ -1,7 +1,18 @@
 Indexed color game plan
-	Expand bucket "resolution" with dithering
-		Alternate on distance-to-start-of-raster
-			https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html
+
+	Replace dither's Compute start of "scanline"
+		Give each vertex all three positions
+		Vertex shader
+			Compute the screen positions of all three vertices
+			pass to fragment shader
+				vec2 leftmostVertexScreenPos
+				float topLeftSlope
+				float bottomLeftSlope
+		Fragment shader
+			vec2 fragTriangleCoord = fragCoord - leftmostVertexScreenPos
+			float slope = fragTriangleCoord.y < 0 ? topSlope : bottomSlope
+			float startX = round(fragTriangleCoord.y / slope)
+
 	Fix distance brightness in both terrain vert shaders to better match reference
 	Put all magic numbers in the data.rendering object
 	Before continuing, compare to BMP in all browsers
