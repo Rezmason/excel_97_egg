@@ -121,12 +121,8 @@ export default (async () => {
 			return;
 		}
 
-		if (event.code === "Space") {
-			if (commandBar.contains(event.target)) {
-				event.preventDefault();
-			}
-
-			// TODO: handbrake
+		if (event.code === "Space" && commandBar.contains(event.target)) {
+			event.preventDefault();
 			return;
 		}
 
