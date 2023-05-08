@@ -81,13 +81,17 @@ void main() {
 	bool less12 = pos1.x < pos2.x;
 	bool less20 = pos2.x < pos0.x;
 
-	vec2 posP, posQ;
-	if (less01 && !less20) vLeftVertex = pos0, posP = pos1, posQ = pos2;
-	if (less12 && !less01) vLeftVertex = pos1, posP = pos2, posQ = pos0;
-	if (less20 && !less12) vLeftVertex = pos2, posP = pos0, posQ = pos1;
+	vec2 deltaP, deltaQ;
+	if (less01 && !less20) vLeftVertex = pos0, deltaP = pos1, deltaQ = pos2;
+	if (less12 && !less01) vLeftVertex = pos1, deltaP = pos2, deltaQ = pos0;
+	if (less20 && !less12) vLeftVertex = pos2, deltaP = pos0, deltaQ = pos1;
 
-	float slopeP = (posP.y - vLeftVertex.y) / (posP.x - vLeftVertex.x);
-	float slopeQ = (posQ.y - vLeftVertex.y) / (posQ.x - vLeftVertex.x);
+	deltaP -= vLeftVertex;
+	deltaQ -= vLeftVertex;
+
+	float slopeP = deltaP.y == 0.0 ? 0.0 : clamp(deltaP.x / deltaP.y, -100.0, 100.0);
+	float slopeQ = deltaQ.y == 0.0 ? 0.0 : clamp(deltaQ.x / deltaQ.y, -100.0, 100.0);
+
 	vTopLeftSlope = abs(max(slopeP, slopeQ));
 	vBottomLeftSlope = abs(min(slopeP, slopeQ));
 }

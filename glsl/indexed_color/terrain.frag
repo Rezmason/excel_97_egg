@@ -1,7 +1,3 @@
-#ifdef GL_OES_standard_derivatives
-#extension GL_OES_standard_derivatives: enable
-#endif
-
 precision mediump float;
 
 uniform highp float tick, time;
@@ -45,8 +41,8 @@ void main() {
 		creditUV.y += 0.076;
 
 		creditUV.y *= 5.0;
-		creditUV.x = creditUV.x / 5.0 + (1.0 - 1.0 / 5.0);
-		creditUV.x += 1.0 / 5.0 * (1.0 + floor(creditUV.y));
+		creditUV.x = creditUV.x * 0.2 + (1.0 - 1.0 * 0.2);
+		creditUV.x += 1.0 * 0.2 * (1.0 + floor(creditUV.y));
 		creditUV.y = fract(creditUV.y);
 
 		creditUV = vec2(1.0) - creditUV;
@@ -56,18 +52,15 @@ void main() {
 	}
 
 	int row = int(src * colorTableWidth);
+	int column = int(amount * colorTableWidth);
 
-	amount = (colorTableWidth - 1.0) * amount;
-	int column = int(amount);
+	if (fract(amount * colorTableWidth) >= 0.5) {
 
-	if (fract(amount) >= 0.5) {
+		vec2 origin = gl_FragCoord.xy - vLeftVertex;
+		float slope = origin.y < 0.0 ? vTopLeftSlope : vBottomLeftSlope;
+		float hDist = origin.x - origin.y * slope;
 
-		vec2 fragTriangleCoord = gl_FragCoord.xy - vLeftVertex;
-		float slope = fragTriangleCoord.y < 0.0 ? vTopLeftSlope : vBottomLeftSlope;
-		float startX = floor(fragTriangleCoord.y / slope + 0.5); // round(x) = floor(x + 0.5)
-		float hDist = gl_FragCoord.x - startX;
-
-		bool everyOtherPixel = fract(hDist / 2.0) > 0.5;
+		bool everyOtherPixel = fract(hDist * 0.5) > 0.5;
 		bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
 		if (everyOtherPixel || nearBorder) {
 			column += 1;
