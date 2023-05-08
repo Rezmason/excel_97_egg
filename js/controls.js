@@ -348,10 +348,12 @@ export default (async () => {
 
 	const update = (deltaTime) => {
 		updateCreditOffset(deltaTime);
-		updateRotation(deltaTime);
-		updatePosition(deltaTime);
-		limitAltitude(deltaTime);
-		updateForwardSpeed(deltaTime);
+		if (settings.interactive) {
+			updateRotation(deltaTime);
+			updatePosition(deltaTime);
+			limitAltitude(deltaTime);
+			updateForwardSpeed(deltaTime);
+		}
 		updateTransform();
 	};
 

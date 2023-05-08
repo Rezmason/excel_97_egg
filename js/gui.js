@@ -15,6 +15,9 @@ export default (async () => {
 		sanitizePosition:
 			!urlParams.has("sanitizePosition") ||
 			urlParams.get("sanitizePosition").toLowerCase() !== "false",
+		interactive:
+			!urlParams.has("interactive") ||
+			urlParams.get("interactive").toLowerCase() !== "false",
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");

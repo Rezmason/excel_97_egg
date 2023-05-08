@@ -1,8 +1,13 @@
 Indexed color game plan
-	Fix distance brightness in both terrain vert shaders to better match reference
+	Match the initial framebuffer
+		640x480
+		Line everything up
+			http://localhost:8000/?l=spawn&interactive=false
+			Compare in Photoshop
+			Change the position, rotation and fov if you have to
+		Tweak or rewrite the pointiness calculation
+		Tweak or rewrite the fog calculation
 	Put all magic numbers in the data.rendering object
-	Before continuing, compare to BMP in all browsers
-		Confirm from screenshots that colors are correct
 	Recolor everything, you moron.
 		Base it all on the last column in the palette
 		Recolor the high res textures
@@ -13,9 +18,10 @@ Indexed color game plan
 	Now test all permutations, comparing before and after side by side
 	Update the essay
 		reread the whole thing just to be sure
-		revise/remove the part about the color palette
+		Tweak or rewrite the part about the color palette
 		color lookup table
 		scanline space dithering
+			Modern GPUs don't rasterize with scanlines
 	Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
 	Merge branch
 
