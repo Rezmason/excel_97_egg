@@ -23,8 +23,8 @@
 		"maxAltitude": 104,
 		"locations": {
 			"spawn": {
-				"position": [0, 0, 45],
-				"rotation": [0, 260]
+				"position": [0, 32.8125, 40],
+				"rotation": [0, 235.45]
 			},
 			"looking_at_monolith": {
 				"position": [0, 0, 45],
@@ -51,7 +51,7 @@
 		"fov": 26,
 		"maxDrawDistance": 600,
 		"quadBorder": 0.02,
-		"resolution": [800, 600],
+		"resolution": [640, 480],
 		"targetFPS": 15,
 		"creditColors": [
 			[0.0, 0.0, 0.0],
@@ -76,10 +76,10 @@
 		"color_table": "assets/textures/palette.bmp"
 	},
 	"horizon": {
-		"height": 40
+		"height": 46
 	},
 	"terrain": {
-		"size": 2000,
+		"size": 2100,
 		"waveAmplitude": 0.125,
 		"regions": [
 			{
