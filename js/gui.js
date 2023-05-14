@@ -173,6 +173,9 @@ export default (async () => {
 	);
 
 	const reportPosition = (x, y) => {
+		if (!settings.interactive) {
+			return;
+		}
 		urlParams.set("l", `${x},${y}`);
 		history.replaceState({}, "", "?" + unescape(urlParams.toString()));
 	};

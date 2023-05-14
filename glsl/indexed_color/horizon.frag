@@ -26,6 +26,10 @@ void main() {
 		int numColumns = int(colorTableWidth);
 		int row = index / numColumns;
 		int column = index - row * numColumns;
+
+		// row = int(colorTableWidth) - 1;
+		// column = int(colorTableWidth) - 1;
+
 		vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
 		color = texture2D(colorTableTexture, colorTableUV).rgb;
 

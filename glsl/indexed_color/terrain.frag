@@ -68,6 +68,7 @@ void main() {
 	}
 
 	// row = int(colorTableWidth) - 1;
+	// column = int(colorTableWidth) - 1;
 
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
 	vec3 color = texture2D(colorTableTexture, colorTableUV).rgb;
