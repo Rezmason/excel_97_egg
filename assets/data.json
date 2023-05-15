@@ -49,7 +49,7 @@
 		"fogNear": 100,
 		"fogFar": 800,
 		"fov": 26,
-		"maxDrawDistance": 600,
+		"maxDrawDistance": 650,
 		"quadBorder": 0.02,
 		"resolution": [640, 480],
 		"targetFPS": 15,
