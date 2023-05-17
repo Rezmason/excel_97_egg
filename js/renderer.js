@@ -197,8 +197,11 @@ export default (async () => {
 		repeatOffset: vec2.create(),
 		birdsEyeView: 0,
 		lightingCutoff: 1,
+		limitDrawResolution: 1,
+		vertexJiggle: data.rendering.vertexJiggle,
 		quadBorder: 0,
 		showSindogs: 0,
+		screenSize: [0, 0],
 		fogFar: data.rendering.fogFar,
 		colorTableTexture,
 		colorTableWidth: colorTableTexture.width,
@@ -213,8 +216,11 @@ export default (async () => {
 					: data.rendering.resolution[1] / canvas.clientHeight;
 			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
 		}
-		canvas.width = Math.ceil(canvas.clientWidth * scaleFactor);
-		canvas.height = Math.ceil(canvas.clientHeight * scaleFactor);
+		const width = Math.ceil(canvas.clientWidth * scaleFactor);
+		const height = Math.ceil(canvas.clientHeight * scaleFactor);
+		renderProperties.screenSize = [width, height];
+		canvas.width = width;
+		canvas.height = height;
 	};
 
 	window.addEventListener("resize", (event) => resize());
@@ -266,12 +272,15 @@ export default (async () => {
 			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
 			transform: regl.prop("transform"),
+			screenSize: regl.prop("screenSize"),
 			airplanePosition: regl.prop("position"),
 			terrainSize: terrain.size,
 			maxDrawDistance: data.rendering.maxDrawDistance,
 			currentQuadID: regl.prop("currentQuadID"),
 			birdsEyeView: regl.prop("birdsEyeView"),
 			lightingCutoff: regl.prop("lightingCutoff"),
+			limitDrawResolution: regl.prop("limitDrawResolution"),
+			vertexJiggle: regl.prop("vertexJiggle"),
 			quadBorder: regl.prop("quadBorder"),
 			repeatOffset: regl.prop("repeatOffset"),
 			time: regl.prop("time"),
@@ -355,6 +364,7 @@ export default (async () => {
 
 		renderProperties.birdsEyeView = settings.birdsEyeView ? 1 : 0;
 		renderProperties.lightingCutoff = settings.lightingCutoff ? 1 : 0;
+		renderProperties.limitDrawResolution = settings.limitDrawResolution ? 1 : 0;
 		renderProperties.fogFar =
 			data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
 		renderProperties.quadBorder = settings.showQuadEdges

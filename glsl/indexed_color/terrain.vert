@@ -7,7 +7,7 @@ uniform mat4 camera, transform;
 uniform vec3 airplanePosition;
 uniform float terrainSize, maxDrawDistance;
 uniform float currentQuadID;
-uniform float birdsEyeView, lightingCutoff;
+uniform float birdsEyeView, lightingCutoff, limitDrawResolution, vertexJiggle;
 uniform float fogNear, fogFar;
 uniform vec2 repeatOffset;
 
@@ -63,13 +63,16 @@ void main() {
 	vec4 worldPosition = transform * localPosition;
 	vec4 screenPosition = camera * worldPosition;
 
+	if (limitDrawResolution == 1.0) {
+		screenPosition.xy = floor(screenPosition.xy * vertexJiggle + 0.5) / vertexJiggle;
+	}
+
 	gl_Position = screenPosition;
 
 	vBrightness = aBrightness + wave * 0.08;
 	float fogDepth = -worldPosition.z;
 	float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
 	vFogFactor = fogFactor;
-	// vBrightness *= (1.0 - fogFactor);
 	vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
 
 

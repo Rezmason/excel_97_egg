@@ -1,13 +1,5 @@
 Indexed color game plan
-	Match the initial framebuffer
-		640x480
-		Line everything up
-			http://localhost:8000/?l=spawn&interactive=false
-			Compare in Photoshop
-			Change the position, rotation and fov if you have to
-		Tweak or rewrite the pointiness calculation
-		Tweak or rewrite the fog calculation
-	Put all magic numbers in the data.rendering object
+	Correct indexed-color horizon.bmp to match framebuffer
 	Recolor everything, you moron.
 		Base it all on the last column in the palette
 		Recolor the high res textures
@@ -22,7 +14,11 @@ Indexed color game plan
 		color lookup table
 		scanline space dithering
 			Modern GPUs don't rasterize with scanlines
+		brightness calculation?
+		Thank fSpy creator for fSpy
 	Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
+	Bonus: right-side two skipped columns
+		It's drawing the edge lines over it though, that's funny
 	Merge branch
 
 Maybe some texture wobble wouldn't be so bad

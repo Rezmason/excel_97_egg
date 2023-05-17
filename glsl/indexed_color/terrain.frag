@@ -4,7 +4,8 @@ uniform highp float tick, time;
 uniform sampler2D moonscapeTexture;
 uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
-uniform float quadBorder, birdsEyeView;
+uniform float quadBorder, birdsEyeView, limitDrawResolution;
+uniform vec2 screenSize;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTableTexture;
@@ -20,36 +21,41 @@ varying float vPointyQuad;
 varying vec2 vLeftVertex;
 varying float vTopLeftSlope, vBottomLeftSlope;
 
+highp vec2 getCreditUV() {
+	highp vec2 uv = vUV;
+	uv.y = fract((time + timeOffset.y) * -0.006 + uv.y * 0.03 - 0.0225);
+
+	uv.y *= 0.92;
+	uv.y += 0.076;
+
+	uv.y *= 5.0;
+	uv.x = uv.x * 0.2 + (1.0 - 1.0 * 0.2);
+	uv.x += 1.0 * 0.2 * (1.0 + floor(uv.y));
+	uv.y = fract(uv.y);
+
+	uv = vec2(1.0) - uv;
+	uv = fract(uv);
+
+	return uv;
+}
+
 void main() {
 
 	int whichTexture = int(vWhichTexture);
 
 	float src = 0.0;
-	float amount = 0.0;
+	float amount = 1.0;
 
 	if (whichTexture == 0) {
 		src = texture2D(moonscapeTexture, vUV).r;
-		amount = vBrightness;
 	} else if (whichTexture == 1) {
 		src = texture2D(platformTexture, vUV).r;
-		amount = vBrightness;
 	} else if (whichTexture == 2) {
-		highp vec2 creditUV = vUV;
-		creditUV.y = fract((time + timeOffset.y) * -0.006 + creditUV.y * 0.03 - 0.0225);
-
-		creditUV.y *= 0.92;
-		creditUV.y += 0.076;
-
-		creditUV.y *= 5.0;
-		creditUV.x = creditUV.x * 0.2 + (1.0 - 1.0 * 0.2);
-		creditUV.x += 1.0 * 0.2 * (1.0 + floor(creditUV.y));
-		creditUV.y = fract(creditUV.y);
-
-		creditUV = vec2(1.0) - creditUV;
-		src = texture2D(creditsTexture, fract(creditUV)).r;
-
+		src = texture2D(creditsTexture, getCreditUV()).r;
 		amount = 1.0 - abs(vUV.y - 0.5) * 2.0;
 	}
+
+	amount *= vBrightness;
 
 	int row = int(src * colorTableWidth);
 	int column = int(amount * colorTableWidth);
@@ -111,6 +117,16 @@ void main() {
 				color,
 				borderDistance
 			);
+		}
+	}
+
+	if (limitDrawResolution == 1.0) {
+		float distanceFromRight = screenSize.x - gl_FragCoord.x;
+		if (distanceFromRight < 4.0) {
+			float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
+			if (borderDistance > 0.02 || distanceFromRight <= 2.0) {
+					color = vec3(0.0);
+			}
 		}
 	}
 

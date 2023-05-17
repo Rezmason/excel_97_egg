@@ -13,6 +13,7 @@ export default (data) => {
 	const getRegion = (x, y, minOffset, maxOffset) => {
 		const region = data.terrain.regions.find(
 			(region) =>
+				region.active &&
 				x >= region.x + minOffset &&
 				x < region.x + region.width - maxOffset &&
 				y >= region.y + minOffset &&
@@ -122,8 +123,13 @@ export default (data) => {
 					brightness: vertices
 						.map(([x, y]) => {
 							let brightness;
-							if (region.brightness != null) {
-								brightness = region.brightness[y - region.y][x - region.x];
+							if (
+								region.brightness != null &&
+								region.brightness[y - region.y][x - region.x] >= 0
+							) {
+								brightness =
+									region.brightness[y - region.y][x - region.x] *
+									region.brightnessTableMult;
 							} else {
 								const elevation = elevations[y][x];
 								const north = elevations[modulo(y - 1, numRows)][x];
@@ -131,7 +137,9 @@ export default (data) => {
 								const west = elevations[y][modulo(x - 1, numColumns)];
 								const east = elevations[y][modulo(x + 1, numColumns)];
 								brightness = (north + south + east + west) / 2 - elevation * 2;
-								brightness = (brightness - 1) * region.brightnessMagnifier + 1;
+								brightness =
+									(brightness - 1) * region.brightnessMult +
+									region.brightnessAdd;
 							}
 							return Math.max(0, Math.min(1, brightness));
 						})

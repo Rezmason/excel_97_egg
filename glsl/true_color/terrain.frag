@@ -8,7 +8,8 @@ uniform highp float tick, time;
 uniform sampler2D moonscapeTexture;
 uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
-uniform float quadBorder, birdsEyeView;
+uniform float quadBorder, birdsEyeView, limitDrawResolution;
+uniform vec2 screenSize;
 
 uniform vec3 creditColor1;
 uniform vec3 creditColor2;
@@ -23,29 +24,39 @@ varying float vFogFactor, vBrightness, vSpotlight;
 varying vec3 vBarycentrics;
 varying float vPointyQuad;
 
+varying vec2 vLeftVertex;
+varying float vTopLeftSlope, vBottomLeftSlope;
+
+highp vec2 getCreditUV() {
+	highp vec2 uv = vUV;
+	uv.y = fract((time + timeOffset.y) * -0.006 + uv.y * 0.03 - 0.0225);
+
+	uv.y *= 0.92;
+	uv.y += 0.076;
+
+	uv.y *= 5.0;
+	uv.x = uv.x * 0.2 + (1.0 - 1.0 * 0.2);
+	uv.x += 1.0 * 0.2 * (1.0 + floor(uv.y));
+	uv.y = fract(uv.y);
+
+	uv = vec2(1.0) - uv;
+	uv = fract(uv);
+
+	return uv;
+}
+
 void main() {
 
-	vec3 color = vec3(0.0);
-
 	int whichTexture = int(vWhichTexture);
+
+	vec3 color = vec3(0.0);
 
 	if (whichTexture == 0) {
 		color = texture2D(moonscapeTexture, vUV).rgb;
 	} else if (whichTexture == 1) {
 		color = texture2D(platformTexture, vUV).rgb;
 	} else if (whichTexture == 2) {
-		highp vec2 creditUV = vUV;
-		creditUV.y = fract((time + timeOffset.y) * -0.006 + creditUV.y * 0.03 - 0.0225);
-
-		creditUV.y *= 0.92;
-		creditUV.y += 0.076;
-
-		creditUV.y *= 5.0;
-		creditUV.x = creditUV.x / 5.0 + (1.0 - 1.0 / 5.0);
-		creditUV.x += 1.0 / 5.0 * (1.0 + floor(creditUV.y));
-		creditUV.y = fract(creditUV.y);
-
-		creditUV = vec2(1.0) - creditUV;
+		highp vec2 creditUV = getCreditUV();
 		vec4 credits = texture2D(creditsTexture, fract(creditUV));
 
 		vec3 creditColor = vec3(0.0);
@@ -105,6 +116,16 @@ void main() {
 				color,
 				borderDistance
 			);
+		}
+	}
+
+	if (limitDrawResolution == 1.0) {
+		float distanceFromRight = screenSize.x - gl_FragCoord.x;
+		if (distanceFromRight < 4.0) {
+			float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
+			if (borderDistance > 0.02 || distanceFromRight <= 2.0) {
+					color = vec3(0.0);
+			}
 		}
 	}
 
