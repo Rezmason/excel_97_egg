@@ -11,10 +11,9 @@ uniform sampler2D creditsTexture;
 uniform float quadBorder, birdsEyeView, limitDrawResolution;
 uniform vec2 screenSize;
 
-uniform vec3 creditColor1;
-uniform vec3 creditColor2;
-uniform vec3 creditColor3;
-uniform vec3 creditColor4;
+uniform float colorTableWidth;
+uniform sampler2D linearColorTableTexture;
+uniform float creditColor1, creditColor2;
 
 uniform vec2 timeOffset;
 
@@ -50,6 +49,7 @@ void main() {
 	int whichTexture = int(vWhichTexture);
 
 	vec3 color = vec3(0.0);
+	float amount = vBrightness;
 
 	if (whichTexture == 0) {
 		color = texture2D(moonscapeTexture, vUV).rgb;
@@ -59,25 +59,17 @@ void main() {
 		highp vec2 creditUV = getCreditUV();
 		vec4 credits = texture2D(creditsTexture, fract(creditUV));
 
-		vec3 creditColor = vec3(0.0);
-		float amount = 0.0;
-		if (credits.b > 0.0 && credits.b > credits.g) {
-			amount = credits.b;
-			creditColor = mix(creditColor2, creditColor1, abs(vUV.y - 0.5) * 2.0);
-		} else if (credits.g > 0.0) {
-			amount = credits.g;
-			creditColor = mix(creditColor4, creditColor3, abs(vUV.y - 0.5) * 2.0);
-		}
-
-		amount = clamp(amount, 0.0, 1.0);
+		float scroll = 1.0 - abs(vUV.y - 0.5) * 2.0;
+		float colorIndex = (credits.g > credits.b) ? creditColor1 : creditColor2;
+		vec2 colorTableUV = vec2(scroll, (colorIndex + 0.5) / colorTableWidth);
+		color = texture2D(linearColorTableTexture, colorTableUV).rgb;
 
 		float radius = 0.4;
+		amount = max(credits.g, credits.b);
 		amount = clamp(smoothstep(radius - fwidth(amount), radius, amount), 0.0, 1.0);
-
-		color = creditColor * amount;
 	}
 
-	color *= vBrightness;
+	color *= amount;
 
 	float quadBorder = quadBorder;
 	if (birdsEyeView == 1.0) {

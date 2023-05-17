@@ -44,7 +44,7 @@ void main() {
 	int whichTexture = int(vWhichTexture);
 
 	float src = 0.0;
-	float amount = 1.0;
+	float amount = vBrightness;
 
 	if (whichTexture == 0) {
 		src = texture2D(moonscapeTexture, vUV).r;
@@ -54,8 +54,6 @@ void main() {
 		src = texture2D(creditsTexture, getCreditUV()).r;
 		amount = 1.0 - abs(vUV.y - 0.5) * 2.0;
 	}
-
-	amount *= vBrightness;
 
 	int row = int(src * colorTableWidth);
 	int column = int(amount * colorTableWidth);

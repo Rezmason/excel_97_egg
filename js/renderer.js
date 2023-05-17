@@ -155,9 +155,12 @@ export default (async () => {
 		};
 	};
 
-	const loadColorTableTexture = async (url) => {
-		return regl.texture((await loadIndexedBitmap(url)).colorTable);
-	};
+	const loadColorTableTexture = async (url, linear) =>
+		regl.texture({
+			...(await loadIndexedBitmap(url)).colorTable,
+			min: linear ? "linear" : "nearest",
+			mag: linear ? "linear" : "nearest",
+		});
 
 	const loadTexturePack = async (pack) => {
 		const textures = await Promise.all(
@@ -180,7 +183,12 @@ export default (async () => {
 		data.rendering.texture_packs.standard
 	);
 	const colorTableTexture = await loadColorTableTexture(
-		data.rendering.color_table
+		data.rendering.color_table,
+		false
+	);
+	const linearColorTableTexture = await loadColorTableTexture(
+		data.rendering.color_table,
+		true
 	);
 	let hiResTexturePack = null;
 	await deferredHiResLoad();
@@ -204,6 +212,7 @@ export default (async () => {
 		screenSize: [0, 0],
 		fogFar: data.rendering.fogFar,
 		colorTableTexture,
+		linearColorTableTexture,
 		colorTableWidth: colorTableTexture.width,
 	};
 
@@ -243,6 +252,7 @@ export default (async () => {
 			rotation: regl.prop("rotation"),
 
 			colorTableTexture: regl.prop("colorTableTexture"),
+			linearColorTableTexture: regl.prop("linearColorTableTexture"),
 			colorTableWidth: regl.prop("colorTableWidth"),
 
 			camera: regl.prop("camera"),
@@ -291,12 +301,11 @@ export default (async () => {
 			creditsTexture: regl.prop("creditsTexture"),
 
 			colorTableTexture: regl.prop("colorTableTexture"),
+			linearColorTableTexture: regl.prop("linearColorTableTexture"),
 			colorTableWidth: regl.prop("colorTableWidth"),
 
 			creditColor1: creditColors[0],
 			creditColor2: creditColors[1],
-			creditColor3: creditColors[2],
-			creditColor4: creditColors[3],
 
 			timeOffset: regl.prop("timeOffset"),
 		},

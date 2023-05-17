@@ -3,9 +3,8 @@ Indexed color game plan
 	Recolor everything, you moron.
 		Base it all on the last column in the palette
 		Recolor the high res textures
-		Base the SDF text colors on the loaded palette
 		Convert UI images to indexed bitmaps
-		Maybe recolor the the about banner
+		Maybe recolor the about banner
 	Rename the high res texture option to true color
 	Now test all permutations, comparing before and after side by side
 	Update the essay
