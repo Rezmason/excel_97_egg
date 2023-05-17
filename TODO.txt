@@ -1,39 +1,36 @@
 Indexed color game plan
-	Recolor everything, you moron.
-		Base it all on the last column in the palette
-		Recolor the high res textures
-		Convert UI images to indexed bitmaps
-		Maybe recolor the about banner
-	Rename the high res texture option to true color
-	Now test all permutations, comparing before and after side by side
-	Update the essay
-		reread the whole thing just to be sure
-		Tweak or rewrite the part about the color palette
-		color lookup table
-		scanline space dithering
-			Modern GPUs don't rasterize with scanlines
-		brightness calculation?
-		Thank fSpy creator for fSpy
-	Bonus: if someone drags and drops a diferent palette in, change the palette and update everything downstream
-	Bonus: right-side two skipped columns
-		It's drawing the edge lines over it though, that's funny
-	Merge branch
+	Recolor the high res moonscape texture
+	Convert UI images to indexed bitmaps
+	Remake the about banner with a reduced color palette
 
-Maybe some texture wobble wouldn't be so bad
+More refinements
+	Moonscape texture UVs ignore the last column
+		but only moonscape
+		Remake the high res moonscape texture, hooray
+	Heightmap bitmaps
+		What all is encoded in it?
+		heights
+		lighting?
+	Keyboard controls
+		0x1b ESCAPE or 0x7b f12 : quit the easter egg
+		0x26 UP or 0x68 numeric 8 : nudge the altitude up
+		0x28 DOWN or 0x62 numeric 2 : nudge the altitude down
+	Custom palette support
+
+Update the essay
+	reread the whole thing just to be sure
+	Tweak or rewrite the part about the color palette
+	color lookup table
+	scanline space dithering
+		Modern GPUs don't rasterize with scanlines
+	64x64 height/brightness/etc table
+	Thank fSpy creator for fSpy
 
 Spherical distortion could be neat
 	How do those Minecraft shaders do it?
 
 ATI TruForm type tesselation option, aka NPatches
 	N for NPatches
-
-Keyboard controls discovered!
-	0x1b ESCAPE or 0x7b f12
-		Quit the easter egg
-	0x26 UP or 0x68 numeric 8
-		Nudge the altitude up
-	0x28 DOWN or 0x62 numeric 2
-		Nudge the altitude down
 
 Essay based on interviews
 

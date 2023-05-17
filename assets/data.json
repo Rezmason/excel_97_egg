@@ -61,7 +61,7 @@
 				"platformTexture": { "url": "assets/textures/platform.bmp", "type": "indexed_color" },
 				"creditsTexture": { "url": "assets/textures/credits_wrapped.bmp", "type": "indexed_color" }
 			},
-			"hi_res": {
+			"true_color": {
 				"horizonTexture": { "url": "assets/textures/hi_res/horizon_hi_res.png", "type": "mipmapped_true_color" },
 				"moonscapeTexture": { "url": "assets/textures/hi_res/moonscape_hi_res.png", "type": "mipmapped_true_color" },
 				"platformTexture": { "url": "assets/textures/hi_res/platform_hi_res.png", "type": "mipmapped_true_color" },

@@ -114,7 +114,7 @@ input#lighting_cutoff {
 input#show_quad_edges {
 	--sprite-x: 3;
 }
-input#hi_res_textures {
+input#true_color_textures {
 	--sprite-x: 4;
 }
 input#limit_draw_resolution {

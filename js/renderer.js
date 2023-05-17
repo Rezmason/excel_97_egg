@@ -22,14 +22,14 @@ export default (async () => {
 	});
 
 	events.addEventListener("settingsChanged", (event) => {
-		deferredHiResLoad();
+		deferredTrueColorLoad();
 		resize();
 	});
 
-	const deferredHiResLoad = async () => {
-		if (settings.hiResTextures && hiResTexturePack == null) {
-			hiResTexturePack = await loadTexturePack(
-				data.rendering.texture_packs.hi_res
+	const deferredTrueColorLoad = async () => {
+		if (settings.trueColorTextures && trueColorTexturePack == null) {
+			trueColorTexturePack = await loadTexturePack(
+				data.rendering.texture_packs.true_color
 			);
 		}
 	};
@@ -190,8 +190,8 @@ export default (async () => {
 		data.rendering.color_table,
 		true
 	);
-	let hiResTexturePack = null;
-	await deferredHiResLoad();
+	let trueColorTexturePack = null;
+	await deferredTrueColorLoad();
 
 	const camera = mat4.create();
 
@@ -362,10 +362,10 @@ export default (async () => {
 
 		update(deltaTime);
 
-		const hiRes = settings.hiResTextures && hiResTexturePack != null;
-		const textures = hiRes ? hiResTexturePack : texturePack;
+		const trueColor = settings.trueColorTextures && trueColorTexturePack != null;
+		const textures = trueColor ? trueColorTexturePack : texturePack;
 		Object.assign(renderProperties, textures);
-		const shaders = hiRes ? trueColorShaders : indexedShaders;
+		const shaders = trueColor ? trueColorShaders : indexedShaders;
 		Object.assign(renderProperties, shaders);
 
 		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
