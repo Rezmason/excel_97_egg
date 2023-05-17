@@ -1,7 +1,4 @@
-Indexed color game plan
-	Recolor the high res moonscape texture
-	Convert UI images to indexed bitmaps
-	Remake the about banner with a reduced color palette
+Recolor the high res moonscape texture
 
 More refinements
 	Moonscape texture UVs ignore the last column
@@ -21,6 +18,7 @@ Update the essay
 	reread the whole thing just to be sure
 	Tweak or rewrite the part about the color palette
 	color lookup table
+		indexed colors
 	scanline space dithering
 		Modern GPUs don't rasterize with scanlines
 	64x64 height/brightness/etc table
