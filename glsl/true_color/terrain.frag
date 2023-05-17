@@ -66,7 +66,14 @@ void main() {
 
 		float radius = 0.4;
 		amount = max(credits.g, credits.b);
-		amount = clamp(smoothstep(radius - fwidth(amount), radius, amount), 0.0, 1.0);
+		float derivative = 0.02;
+		if (limitDrawResolution == 0.0) {
+			derivative = fwidth(amount);
+			if (derivative > 0.1) {
+				derivative = 0.0;
+			}
+		}
+		amount = clamp(smoothstep(radius - derivative, radius, amount), 0.0, 1.0);
 	}
 
 	color *= amount;
