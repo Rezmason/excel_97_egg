@@ -120,9 +120,9 @@ void main() {
 
 	if (limitDrawResolution == 1.0) {
 		float distanceFromRight = screenSize.x - gl_FragCoord.x;
-		if (distanceFromRight < 4.0) {
+		if (distanceFromRight < 2.0) {
 			float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
-			if (borderDistance > 0.02 || distanceFromRight <= 2.0) {
+			if (borderDistance > 0.02 || distanceFromRight <= 1.0) {
 					color = vec3(0.0);
 			}
 		}
