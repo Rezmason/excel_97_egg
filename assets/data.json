@@ -71,7 +71,7 @@
 		"color_table": "assets/textures/palette.bmp"
 	},
 	"horizon": {
-		"height": 46
+		"height": 64
 	},
 	"terrain": {
 		"size": 2050,

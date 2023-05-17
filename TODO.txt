@@ -1,5 +1,4 @@
 Indexed color game plan
-	Correct indexed-color horizon.bmp to match framebuffer
 	Recolor everything, you moron.
 		Base it all on the last column in the palette
 		Recolor the high res textures
