@@ -60,7 +60,7 @@ export default (async () => {
 	const indexedShaderSet = await loadShaderSet("indexed_color");
 	const trueColorShaderSet = await loadShaderSet("true_color");
 
-	const renderProperties = {
+	const state = {
 		time: 0,
 		camera,
 		repeatOffset,
@@ -99,13 +99,10 @@ export default (async () => {
 
 	const interpretSettings = () => {
 		for (const key in settings) {
-			renderProperties[key] = settings[key] ? 1 : 0;
+			state[key] = settings[key] ? 1 : 0;
 		}
-		renderProperties.fogFar =
-			data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
-		renderProperties.quadBorder = settings.showQuadEdges
-			? data.rendering.quadBorder
-			: 0;
+		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
+		state.quadBorder = settings.showQuadEdges ? data.rendering.quadBorder : 0;
 	};
 
 	window.addEventListener("resize", (event) => resize());
@@ -114,7 +111,7 @@ export default (async () => {
 	resize();
 
 	const uniforms = Object.fromEntries(
-		Object.keys(renderProperties).map((key) => [key, regl.prop(key)])
+		Object.keys(state).map((key) => [key, regl.prop(key)])
 	);
 
 	const drawHorizon = regl({
@@ -179,29 +176,27 @@ export default (async () => {
 
 		const trueColor = settings.trueColorTextures && trueColorTextures != null;
 		const textures = trueColor ? trueColorTextures : indexedColorTextures;
-		Object.assign(renderProperties, textures);
+		Object.assign(state, textures);
 		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;
-		Object.assign(renderProperties, shaderSet);
+		Object.assign(state, shaderSet);
 
-		renderProperties.currentQuadID = terrain.getQuadAt(
-			...controlData.position
-		).id;
-		renderProperties.time = (Date.now() - start) / 1000;
+		state.currentQuadID = terrain.getQuadAt(...controlData.position).id;
+		state.time = (Date.now() - start) / 1000;
 
 		if (!settings.birdsEyeView) {
-			drawHorizon(renderProperties);
+			drawHorizon(state);
 		}
 
-		if (renderProperties.lightingCutoff == 0) {
+		if (state.lightingCutoff == 0) {
 			for (let y = -1; y < 2; y++) {
 				for (let x = -1; x < 2; x++) {
 					vec2.set(repeatOffset, x, y);
-					drawTerrain(renderProperties);
+					drawTerrain(state);
 				}
 			}
 		} else {
 			vec2.set(repeatOffset, 0, 0);
-			drawTerrain(renderProperties);
+			drawTerrain(state);
 		}
 	});
 })();
