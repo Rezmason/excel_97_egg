@@ -46,9 +46,20 @@ export default (async () => {
 	let trueColorTextures = null;
 	await deferredTrueColorLoad();
 
+	const repeatingOffsets = Array(3)
+		.fill()
+		.map((_, y) =>
+			Array(3)
+				.fill()
+				.map((_, x) => [x - 1, y - 1])
+		)
+		.flat();
+	const singleOffset = [[0, 0]];
+
+	let offsets = singleOffset;
+	const screenSize = vec2.create();
 	const camera = mat4.create();
 	const repeatOffset = vec2.create();
-	const screenSize = vec2.create();
 
 	const indexedShaderSet = await loadShaderSet("indexed_color");
 	const trueColorShaderSet = await loadShaderSet("true_color");
@@ -84,9 +95,18 @@ export default (async () => {
 		}
 		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
 		state.quadBorder = settings.showQuadEdges ? data.rendering.quadBorder : 0;
+
+		offsets = settings.lightingCutoff ? repeatingOffsets : offsets;
+
+		const trueColor = settings.trueColorTextures && trueColorTextures != null;
+		const textures = trueColor ? trueColorTextures : indexedColorTextures;
+		Object.assign(state, textures);
+		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;
+		Object.assign(state, shaderSet);
 	};
 
 	const drawHorizon = regl({
+		depth: { enable: false },
 		vert: regl.prop("horizonVert"),
 		frag: regl.prop("horizonFrag"),
 		attributes: {
@@ -94,7 +114,6 @@ export default (async () => {
 		},
 		count: 3,
 		uniforms,
-		depth: { enable: false },
 	});
 
 	const drawTerrain = regl({
@@ -140,49 +159,30 @@ export default (async () => {
 	interpretSettings();
 	resize();
 
-	const dimensions = { width: 1, height: 1 };
+	const lastScreenSize = vec2.fromValues(1, 1);
 	let lastFrameTime = -1;
 	const start = Date.now();
-	const raf = regl.frame(({ viewportWidth, viewportHeight, time }) => {
+	const raf = regl.frame(({ time }) => {
 		// raf.cancel();
 
 		const deltaTime = time - lastFrameTime;
+		const mustDraw =
+			!settings.limitDrawSpeed || deltaTime >= 1 / data.rendering.targetFPS;
+		const mustResize = !vec2.equals(lastScreenSize, screenSize);
 
-		const mustResize =
-			dimensions.width !== viewportWidth ||
-			dimensions.height !== viewportHeight;
-
-		if (mustResize) {
-			dimensions.width = viewportWidth;
-			dimensions.height = viewportHeight;
-			const aspectRatio = viewportWidth / viewportHeight;
-
-			mat4.perspective(
-				camera,
-				(Math.PI / 180) * data.rendering.fov,
-				aspectRatio,
-				0.01,
-				terrain.size * 2
-			);
+		if (!(mustDraw || mustResize)) {
+			return;
 		}
 
-		if (
-			!mustResize &&
-			settings.limitDrawSpeed &&
-			deltaTime < 1 / data.rendering.targetFPS
-		) {
-			return;
+		if (mustResize) {
+			vec2.copy(lastScreenSize, screenSize);
+			const aspectRatio = screenSize[0] / screenSize[1];
+			const fovRadians = (Math.PI / 180) * data.rendering.fov;
+			mat4.perspective(camera, fovRadians, aspectRatio, 0.01, terrain.size * 2);
 		}
 
 		lastFrameTime = time;
 		update(deltaTime);
-
-		const trueColor = settings.trueColorTextures && trueColorTextures != null;
-		const textures = trueColor ? trueColorTextures : indexedColorTextures;
-		Object.assign(state, textures);
-		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;
-		Object.assign(state, shaderSet);
-
 		state.currentQuadID = terrain.getQuadAt(...controlData.position).id;
 		state.time = (Date.now() - start) / 1000;
 
@@ -190,15 +190,8 @@ export default (async () => {
 			drawHorizon(state);
 		}
 
-		if (state.lightingCutoff == 0) {
-			for (let y = -1; y < 2; y++) {
-				for (let x = -1; x < 2; x++) {
-					vec2.set(repeatOffset, x, y);
-					drawTerrain(state);
-				}
-			}
-		} else {
-			vec2.set(repeatOffset, 0, 0);
+		for (const offset of offsets) {
+			vec2.set(repeatOffset, ...offset);
 			drawTerrain(state);
 		}
 	});
