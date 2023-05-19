@@ -17,6 +17,7 @@ export default (async () => {
 
 	events.addEventListener("settingsChanged", (event) => {
 		deferredTrueColorLoad();
+		interpretSettings();
 		resize();
 	});
 
@@ -56,23 +57,28 @@ export default (async () => {
 	const repeatOffset = vec2.create();
 	const screenSize = vec2.create();
 
+	const indexedShaderSet = await loadShaderSet("indexed_color");
+	const trueColorShaderSet = await loadShaderSet("true_color");
+
 	const renderProperties = {
+		time: 0,
 		camera,
 		repeatOffset,
 		screenSize,
+		currentQuadID: -1,
 
 		...controlData,
+		...settings,
+		...data.rendering,
+		...indexedColorTextures,
+		...indexedShaderSet,
 
-		birdsEyeView: 0,
-		lightingCutoff: 1,
-		limitDrawResolution: 1,
-		vertexJiggle: data.rendering.vertexJiggle,
-		quadBorder: 0,
-		showSindogs: 0,
-		fogFar: data.rendering.fogFar,
 		colorTable,
 		linearColorTable,
 		colorTableWidth: colorTable.width,
+
+		terrainSize: terrain.size,
+		horizonHeight: indexedColorTextures.horizonTexture.height,
 	};
 
 	const resize = () => {
@@ -91,36 +97,34 @@ export default (async () => {
 		canvas.height = height;
 	};
 
+	const interpretSettings = () => {
+		for (const key in settings) {
+			renderProperties[key] = settings[key] ? 1 : 0;
+		}
+		renderProperties.fogFar =
+			data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
+		renderProperties.quadBorder = settings.showQuadEdges
+			? data.rendering.quadBorder
+			: 0;
+	};
+
 	window.addEventListener("resize", (event) => resize());
 	screen.orientation.addEventListener("change", (event) => resize());
+	interpretSettings();
 	resize();
+
+	const uniforms = Object.fromEntries(
+		Object.keys(renderProperties).map((key) => [key, regl.prop(key)])
+	);
 
 	const drawHorizon = regl({
 		vert: regl.prop("horizonVert"),
 		frag: regl.prop("horizonFrag"),
-
 		attributes: {
 			aPosition: [-1000, -1, 1000, -1, 0, 1],
 		},
 		count: 3,
-
-		uniforms: {
-			horizonTexture: regl.prop("horizonTexture"),
-			horizonHeight: indexedColorTextures.horizonTexture.height,
-			showSindogs: regl.prop("showSindogs"),
-			rotation: regl.prop("rotation"),
-
-			colorTable: regl.prop("colorTable"),
-			linearColorTable: regl.prop("linearColorTable"),
-			colorTableWidth: regl.prop("colorTableWidth"),
-
-			camera: regl.prop("camera"),
-			horizonTransform: regl.prop("horizonTransform"),
-
-			time: regl.prop("time"),
-			timeOffset: regl.prop("timeOffset"),
-		},
-
+		uniforms,
 		depth: { enable: false },
 	});
 
@@ -131,44 +135,10 @@ export default (async () => {
 		},
 		vert: regl.prop("terrainVert"),
 		frag: regl.prop("terrainFrag"),
-
 		attributes: terrain.attributes,
 		count: terrain.numVertices,
-
-		uniforms: {
-			camera: regl.prop("camera"),
-			transform: regl.prop("transform"),
-			screenSize: regl.prop("screenSize"),
-			position: regl.prop("position"),
-			terrainSize: terrain.size,
-			maxDrawDistance: data.rendering.maxDrawDistance,
-			currentQuadID: regl.prop("currentQuadID"),
-			birdsEyeView: regl.prop("birdsEyeView"),
-			lightingCutoff: regl.prop("lightingCutoff"),
-			limitDrawResolution: regl.prop("limitDrawResolution"),
-			vertexJiggle: regl.prop("vertexJiggle"),
-			quadBorder: regl.prop("quadBorder"),
-			repeatOffset: regl.prop("repeatOffset"),
-			time: regl.prop("time"),
-			fogNear: data.rendering.fogNear,
-			fogFar: regl.prop("fogFar"),
-			moonscapeTexture: regl.prop("moonscapeTexture"),
-			platformTexture: regl.prop("platformTexture"),
-			creditsTexture: regl.prop("creditsTexture"),
-
-			colorTable: regl.prop("colorTable"),
-			linearColorTable: regl.prop("linearColorTable"),
-			colorTableWidth: regl.prop("colorTableWidth"),
-
-			titleCreditColor: data.rendering.titleCreditColor,
-			bodyCreditColor: data.rendering.bodyCreditColor,
-
-			timeOffset: regl.prop("timeOffset"),
-		},
+		uniforms,
 	});
-
-	const indexedShaderSet = await loadShaderSet("indexed_color");
-	const trueColorShaderSet = await loadShaderSet("true_color");
 
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
@@ -178,7 +148,7 @@ export default (async () => {
 
 		const deltaTime = time - lastFrameTime;
 
-		let mustResize =
+		const mustResize =
 			dimensions.width !== viewportWidth ||
 			dimensions.height !== viewportHeight;
 
@@ -217,16 +187,6 @@ export default (async () => {
 			...controlData.position
 		).id;
 		renderProperties.time = (Date.now() - start) / 1000;
-
-		renderProperties.birdsEyeView = settings.birdsEyeView ? 1 : 0;
-		renderProperties.lightingCutoff = settings.lightingCutoff ? 1 : 0;
-		renderProperties.limitDrawResolution = settings.limitDrawResolution ? 1 : 0;
-		renderProperties.fogFar =
-			data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
-		renderProperties.quadBorder = settings.showQuadEdges
-			? data.rendering.quadBorder
-			: 0;
-		renderProperties.showSindogs = settings.showSindogs ? 1 : 0;
 
 		if (!settings.birdsEyeView) {
 			drawHorizon(renderProperties);
