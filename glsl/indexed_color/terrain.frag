@@ -8,7 +8,7 @@ uniform float quadBorder, birdsEyeView, limitDrawResolution;
 uniform vec2 screenSize;
 
 uniform float colorTableWidth;
-uniform sampler2D colorTableTexture;
+uniform sampler2D colorTable;
 
 uniform vec2 timeOffset;
 
@@ -75,7 +75,7 @@ void main() {
 	// column = int(colorTableWidth) - 1;
 
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
-	vec3 color = texture2D(colorTableTexture, colorTableUV).rgb;
+	vec3 color = texture2D(colorTable, colorTableUV).rgb;
 
 	float quadBorder = quadBorder;
 	if (birdsEyeView == 1.0) {

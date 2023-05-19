@@ -1,6 +1,7 @@
 import Model from "./model.js";
 import GUI from "./gui.js";
 import Controls from "./controls.js";
+import { loadShaderSet, loadColorTable, loadTexturePack } from "./utils.js";
 const { mat4, vec2 } = glMatrix;
 
 export default (async () => {
@@ -27,8 +28,9 @@ export default (async () => {
 	});
 
 	const deferredTrueColorLoad = async () => {
-		if (settings.trueColorTextures && trueColorTexturePack == null) {
-			trueColorTexturePack = await loadTexturePack(
+		if (settings.trueColorTextures && trueColorTextures == null) {
+			trueColorTextures = await loadTexturePack(
+				regl,
 				data.rendering.texture_packs.true_color
 			);
 		}
@@ -40,157 +42,21 @@ export default (async () => {
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
-	const [
-		horizonIndexedVert,
-		horizonIndexedFrag,
-		terrainIndexedVert,
-		terrainIndexedFrag,
-	] = await Promise.all(
-		[
-			"glsl/indexed_color/horizon.vert",
-			"glsl/indexed_color/horizon.frag",
-			"glsl/indexed_color/terrain.vert",
-			"glsl/indexed_color/terrain.frag",
-		].map((url) => fetch(url).then((response) => response.text()))
+	const indexedColorTextures = await loadTexturePack(
+		regl,
+		data.rendering.texture_packs.indexed_color
 	);
-
-	const [
-		horizonTrueColorVert,
-		horizonTrueColorFrag,
-		terrainTrueColorVert,
-		terrainTrueColorFrag,
-	] = await Promise.all(
-		[
-			"glsl/true_color/horizon.vert",
-			"glsl/true_color/horizon.frag",
-			"glsl/true_color/terrain.vert",
-			"glsl/true_color/terrain.frag",
-		].map((url) => fetch(url).then((response) => response.text()))
-	);
-
-	const loadImage = async (url, isSDF) => {
-		const image = new Image();
-		image.crossOrigin = "anonymous";
-		image.src = url;
-		await image.decode();
-
-		const isNPOT =
-			Math.log2(image.width) % 1 > 0 || Math.log2(image.height) % 1 > 0;
-
-		const mipmap = !isNPOT && !isSDF;
-
-		return {
-			image: {
-				data: image,
-				mipmap,
-				anisotropic: data.rendering.anisotropicLevels,
-				min: mipmap ? "mipmap" : "linear",
-				mag: "linear",
-			},
-		};
-	};
-
-	const littleEndian = (() => {
-		const buffer = new ArrayBuffer(2);
-		new DataView(buffer).setInt16(0, 256, true);
-		return new Int16Array(buffer)[0] === 256;
-	})();
-
-	const loadIndexedBitmap = async (url) => {
-		const file = await fetch(url).then((response) => response.arrayBuffer());
-		const header = new DataView(file);
-
-		// assert "BM" DIB
-		if (header.getUint16(0) !== 0x424d) {
-			throw new Error(`file at ${url} is not properly formatted.`);
-		}
-
-		// Assert 8 bits per pixel
-		const bitsPerPixel = header.getUint16(28, littleEndian);
-		if (bitsPerPixel !== 8) {
-			throw new Error(`Bitmap ${url} has the wrong bpp.`);
-		}
-
-		const colorTableSize =
-			header.getUint32(46, littleEndian) || 1 << bitsPerPixel;
-
-		const colorTableBytes = new Uint8Array(file, 54, colorTableSize * 4);
-		const colorTable = Array(colorTableSize)
-			.fill()
-			.map((_, index) => [
-				colorTableBytes[index * 4 + 2],
-				colorTableBytes[index * 4 + 1],
-				colorTableBytes[index * 4 + 0],
-			]);
-		const colorTableWidth = 1 << Math.ceil(bitsPerPixel / 2);
-
-		const width = header.getUint32(18, littleEndian);
-		const height = header.getUint32(22, littleEndian);
-		const pixelStart = header.getUint32(10, littleEndian);
-		let pixels = Array(height)
-			.fill()
-			.map((_, index) =>
-				Array.from(new Uint8Array(file, pixelStart + width * index, width))
-			)
-			.reverse()
-			.flat();
-
-		return {
-			image: {
-				format: "luminance",
-				type: "uint8",
-				width,
-				height,
-				data: pixels,
-			},
-			colorTable: {
-				format: "rgb",
-				type: "uint8",
-				wrapS: "clamp",
-				wrapT: "clamp",
-				width: colorTableWidth,
-				height: colorTableWidth,
-				data: colorTable,
-			},
-		};
-	};
-
-	const loadColorTableTexture = async (url, linear) =>
-		regl.texture({
-			...(await loadIndexedBitmap(url)).colorTable,
-			min: linear ? "linear" : "nearest",
-			mag: linear ? "linear" : "nearest",
-		});
-
-	const loadTexturePack = async (pack) => {
-		const textures = await Promise.all(
-			Object.values(pack).map(async (entry) => {
-				const isIndexedColor = entry.type === "indexed_color";
-				if (isIndexedColor) {
-					return regl.texture((await loadIndexedBitmap(entry.url)).image);
-				} else {
-					const isSDF = entry.type === "sdf";
-					return regl.texture((await loadImage(entry.url, isSDF)).image);
-				}
-			})
-		);
-		return Object.fromEntries(
-			Object.keys(pack).map((key, index) => [key, textures[index]])
-		);
-	};
-
-	const texturePack = await loadTexturePack(
-		data.rendering.texture_packs.standard
-	);
-	const colorTableTexture = await loadColorTableTexture(
+	const colorTable = await loadColorTable(
+		regl,
 		data.rendering.color_table,
 		false
 	);
-	const linearColorTableTexture = await loadColorTableTexture(
+	const linearColorTable = await loadColorTable(
+		regl,
 		data.rendering.color_table,
 		true
 	);
-	let trueColorTexturePack = null;
+	let trueColorTextures = null;
 	await deferredTrueColorLoad();
 
 	const camera = mat4.create();
@@ -211,9 +77,9 @@ export default (async () => {
 		showSindogs: 0,
 		screenSize: [0, 0],
 		fogFar: data.rendering.fogFar,
-		colorTableTexture,
-		linearColorTableTexture,
-		colorTableWidth: colorTableTexture.width,
+		colorTable,
+		linearColorTable,
+		colorTableWidth: colorTable.width,
 	};
 
 	const resize = () => {
@@ -251,8 +117,8 @@ export default (async () => {
 			showSindogs: regl.prop("showSindogs"),
 			rotation: regl.prop("rotation"),
 
-			colorTableTexture: regl.prop("colorTableTexture"),
-			linearColorTableTexture: regl.prop("linearColorTableTexture"),
+			colorTable: regl.prop("colorTable"),
+			linearColorTable: regl.prop("linearColorTable"),
 			colorTableWidth: regl.prop("colorTableWidth"),
 
 			camera: regl.prop("camera"),
@@ -300,8 +166,8 @@ export default (async () => {
 			platformTexture: regl.prop("platformTexture"),
 			creditsTexture: regl.prop("creditsTexture"),
 
-			colorTableTexture: regl.prop("colorTableTexture"),
-			linearColorTableTexture: regl.prop("linearColorTableTexture"),
+			colorTable: regl.prop("colorTable"),
+			linearColorTable: regl.prop("linearColorTable"),
 			colorTableWidth: regl.prop("colorTableWidth"),
 
 			creditColor1: creditColors[0],
@@ -311,19 +177,8 @@ export default (async () => {
 		},
 	});
 
-	const indexedShaders = {
-		horizonVert: horizonIndexedVert,
-		horizonFrag: horizonIndexedFrag,
-		terrainVert: terrainIndexedVert,
-		terrainFrag: terrainIndexedFrag,
-	};
-
-	const trueColorShaders = {
-		horizonVert: horizonTrueColorVert,
-		horizonFrag: horizonTrueColorFrag,
-		terrainVert: terrainTrueColorVert,
-		terrainFrag: terrainTrueColorFrag,
-	};
+	const indexedShaderSet = await loadShaderSet("indexed_color");
+	const trueColorShaderSet = await loadShaderSet("true_color");
 
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
@@ -362,11 +217,12 @@ export default (async () => {
 
 		update(deltaTime);
 
-		const trueColor = settings.trueColorTextures && trueColorTexturePack != null;
-		const textures = trueColor ? trueColorTexturePack : texturePack;
+		const trueColor =
+			settings.trueColorTextures && trueColorTextures != null;
+		const textures = trueColor ? trueColorTextures : indexedColorTextures;
 		Object.assign(renderProperties, textures);
-		const shaders = trueColor ? trueColorShaders : indexedShaders;
-		Object.assign(renderProperties, shaders);
+		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;
+		Object.assign(renderProperties, shaderSet);
 
 		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
 		renderProperties.time = (Date.now() - start) / 1000;

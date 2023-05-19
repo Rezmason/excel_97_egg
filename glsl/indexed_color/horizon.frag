@@ -7,7 +7,7 @@ uniform vec3 rotation;
 uniform float showSindogs;
 
 uniform float colorTableWidth;
-uniform sampler2D colorTableTexture;
+uniform sampler2D colorTable;
 
 uniform float time;
 uniform vec2 timeOffset;
@@ -31,7 +31,7 @@ void main() {
 		// column = int(colorTableWidth) - 1;
 
 		vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
-		color = texture2D(colorTableTexture, colorTableUV).rgb;
+		color = texture2D(colorTable, colorTableUV).rgb;
 
 		float brightness = 1.0;
 		if (showSindogs == 1.0) {

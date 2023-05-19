@@ -41,7 +41,6 @@
 		}
 	},
 	"rendering": {
-		"anisotropicLevels": 12,
 		"fogNear": 570,
 		"fogFar": 750,
 		"fov": 26,
@@ -55,17 +54,23 @@
 			15
 		],
 		"texture_packs": {
-			"standard": {
-				"horizonTexture": { "url": "assets/textures/horizon.bmp", "type": "indexed_color" },
-				"moonscapeTexture": { "url": "assets/textures/moonscape.bmp", "type": "indexed_color" },
-				"platformTexture": { "url": "assets/textures/platform.bmp", "type": "indexed_color" },
-				"creditsTexture": { "url": "assets/textures/credits_wrapped.bmp", "type": "indexed_color" }
+			"indexed_color": {
+				"anisotropicLevels": 0,
+				"textures": {
+					"horizonTexture": { "url": "assets/textures/horizon.bmp", "type": "indexed_color" },
+					"moonscapeTexture": { "url": "assets/textures/moonscape.bmp", "type": "indexed_color" },
+					"platformTexture": { "url": "assets/textures/platform.bmp", "type": "indexed_color" },
+					"creditsTexture": { "url": "assets/textures/credits_wrapped.bmp", "type": "indexed_color" }
+				}
 			},
 			"true_color": {
-				"horizonTexture": { "url": "assets/textures/hi_res/horizon_hi_res.png", "type": "mipmapped_true_color" },
-				"moonscapeTexture": { "url": "assets/textures/hi_res/moonscape_hi_res.png", "type": "mipmapped_true_color" },
-				"platformTexture": { "url": "assets/textures/hi_res/platform_hi_res.png", "type": "mipmapped_true_color" },
-				"creditsTexture": { "url": "assets/textures/hi_res/credits_sdf_wrapped.png", "type": "sdf" }
+				"anisotropicLevels": 12,
+				"textures": {
+					"horizonTexture": { "url": "assets/textures/hi_res/horizon_hi_res.png", "type": "mipmapped_true_color" },
+					"moonscapeTexture": { "url": "assets/textures/hi_res/moonscape_hi_res.png", "type": "mipmapped_true_color" },
+					"platformTexture": { "url": "assets/textures/hi_res/platform_hi_res.png", "type": "mipmapped_true_color" },
+					"creditsTexture": { "url": "assets/textures/hi_res/credits_sdf_wrapped.png", "type": "sdf" }
+				}
 			}
 		},
 		"color_table": "assets/textures/palette.bmp"
