@@ -1,7 +1,6 @@
 Remake the high res moonscape texture
 
 More refinements
-	Do the credits fade with distance or not?
 	Heightmap bitmaps
 		What all is encoded in it?
 		heights

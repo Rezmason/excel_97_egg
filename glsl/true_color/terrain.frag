@@ -66,15 +66,15 @@ void main() {
 		color = texture2D(linearColorTable, colorTableUV).rgb;
 
 		float radius = 0.4;
-		amount = max(credits.g, credits.b);
+		float credit = max(credits.g, credits.b);
 		float derivative = 0.02;
 		if (limitDrawResolution == 0.0) {
-			derivative = fwidth(amount);
+			derivative = fwidth(credit);
 			if (derivative > 0.1) {
 				derivative = 0.0;
 			}
 		}
-		amount = clamp(smoothstep(radius - derivative, radius, amount), 0.0, 1.0);
+		amount *= clamp(smoothstep(radius - derivative, radius, credit), 0.0, 1.0);
 	}
 
 	color *= amount;

@@ -54,7 +54,8 @@ void main() {
 		src = texture2D(platformTexture, vUV).r;
 	} else if (whichTexture == 2) {
 		src = texture2D(creditsTexture, getCreditUV()).r;
-		amount = 1.0 - abs(vUV.y - 0.5) * 2.0;
+		float credit = 1.0 - abs(vUV.y - 0.5) * 2.0;
+		amount *= credit;
 	}
 
 	int row = int(src * colorTableWidth);
