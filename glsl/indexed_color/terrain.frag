@@ -8,6 +8,7 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder, birdsEyeView, limitDrawResolution;
 uniform vec2 screenSize;
+uniform vec2 moonscapeUVDistort;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTable;
@@ -48,7 +49,7 @@ void main() {
 	float amount = vBrightness;
 
 	if (whichTexture == 0) {
-		src = texture2D(moonscapeTexture, vUV).r;
+		src = texture2D(moonscapeTexture, vUV * moonscapeUVDistort).r;
 	} else if (whichTexture == 1) {
 		src = texture2D(platformTexture, vUV).r;
 	} else if (whichTexture == 2) {

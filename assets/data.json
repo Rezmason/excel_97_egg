@@ -49,6 +49,7 @@
 		"resolution": [640, 480],
 		"targetFPS": 15,
 		"vertexJiggle": 2,
+		"moonscapeUVDistort": [0.98828125, 1],
 		"titleCreditColor": 13,
 		"bodyCreditColor": 15,
 		"texture_packs": {
