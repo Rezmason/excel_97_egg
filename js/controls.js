@@ -388,10 +388,12 @@ export default (async () => {
 
 	return {
 		update,
-		transform,
-		horizonTransform,
-		position,
-		rotation,
-		timeOffset,
+		controlData: {
+			transform,
+			horizonTransform,
+			position,
+			rotation,
+			timeOffset,
+		},
 	};
 })();

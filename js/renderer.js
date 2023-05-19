@@ -7,14 +7,7 @@ const { mat4, vec2 } = glMatrix;
 export default (async () => {
 	const { events, settings } = await GUI;
 	const { data, terrain } = await Model;
-	const {
-		update,
-		transform,
-		horizonTransform,
-		position,
-		rotation,
-		timeOffset,
-	} = await Controls;
+	const { update, controlData } = await Controls;
 
 	const canvas = document.querySelector("canvas");
 
@@ -60,22 +53,22 @@ export default (async () => {
 	await deferredTrueColorLoad();
 
 	const camera = mat4.create();
+	const repeatOffset = vec2.create();
+	const screenSize = vec2.create();
 
 	const renderProperties = {
 		camera,
-		transform,
-		horizonTransform,
-		position,
-		rotation,
-		timeOffset,
-		repeatOffset: vec2.create(),
+		repeatOffset,
+		screenSize,
+
+		...controlData,
+
 		birdsEyeView: 0,
 		lightingCutoff: 1,
 		limitDrawResolution: 1,
 		vertexJiggle: data.rendering.vertexJiggle,
 		quadBorder: 0,
 		showSindogs: 0,
-		screenSize: [0, 0],
 		fogFar: data.rendering.fogFar,
 		colorTable,
 		linearColorTable,
@@ -93,7 +86,7 @@ export default (async () => {
 		}
 		const width = Math.ceil(canvas.clientWidth * scaleFactor);
 		const height = Math.ceil(canvas.clientHeight * scaleFactor);
-		renderProperties.screenSize = [width, height];
+		vec2.set(screenSize, width, height);
 		canvas.width = width;
 		canvas.height = height;
 	};
@@ -220,7 +213,9 @@ export default (async () => {
 		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;
 		Object.assign(renderProperties, shaderSet);
 
-		renderProperties.currentQuadID = terrain.getQuadAt(...position).id;
+		renderProperties.currentQuadID = terrain.getQuadAt(
+			...controlData.position
+		).id;
 		renderProperties.time = (Date.now() - start) / 1000;
 
 		renderProperties.birdsEyeView = settings.birdsEyeView ? 1 : 0;
@@ -240,12 +235,12 @@ export default (async () => {
 		if (renderProperties.lightingCutoff == 0) {
 			for (let y = -1; y < 2; y++) {
 				for (let x = -1; x < 2; x++) {
-					vec2.set(renderProperties.repeatOffset, x, y);
+					vec2.set(repeatOffset, x, y);
 					drawTerrain(renderProperties);
 				}
 			}
 		} else {
-			vec2.set(renderProperties.repeatOffset, 0, 0);
+			vec2.set(repeatOffset, 0, 0);
 			drawTerrain(renderProperties);
 		}
 	});
