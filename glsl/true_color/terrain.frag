@@ -4,7 +4,9 @@
 
 precision mediump float;
 
-uniform highp float tick, time;
+uniform highp float time;
+uniform vec2 timeOffset;
+
 uniform sampler2D moonscapeTexture;
 uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
@@ -13,9 +15,8 @@ uniform vec2 screenSize;
 
 uniform float colorTableWidth;
 uniform sampler2D linearColorTable;
-uniform float creditColor1, creditColor2;
+uniform float titleCreditColor, bodyCreditColor;
 
-uniform vec2 timeOffset;
 
 varying float vWhichTexture;
 varying vec2 vUV;
@@ -60,7 +61,7 @@ void main() {
 		vec4 credits = texture2D(creditsTexture, fract(creditUV));
 
 		float scroll = 1.0 - abs(vUV.y - 0.5) * 2.0;
-		float colorIndex = (credits.g > credits.b) ? creditColor1 : creditColor2;
+		float colorIndex = (credits.g > credits.b) ? titleCreditColor : bodyCreditColor;
 		vec2 colorTableUV = vec2(scroll, (colorIndex + 0.5) / colorTableWidth);
 		color = texture2D(linearColorTable, colorTableUV).rgb;
 

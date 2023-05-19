@@ -9,7 +9,7 @@ uniform float showSindogs;
 uniform float colorTableWidth;
 uniform sampler2D colorTable;
 
-uniform float time;
+uniform highp float time;
 uniform vec2 timeOffset;
 
 varying vec2 vUV;

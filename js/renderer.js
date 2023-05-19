@@ -113,7 +113,7 @@ export default (async () => {
 
 		uniforms: {
 			horizonTexture: regl.prop("horizonTexture"),
-			horizonHeight: data.horizon.height,
+			horizonHeight: indexedColorTextures.horizonTexture.height,
 			showSindogs: regl.prop("showSindogs"),
 			rotation: regl.prop("rotation"),
 
@@ -131,8 +131,6 @@ export default (async () => {
 		depth: { enable: false },
 	});
 
-	const creditColors = data.rendering.creditColors;
-
 	const drawTerrain = regl({
 		cull: {
 			enable: true,
@@ -145,11 +143,10 @@ export default (async () => {
 		count: terrain.numVertices,
 
 		uniforms: {
-			tick: regl.context("tick"),
 			camera: regl.prop("camera"),
 			transform: regl.prop("transform"),
 			screenSize: regl.prop("screenSize"),
-			airplanePosition: regl.prop("position"),
+			position: regl.prop("position"),
 			terrainSize: terrain.size,
 			maxDrawDistance: data.rendering.maxDrawDistance,
 			currentQuadID: regl.prop("currentQuadID"),
@@ -170,8 +167,8 @@ export default (async () => {
 			linearColorTable: regl.prop("linearColorTable"),
 			colorTableWidth: regl.prop("colorTableWidth"),
 
-			creditColor1: creditColors[0],
-			creditColor2: creditColors[1],
+			titleCreditColor: data.rendering.titleCreditColor,
+			bodyCreditColor: data.rendering.bodyCreditColor,
 
 			timeOffset: regl.prop("timeOffset"),
 		},
@@ -183,7 +180,7 @@ export default (async () => {
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
 	const start = Date.now();
-	const raf = regl.frame(({ viewportWidth, viewportHeight, time, tick }) => {
+	const raf = regl.frame(({ viewportWidth, viewportHeight, time }) => {
 		// raf.cancel();
 
 		const deltaTime = time - lastFrameTime;
@@ -217,8 +214,7 @@ export default (async () => {
 
 		update(deltaTime);
 
-		const trueColor =
-			settings.trueColorTextures && trueColorTextures != null;
+		const trueColor = settings.trueColorTextures && trueColorTextures != null;
 		const textures = trueColor ? trueColorTextures : indexedColorTextures;
 		Object.assign(renderProperties, textures);
 		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;

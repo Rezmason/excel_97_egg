@@ -49,10 +49,8 @@
 		"resolution": [640, 480],
 		"targetFPS": 15,
 		"vertexJiggle": 2,
-		"creditColors": [
-			13,
-			15
-		],
+		"titleCreditColor": 13,
+		"bodyCreditColor": 15,
 		"texture_packs": {
 			"indexed_color": {
 				"anisotropicLevels": 0,
@@ -74,9 +72,6 @@
 			}
 		},
 		"color_table": "assets/textures/palette.bmp"
-	},
-	"horizon": {
-		"height": 64
 	},
 	"terrain": {
 		"size": 2050,

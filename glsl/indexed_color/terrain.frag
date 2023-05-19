@@ -1,6 +1,8 @@
 precision mediump float;
 
-uniform highp float tick, time;
+uniform highp float time;
+uniform vec2 timeOffset;
+
 uniform sampler2D moonscapeTexture;
 uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
@@ -10,7 +12,6 @@ uniform vec2 screenSize;
 uniform float colorTableWidth;
 uniform sampler2D colorTable;
 
-uniform vec2 timeOffset;
 
 varying float vWhichTexture;
 varying vec2 vUV;

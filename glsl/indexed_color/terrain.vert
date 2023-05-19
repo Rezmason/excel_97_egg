@@ -4,7 +4,7 @@ precision mediump float;
 
 uniform highp float time;
 uniform mat4 camera, transform;
-uniform vec3 airplanePosition;
+uniform vec3 position;
 uniform float terrainSize, maxDrawDistance;
 uniform float currentQuadID;
 uniform float birdsEyeView, lightingCutoff, limitDrawResolution, vertexJiggle;
@@ -38,11 +38,11 @@ void main() {
 	vPointyQuad = aPointyQuad;
 	vUV = aUV + 0.5;
 
-	vec2 centroid = (fract((aCentroid + airplanePosition.xy) / terrainSize + 0.5) - 0.5) * terrainSize - airplanePosition.xy;
+	vec2 centroid = (fract((aCentroid + position.xy) / terrainSize + 0.5) - 0.5) * terrainSize - position.xy;
 
 	centroid += terrainSize * repeatOffset;
 
-	vec2 diff = maxDrawDistance - abs(centroid + airplanePosition.xy);
+	vec2 diff = maxDrawDistance - abs(centroid + position.xy);
 	if (lightingCutoff == 1.0 && (diff.x < 0.0 || diff.y < 0.0)) {
 		return;
 	}
@@ -50,7 +50,7 @@ void main() {
 	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
 	vec3 offset = vec3(centroid, wave);
 
-	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + airplanePosition.xy)) * 0.0025;
+	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + position.xy)) * 0.0025;
 	if (aQuadID == currentQuadID) {
 		vSpotlight = birdsEyeView;
 	}
