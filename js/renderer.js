@@ -11,14 +11,10 @@ export default (async () => {
 
 	const canvas = document.querySelector("canvas");
 
-	document.addEventListener("touchmove", (event) => event.preventDefault(), {
-		passive: false,
-	});
-
-	events.addEventListener("settingsChanged", (event) => {
-		deferredTrueColorLoad();
-		interpretSettings();
-		resize();
+	const regl = createREGL({
+		canvas,
+		attributes: { antialias: false },
+		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
 	const deferredTrueColorLoad = async () => {
@@ -30,26 +26,23 @@ export default (async () => {
 		}
 	};
 
-	const regl = createREGL({
-		canvas,
-		attributes: { antialias: false },
-		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
-	});
-
-	const indexedColorTextures = await loadTexturePack(
-		regl,
-		data.rendering.texture_packs.indexed_color
-	);
 	const colorTable = await loadColorTable(
 		regl,
 		data.rendering.color_table,
 		false
 	);
+
 	const linearColorTable = await loadColorTable(
 		regl,
 		data.rendering.color_table,
 		true
 	);
+
+	const indexedColorTextures = await loadTexturePack(
+		regl,
+		data.rendering.texture_packs.indexed_color
+	);
+
 	let trueColorTextures = null;
 	await deferredTrueColorLoad();
 
@@ -81,21 +74,9 @@ export default (async () => {
 		horizonHeight: indexedColorTextures.horizonTexture.height,
 	};
 
-	const resize = () => {
-		let scaleFactor = window.devicePixelRatio;
-		if (settings.limitDrawResolution) {
-			scaleFactor =
-				canvas.clientWidth > canvas.clientHeight
-					? data.rendering.resolution[0] / canvas.clientWidth
-					: data.rendering.resolution[1] / canvas.clientHeight;
-			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
-		}
-		const width = Math.ceil(canvas.clientWidth * scaleFactor);
-		const height = Math.ceil(canvas.clientHeight * scaleFactor);
-		vec2.set(screenSize, width, height);
-		canvas.width = width;
-		canvas.height = height;
-	};
+	const uniforms = Object.fromEntries(
+		Object.keys(state).map((key) => [key, regl.prop(key)])
+	);
 
 	const interpretSettings = () => {
 		for (const key in settings) {
@@ -104,15 +85,6 @@ export default (async () => {
 		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
 		state.quadBorder = settings.showQuadEdges ? data.rendering.quadBorder : 0;
 	};
-
-	window.addEventListener("resize", (event) => resize());
-	screen.orientation.addEventListener("change", (event) => resize());
-	interpretSettings();
-	resize();
-
-	const uniforms = Object.fromEntries(
-		Object.keys(state).map((key) => [key, regl.prop(key)])
-	);
 
 	const drawHorizon = regl({
 		vert: regl.prop("horizonVert"),
@@ -136,6 +108,37 @@ export default (async () => {
 		count: terrain.numVertices,
 		uniforms,
 	});
+
+	const resize = () => {
+		let scaleFactor = window.devicePixelRatio;
+		if (settings.limitDrawResolution) {
+			scaleFactor =
+				canvas.clientWidth > canvas.clientHeight
+					? data.rendering.resolution[0] / canvas.clientWidth
+					: data.rendering.resolution[1] / canvas.clientHeight;
+			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
+		}
+		const width = Math.ceil(canvas.clientWidth * scaleFactor);
+		const height = Math.ceil(canvas.clientHeight * scaleFactor);
+		vec2.set(screenSize, width, height);
+		canvas.width = width;
+		canvas.height = height;
+	};
+
+	document.addEventListener("touchmove", (event) => event.preventDefault(), {
+		passive: false,
+	});
+
+	events.addEventListener("settingsChanged", (event) => {
+		deferredTrueColorLoad();
+		interpretSettings();
+		resize();
+	});
+
+	window.addEventListener("resize", (event) => resize());
+	screen.orientation.addEventListener("change", (event) => resize());
+	interpretSettings();
+	resize();
 
 	const dimensions = { width: 1, height: 1 };
 	let lastFrameTime = -1;
@@ -170,8 +173,8 @@ export default (async () => {
 		) {
 			return;
 		}
-		lastFrameTime = time;
 
+		lastFrameTime = time;
 		update(deltaTime);
 
 		const trueColor = settings.trueColorTextures && trueColorTextures != null;

@@ -1,18 +1,22 @@
-Recolor the high res moonscape texture
+Remake the high res moonscape texture
 
 More refinements
 	Moonscape texture UVs ignore the last column
 		but only moonscape
 		Remake the high res moonscape texture, hooray
+	Do the credits fade with distance or not?
 	Heightmap bitmaps
 		What all is encoded in it?
 		heights
 		lighting?
+		Nah, it's signed chars or something, come on
 	Keyboard controls
 		0x1b ESCAPE or 0x7b f12 : quit the easter egg
 		0x26 UP or 0x68 numeric 8 : nudge the altitude up
 		0x28 DOWN or 0x62 numeric 2 : nudge the altitude down
 	Custom palette support
+
+Clean up and comment the shaders
 
 Update the essay
 	reread the whole thing just to be sure
