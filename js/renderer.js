@@ -18,11 +18,16 @@ export default (async () => {
 	});
 
 	const deferredTrueColorLoad = async () => {
-		if (settings.trueColorTextures && trueColorTextures == null) {
+		const shouldLoad = settings.trueColorTextures && trueColorTextures == null;
+		if (shouldLoad) {
 			trueColorTextures = await loadTexturePack(
 				regl,
 				data.rendering.texture_packs.true_color
 			);
+		}
+
+		if (settings.trueColorTextures) {
+			Object.assign(state, trueColorTextures);
 		}
 	};
 
@@ -44,7 +49,6 @@ export default (async () => {
 	);
 
 	let trueColorTextures = null;
-	await deferredTrueColorLoad();
 
 	const repeatingOffsets = Array(3)
 		.fill()
@@ -89,10 +93,13 @@ export default (async () => {
 		Object.keys(state).map((key) => [key, regl.prop(key)])
 	);
 
-	const interpretSettings = () => {
+	const interpretSettings = async () => {
+		await deferredTrueColorLoad();
+
 		for (const key in settings) {
 			state[key] = settings[key] ? 1 : 0;
 		}
+
 		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
 		state.quadBorder = settings.showQuadEdges ? data.rendering.quadBorder : 0;
 
@@ -103,6 +110,8 @@ export default (async () => {
 		Object.assign(state, textures);
 		const shaderSet = trueColor ? trueColorShaderSet : indexedShaderSet;
 		Object.assign(state, shaderSet);
+
+		resize();
 	};
 
 	const drawHorizon = regl({
@@ -148,16 +157,14 @@ export default (async () => {
 		passive: false,
 	});
 
-	events.addEventListener("settingsChanged", (event) => {
-		deferredTrueColorLoad();
+	events.addEventListener("settingsChanged", async (event) => {
 		interpretSettings();
-		resize();
 	});
 
 	window.addEventListener("resize", (event) => resize());
 	screen.orientation.addEventListener("change", (event) => resize());
-	interpretSettings();
-	resize();
+
+	await interpretSettings();
 
 	const lastScreenSize = vec2.fromValues(1, 1);
 	let lastFrameTime = -1;
