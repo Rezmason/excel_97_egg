@@ -1,13 +1,11 @@
-More refinements
-	Turn horizon into full-screen quad
-		Distort the UVs, not the positions
-	Create bitmaps for heights and lights
-		You already have the data
-	Keyboard controls
-		0x1b ESCAPE or 0x7b f12 : quit the easter egg
-		0x26 UP or 0x68 numeric 8 : nudge the altitude up
-		0x28 DOWN or 0x62 numeric 2 : nudge the altitude down
-	Custom palette support
+Use bitmaps as terrain data sources
+	Height map bmp
+	Brightness map bmp
+	Region map bmp
+Keyboard controls
+	0x1b ESCAPE or 0x7b f12 : quit the easter egg
+	0x26 UP or 0x68 numeric 8 : nudge the altitude up
+	0x28 DOWN or 0x62 numeric 2 : nudge the altitude down
 
 Clean up and comment the shaders
 
@@ -18,7 +16,7 @@ Update the essay
 		indexed colors
 	scanline space dithering
 		Modern GPUs don't rasterize with scanlines
-	64x64 height/brightness/etc table
+	64x64 height/brightness/etc bmp
 	Thank fSpy creator for fSpy
 
 Spherical distortion could be neat
@@ -26,6 +24,10 @@ Spherical distortion could be neat
 
 ATI TruForm type tesselation option, aka NPatches
 	N for NPatches
+
+Custom palette support
+
+Procedural terrain?
 
 Essay based on interviews
 
@@ -50,7 +52,5 @@ Essay based on interviews
 		Ed Fries
 
 Add link to essay to readme file
-
-Procedural terrain?
 
 XENIUM/XENIOLUM LUNENSIS

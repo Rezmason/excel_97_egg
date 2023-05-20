@@ -114,14 +114,21 @@ export default (async () => {
 		resize();
 	};
 
+	const [tl, tr, bl, br] = [
+		[1000, 1000],
+		[-1000, 1000],
+		[1000, -1000],
+		[-1000, -1000],
+	];
+
 	const drawHorizon = regl({
 		depth: { enable: false },
 		vert: regl.prop("horizonVert"),
 		frag: regl.prop("horizonFrag"),
 		attributes: {
-			aPosition: [-1000, -1, 1000, -1, 0, 1],
+			aPosition: [tl, bl, tr, br, tr, bl],
 		},
-		count: 3,
+		count: 6,
 		uniforms,
 	});
 
