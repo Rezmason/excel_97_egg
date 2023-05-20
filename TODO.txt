@@ -1,11 +1,8 @@
-Remake the high res moonscape texture
-
 More refinements
-	Heightmap bitmaps
-		What all is encoded in it?
-		heights
-		lighting?
-		Nah, it's signed chars or something, come on
+	Turn horizon into full-screen quad
+		Distort the UVs, not the positions
+	Create bitmaps for heights and lights
+		You already have the data
 	Keyboard controls
 		0x1b ESCAPE or 0x7b f12 : quit the easter egg
 		0x26 UP or 0x68 numeric 8 : nudge the altitude up
