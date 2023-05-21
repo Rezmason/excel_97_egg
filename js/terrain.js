@@ -1,31 +1,19 @@
+import { loadTerrainBitmap } from "./utils.js";
+
 const modulo = (a, n) => ((a % n) + n) % n;
 
-export default (data) => {
-	const elevations = data.terrain.z;
+export default async (data) => {
+	const [elevationMap, brightnessMap, regionMap] = await Promise.all([
+		loadTerrainBitmap(data.terrain.maps.elevation, 128),
+		loadTerrainBitmap(data.terrain.maps.brightness, 128),
+		loadTerrainBitmap(data.terrain.maps.region),
+	]);
+
 	const [numColumns, numRows, size] = [
-		elevations[0].length,
-		elevations.length,
+		elevationMap[0].length,
+		elevationMap.length,
 		data.terrain.size,
 	];
-
-	const defaultRegion = data.terrain.regions[data.terrain.regions.length - 1];
-
-	const getRegion = (x, y, minOffset, maxOffset) => {
-		const region = data.terrain.regions.find(
-			(region) =>
-				region.active &&
-				x >= region.x + minOffset &&
-				x < region.x + region.width - maxOffset &&
-				y >= region.y + minOffset &&
-				y < region.y + region.height - maxOffset
-		);
-
-		if (region == null) {
-			return defaultRegion;
-		}
-
-		return region;
-	};
 
 	const quadCornerOffsets = [
 		[-0.5, -0.5],
@@ -63,12 +51,17 @@ export default (data) => {
 				return [
 					(quadCornerOffsets[mappedIndex][0] * size) / numColumns,
 					(quadCornerOffsets[mappedIndex][1] * size) / numRows,
-					-elevations[y][x],
+					-elevationMap[y][x],
 				];
 			})
 			.flat();
 
-	const quads = elevations.map((row, y) =>
+	const isOnRegionEdge = (x, y, regionIndex) =>
+		regionIndex !== regionMap[y][x] ||
+		regionIndex !== regionMap[y][modulo(x - 1, numColumns)] ||
+		regionIndex !== regionMap[modulo(y - 1, numRows)][x];
+
+	const quads = elevationMap.map((row, y) =>
 		row.map((_, x) => {
 			const id = y * numRows + x;
 			const centroid = [
@@ -85,18 +78,17 @@ export default (data) => {
 				[nx, ny],
 			];
 			const vertices = [tl, bl, tr, br, tr, bl];
-			const region = getRegion(
-				modulo(x + 0.5, numColumns),
-				modulo(y + 0.5, numRows),
-				0,
-				1
-			);
+			const regionIndex = regionMap[y][x];
+			const region = data.terrain.regions[regionIndex];
 
-			const quadElevations = vertices.map(([x, y]) => elevations[y][x]);
+			const quadElevations = vertices.map(([x, y]) => elevationMap[y][x]);
 			const pointy = Math.abs(
 				Math.abs(quadElevations[0] - quadElevations[2]) -
 					Math.abs(quadElevations[1] - quadElevations[3])
 			);
+
+			const uvScale = region.scale ?? [1, 1];
+			const uvOffset = region.offset ?? [0, 0];
 
 			return {
 				id,
@@ -111,44 +103,17 @@ export default (data) => {
 					position2: getVertexPositions(vertices, 2),
 					barycentrics,
 					whichTexture: vertices.map((_) => region.texture).flat(),
-					uv:
-						region.name === "credits"
-							? quadCornerOffsets
-									.map(([u, v]) => [
-										(u + 0.5 + x - region.x) / (region.width - 1) - 0.5,
-										(v + 0.5 + y - region.y) / (region.height - 1) - 0.5,
-									])
-									.flat()
-							: quadCornerOffsets.flat(),
-					brightness: vertices
-						.map(([x, y]) => {
-							let brightness;
-							if (
-								region.brightness != null &&
-								region.brightness[y - region.y][x - region.x] >= 0
-							) {
-								brightness =
-									region.brightness[y - region.y][x - region.x] *
-									region.brightnessTableMult;
-							} else {
-								const elevation = elevations[y][x];
-								const north = elevations[modulo(y - 1, numRows)][x];
-								const south = elevations[modulo(y + 1, numRows)][x];
-								const west = elevations[y][modulo(x - 1, numColumns)];
-								const east = elevations[y][modulo(x + 1, numColumns)];
-								brightness = (north + south + east + west) / 2 - elevation * 2;
-								brightness =
-									(brightness - 1) * region.brightnessMult +
-									region.brightnessAdd;
-							}
-							return Math.max(0, Math.min(1, brightness));
-						})
+					uv: quadCornerOffsets
+						.map(([u, v]) => [
+							(u + 0.5 + uvOffset[0]) * uvScale[0] - 0.5,
+							(v + 0.5 + uvOffset[1]) * uvScale[1] - 0.5,
+						])
 						.flat(),
+					brightnessMap: vertices.map(([x, y]) => 1),
 					waveAmplitude: vertices
 						.map(([x, y]) =>
-							region.name === "pool" &&
-							getRegion(x, y, 1, 1).name === region.name
-								? data.terrain.waveAmplitude
+							region.waveAmplitude != null && !isOnRegionEdge(x, y, regionIndex)
+								? region.waveAmplitude
 								: 0
 						)
 						.flat(),
@@ -171,7 +136,7 @@ export default (data) => {
 
 		aWhichTexture: allQuads.map((quad) => quad.vertexData.whichTexture).flat(),
 		aUV: allQuads.map((quad) => quad.vertexData.uv).flat(),
-		aBrightness: allQuads.map((quad) => quad.vertexData.brightness).flat(),
+		aBrightness: allQuads.map((quad) => quad.vertexData.brightnessMap).flat(),
 		aWaveAmplitude: allQuads
 			.map((quad) => quad.vertexData.waveAmplitude)
 			.flat(),

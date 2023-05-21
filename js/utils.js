@@ -80,8 +80,7 @@ const loadIndexedBitmap = async (url) => {
 		.map((_, index) =>
 			Array.from(new Uint8Array(file, pixelStart + width * index, width))
 		)
-		.reverse()
-		.flat();
+		.reverse();
 
 	return {
 		image: {
@@ -129,4 +128,9 @@ const loadTexturePack = async (regl, pack) => {
 	);
 };
 
-export { loadShaderSet, loadColorTable, loadTexturePack };
+const loadTerrainBitmap = async (url, baseline = 0) =>
+	(await loadIndexedBitmap(url)).image.data.map((row) =>
+		row.map((x) => x - baseline)
+	);
+
+export { loadShaderSet, loadColorTable, loadTexturePack, loadTerrainBitmap };

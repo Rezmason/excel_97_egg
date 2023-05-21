@@ -1,7 +1,5 @@
-Use bitmaps as terrain data sources
-	Height map bmp
-	Brightness map bmp
-	Region map bmp
+Calibrate brightness with framebuffer comparison
+
 Keyboard controls
 	0x1b ESCAPE or 0x7b f12 : quit the easter egg
 	0x26 UP or 0x68 numeric 8 : nudge the altitude up
