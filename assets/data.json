@@ -41,7 +41,7 @@
 		}
 	},
 	"rendering": {
-		"fogNear": 570,
+		"fogNear": 500,
 		"fogFar": 750,
 		"fov": 26,
 		"maxDrawDistance": 640,
@@ -100,6 +100,8 @@
 	},
 	"terrain": {
 		"size": 2050,
+		"brightnessMult": -0.025,
+		"brightnessAdd": 0.87,
 		"maps": {
 			"elevation": "assets/terrain/elevation.bmp",
 			"brightness": "assets/terrain/brightness.bmp",

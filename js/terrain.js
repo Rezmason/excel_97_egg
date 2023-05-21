@@ -109,7 +109,7 @@ export default async (data) => {
 							(v + 0.5 + uvOffset[1]) * uvScale[1] - 0.5,
 						])
 						.flat(),
-					brightnessMap: vertices.map(([x, y]) => 1),
+					brightness: vertices.map(([x, y]) => brightnessMap[y][x] * data.terrain.brightnessMult + data.terrain.brightnessAdd),
 					waveAmplitude: vertices
 						.map(([x, y]) =>
 							region.waveAmplitude != null && !isOnRegionEdge(x, y, regionIndex)
@@ -136,7 +136,7 @@ export default async (data) => {
 
 		aWhichTexture: allQuads.map((quad) => quad.vertexData.whichTexture).flat(),
 		aUV: allQuads.map((quad) => quad.vertexData.uv).flat(),
-		aBrightness: allQuads.map((quad) => quad.vertexData.brightnessMap).flat(),
+		aBrightness: allQuads.map((quad) => quad.vertexData.brightness).flat(),
 		aWaveAmplitude: allQuads
 			.map((quad) => quad.vertexData.waveAmplitude)
 			.flat(),

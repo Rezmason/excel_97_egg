@@ -73,7 +73,7 @@ void main() {
 	float fogDepth = -worldPosition.z;
 	float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
 	vFogFactor = fogFactor;
-	vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
+	vBrightness = vBrightness * (1.0 - fogFactor);
 
 
 	vec2 pos0 = (camera * transform * vec4(aPosition0 + offset, 1.0)).xy;
