@@ -109,7 +109,11 @@ export default async (data) => {
 							(v + 0.5 + uvOffset[1]) * uvScale[1] - 0.5,
 						])
 						.flat(),
-					brightness: vertices.map(([x, y]) => brightnessMap[y][x] * data.terrain.brightnessMult + data.terrain.brightnessAdd),
+					brightness: vertices.map(
+						([x, y]) =>
+							brightnessMap[y][x] * data.terrain.brightnessMult +
+							data.terrain.brightnessAdd
+					),
 					waveAmplitude: vertices
 						.map(([x, y]) =>
 							region.waveAmplitude != null && !isOnRegionEdge(x, y, regionIndex)

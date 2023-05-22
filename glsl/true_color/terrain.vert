@@ -68,5 +68,5 @@ void main() {
 	float fogDepth = -worldPosition.z;
 	float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
 	vFogFactor = fogFactor;
-	vBrightness = pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor);
+	vBrightness = clamp(pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor), 0.0, 1.0);
 }

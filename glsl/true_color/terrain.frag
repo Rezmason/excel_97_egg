@@ -74,10 +74,10 @@ void main() {
 				derivative = 0.0;
 			}
 		}
-		amount *= clamp(smoothstep(radius - derivative, radius, credit), 0.0, 1.0);
+		amount *= smoothstep(radius - derivative, radius, credit);
 	}
 
-	color *= amount;
+	color *= clamp(amount, 0.0, 1.0);
 
 	float quadBorder = quadBorder;
 	if (birdsEyeView == 1.0) {
