@@ -25,6 +25,7 @@ export default (async () => {
 	const commandBar = document.querySelector("command-bar");
 	const aboutButton = commandBar.querySelector("button#about");
 	const aboutBox = document.querySelector("iframe#about_box");
+	const screenshot = document.querySelector("screenshot");
 	const canvas = document.querySelector("canvas");
 	const fullscreenCheckbox = commandBar.querySelector("input#fullscreen");
 	fullscreenCheckbox.disabled = !(
@@ -41,13 +42,13 @@ export default (async () => {
 		])
 	);
 
-	const showAboutBox = () => {
-		aboutBox.classList.remove("hidden");
-	};
+	const showAboutBox = () => aboutBox.classList.remove("hidden");
 
-	const hideAboutBox = () => {
-		aboutBox.classList.add("hidden");
-	};
+	const hideAboutBox = () => aboutBox.classList.add("hidden");
+
+	const showScreenshot = () => screenshot.classList.remove("hidden");
+
+	const hideScreenshot = () => screenshot.classList.add("hidden");
 
 	const updateSettings = () => {
 		let options = "";
@@ -113,6 +114,8 @@ export default (async () => {
 		}
 	});
 
+	screenshot.addEventListener("mousedown", (event) => hideScreenshot());
+
 	document.addEventListener("keydown", async (event) => {
 		if (
 			event.repeat ||
@@ -124,13 +127,25 @@ export default (async () => {
 			return;
 		}
 
-		if (event.code === "Space" && commandBar.contains(event.target)) {
-			event.preventDefault();
-			return;
+		const isScreenshotVisible = !screenshot.classList.contains("hidden");
+		const isAboutBoxVisible = !aboutBox.classList.contains("hidden");
+
+		if (event.code === "Escape" || event.code === "F12") {
+			if (event.code === "Escape" && isAboutBoxVisible) {
+				hideAboutBox();
+				return;
+			} else if (!isScreenshotVisible) {
+				showScreenshot();
+				return;
+			}
 		}
 
-		if (event.code === "Escape") {
-			hideAboutBox();
+		if (isScreenshotVisible) {
+			hideScreenshot();
+		}
+
+		if (event.code === "Space" && commandBar.contains(event.target)) {
+			event.preventDefault();
 			return;
 		}
 
@@ -138,7 +153,6 @@ export default (async () => {
 			showAboutBox();
 			return;
 		}
-
 		const checkbox = checkboxesByKeyCode[event.code];
 
 		if (checkbox != null && !checkbox.disabled) {

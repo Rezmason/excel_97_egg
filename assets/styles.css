@@ -27,6 +27,28 @@ gui {
 	background: transparent;
 }
 
+screenshot {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+	background: no-repeat top center/cover url("ui/excel_screenshot.bmp") fixed
+		#d4d0c8;
+	cursor: cell;
+
+	transition: opacity 0.05s ease-out;
+}
+
+screenshot.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
 command-bar {
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */

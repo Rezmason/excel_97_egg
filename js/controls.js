@@ -61,6 +61,14 @@ export default (async () => {
 			braking = true;
 			goalMouseJoystick[0] = 0;
 		}
+
+		if (event.code === "ArrowUp" || event.code === "Numpad8") {
+			position[2]++;
+		}
+
+		if (event.code === "ArrowDown" || event.code === "Numpad2") {
+			position[2]--;
+		}
 	});
 
 	document.addEventListener("keyup", async (event) => {
