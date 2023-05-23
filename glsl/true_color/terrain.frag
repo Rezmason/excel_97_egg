@@ -12,11 +12,11 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder, birdsEyeView, limitDrawResolution;
 uniform vec2 screenSize;
+uniform float shadingOnly;
 
 uniform float colorTableWidth;
 uniform sampler2D linearColorTable;
 uniform float titleCreditColor, bodyCreditColor;
-
 
 varying float vWhichTexture;
 varying vec2 vUV;
@@ -81,7 +81,13 @@ void main() {
 			}
 		}
 
-		brightness *= smoothstep(radius - derivative, radius, credit);
+		if (shadingOnly == 0.0) {
+			brightness *= smoothstep(radius - derivative, radius, credit);
+		}
+	}
+
+	if (shadingOnly == 1.0) {
+		color = vec3(1.0);
 	}
 
 	color *= clamp(brightness, 0.0, 1.0);

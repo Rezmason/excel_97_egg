@@ -8,6 +8,7 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder, birdsEyeView, limitDrawResolution;
 uniform vec2 screenSize;
+uniform float shadingOnly;
 uniform vec2 moonscapeUVDistort;
 
 uniform float colorTableWidth;
@@ -60,7 +61,10 @@ void main() {
 		// and contains text in its green and blue channels
 		// with different color gradients applied with indexed colors
 		float credit = 1.0 - abs(vUV.y - 0.5) * 2.0;
-		brightness *= credit;
+
+		if (shadingOnly == 0.0) {
+			brightness *= credit;
+		}
 	}
 
 	// Look up the indexed color in the palette.
@@ -88,6 +92,10 @@ void main() {
 		if (everyOtherPixel == 1 || nearBorder) {
 			column += 1;
 		}
+	}
+
+	if (shadingOnly == 1.0) {
+		row = int(colorTableWidth) - 1;
 	}
 
 	// row = int(colorTableWidth) - 1;

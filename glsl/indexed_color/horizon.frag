@@ -5,6 +5,7 @@ uniform sampler2D horizonTexture;
 uniform float horizonHeight;
 uniform vec3 rotation;
 uniform float showSindogs;
+uniform float shadingOnly;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTable;
@@ -30,6 +31,9 @@ void main() {
 	int numColumns = int(colorTableWidth);
 	int row = index / numColumns;
 	int column = index - row * numColumns;
+	if (shadingOnly == 1.0) {
+		row = int(colorTableWidth) - 1;
+	}
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;

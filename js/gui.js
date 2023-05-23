@@ -18,6 +18,9 @@ export default (async () => {
 		interactive:
 			!urlParams.has("interactive") ||
 			urlParams.get("interactive").toLowerCase() !== "false",
+		shadingOnly:
+			urlParams.has("shadingOnly") &&
+			urlParams.get("shadingOnly").toLowerCase() !== "false",
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");

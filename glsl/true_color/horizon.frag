@@ -5,6 +5,7 @@ uniform sampler2D horizonTexture;
 uniform float horizonHeight;
 uniform vec3 rotation;
 uniform float showSindogs;
+uniform float shadingOnly;
 
 uniform float time;
 uniform vec2 timeOffset;
@@ -18,6 +19,10 @@ void main() {
 	// is proportional to the horizon's size on a 480-pixel-tall screen.
 	float y = (0.5 - uv.y) * 480.0 / horizonHeight + 1.0;
 	vec3 color = texture2D(horizonTexture, vec2(uv.x, y)).rgb;
+
+	if (shadingOnly == 1.0) {
+		color = vec3(max(color.r, max(color.g, color.b)));
+	}
 
 	// "Sindogs" are a repeating glow evenly distributed across the horizon,
 	// which slowly circle over time.
