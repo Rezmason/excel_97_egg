@@ -103,7 +103,7 @@ export default (async () => {
 		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
 		state.quadBorder = settings.showQuadEdges ? data.rendering.quadBorder : 0;
 
-		offsets = settings.lightingCutoff ? repeatingOffsets : offsets;
+		offsets = settings.lightingCutoff ? offsets : repeatingOffsets;
 
 		const trueColor = settings.trueColorTextures && trueColorTextures != null;
 		const textures = trueColor ? trueColorTextures : indexedColorTextures;
