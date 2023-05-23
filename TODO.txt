@@ -1,18 +1,34 @@
 Update the essay
-	reread the whole thing just to be sure
-	Tweak or rewrite the part about the color palette
-	color lookup table
-		indexed colors
-	scanline space dithering
-		Modern GPUs don't rasterize with scanlines
-	64x64 height/brightness/etc bmp
-	Thank fSpy creator for fSpy
+	Change stated opinion
+		DirectDraw, sure
+		Descent, no
+		Flight Simulator, yes
+			Downplay Microsoft's acquisition of BAO
+		Flying carpet
+			No cockpit, simple controls
+		Maybe mention the Excel 95 egg
+		Just interview a charting team member already!
+	Rewrite or expand the "To reverse engineer..." section
+		The comment about the color palette is completely wrong now
+		color lookup table
+			indexed colors
+		scanline space dithering
+			Modern GPUs don't rasterize with scanlines
+		64x64 height/brightness/region bmp
+		Maybe show each image with a description
+	Rephrase "Why does it feel clunky?"
+	Rephrase "There are several design decisions at work here."
+	Acknowledgements section
+		Maybe say more about Pavone
+			Also replace "expertise in matters of reverse engineering" with "reverse engineering expertise"
+		Thank fSpy creator for fSpy
 
 Spherical distortion could be neat
 	How do those Minecraft shaders do it?
 
 ATI TruForm type tesselation option, aka NPatches
-	N for NPatches
+	N for Normals
+	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
 
 Custom palette support
 	indexed color BMP file (color table)
