@@ -105,8 +105,8 @@ export default async (data) => {
 					whichTexture: vertices.map((_) => region.texture).flat(),
 					uv: quadCornerOffsets
 						.map(([u, v]) => [
-							(u + 0.5 + uvOffset[0]) * uvScale[0] - 0.5,
-							(v + 0.5 + uvOffset[1]) * uvScale[1] - 0.5,
+							(u + 0.5 + uvOffset[0]) * uvScale[0],
+							(v + 0.5 + uvOffset[1]) * uvScale[1],
 						])
 						.flat(),
 					brightness: vertices.map(

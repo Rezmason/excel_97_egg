@@ -28,24 +28,27 @@ varying float vFogFactor, vBrightness, vSpotlight;
 varying float vPointyQuad;
 
 void main() {
+	// Pass these right along to the fragment shader.
 	vWhichTexture = aWhichTexture;
 	vBarycentrics = aBarycentrics;
 	vPointyQuad = aPointyQuad;
-	vUV = aUV + 0.5;
+	vUV = aUV;
 
-	vec2 centroid = (fract((aCentroid + position.xy) / terrainSize + 0.5) - 0.5) * terrainSize - position.xy;
+	vec2 quadCentroidLocalPosition = (
+			fract((aCentroid + position.xy) / terrainSize + 0.5) - 0.5
+			+ repeatOffset
+		)
+		* terrainSize;
 
-	centroid += terrainSize * repeatOffset;
-
-	vec2 diff = maxDrawDistance - abs(centroid + position.xy);
+	// Don't draw the triangle if its quad is too far away
+	// in the X or the Y axis
+	vec2 diff = maxDrawDistance - abs(quadCentroidLocalPosition);
 	if (lightingCutoff == 1.0 && (diff.x < 0.0 || diff.y < 0.0)) {
 		return;
 	}
 
-	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
-	vec3 offset = vec3(centroid, wave);
-
-	vSpotlight = birdsEyeView * 0.5 - length(abs(centroid + position.xy)) * 0.0025;
+	// Draw the spotlight if the quad is near enough
+	vSpotlight = birdsEyeView * 0.5 - length(abs(quadCentroidLocalPosition)) * 0.0025;
 	if (aQuadID == currentQuadID) {
 		vSpotlight = birdsEyeView;
 	}
@@ -54,19 +57,28 @@ void main() {
 		vSpotlight = 0.0;
 	}
 
+	// Move the vertex up and down by its wave amplitude
+	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
+	vec3 offset = vec3(quadCentroidLocalPosition - position.xy, wave);
+
+	// Project position from local to world to screen
 	vec4 localPosition = vec4(aPosition + offset, 1.0);
 	vec4 worldPosition = transform * localPosition;
 	vec4 screenPosition = camera * worldPosition;
 
+	// Jiggle the screen position to simulate low precision calculation
 	if (limitDrawResolution == 1.0) {
 		screenPosition.xy = floor(screenPosition.xy * vertexJiggle + 0.5) / vertexJiggle;
 	}
 
 	gl_Position = screenPosition;
 
-	vBrightness = aBrightness + wave * 0.08;
+	// Compute fog
 	float fogDepth = -worldPosition.z;
 	float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
 	vFogFactor = fogFactor;
+
+	// Adjust brightness by wave amplitude and old school exponential-squared fog
+	vBrightness = aBrightness + wave * 0.08;
 	vBrightness = clamp(pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor), 0.0, 1.0);
 }
