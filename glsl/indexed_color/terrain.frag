@@ -81,10 +81,11 @@ void main() {
 		float hDist = origin.x - origin.y * slope;
 
 		// Alternate along that scanline
-		bool everyOtherPixel = fract(hDist * 0.5) > 0.5;
+		int everyOtherPixel = int(fract(hDist * 0.5) * 2.0);
+
 		// For some reason the original program didn't dither near quad edges
 		bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
-		if (everyOtherPixel || nearBorder) {
+		if (everyOtherPixel == 1 || nearBorder) {
 			column += 1;
 		}
 	}
