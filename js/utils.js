@@ -1,20 +1,19 @@
 const loadShaderSet = async (defines) => {
 	const definesPrefix = defines.map((d) => `#define ${d}\n`).join();
-	const [horizonVert, horizonFrag, terrainVert, terrainFrag] = (
+	const defineVert = `#define VERTEX_SHADER\n`;
+	const defineFrag = `#define FRAGMENT_SHADER\n`;
+	const [horizonShader, terrainShader] = (
 		await Promise.all(
-			[
-				`glsl/horizon.vert`,
-				`glsl/horizon.frag`,
-				`glsl/terrain.vert`,
-				`glsl/terrain.frag`,
-			].map((url) => fetch(url).then((response) => response.text()))
+			[`glsl/horizon.glsl`, `glsl/terrain.glsl`].map((url) =>
+				fetch(url).then((response) => response.text())
+			)
 		)
 	).map((shader) => definesPrefix + shader);
 	return {
-		horizonVert,
-		horizonFrag,
-		terrainVert,
-		terrainFrag,
+		horizonVert: defineVert + horizonShader,
+		horizonFrag: defineFrag + horizonShader,
+		terrainVert: defineVert + terrainShader,
+		terrainFrag: defineFrag + terrainShader,
 	};
 };
 

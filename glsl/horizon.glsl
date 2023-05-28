@@ -1,5 +1,14 @@
-#define PI 3.14159265359
 precision mediump float;
+
+#define PI 3.14159265359
+
+#if defined(VERTEX_SHADER)
+attribute vec2 aPosition;
+#endif
+
+varying vec2 vUV;
+
+uniform mat4 camera, horizonTransform;
 
 uniform sampler2D horizonTexture;
 uniform float horizonHeight;
@@ -13,9 +22,23 @@ uniform sampler2D colorTable;
 uniform highp float time;
 uniform vec2 timeOffset;
 
-varying vec2 vUV;
+#if defined(VERTEX_SHADER)
+void vert() {
+	vUV = 0.5 * (aPosition + 1.0);
 
-void main() {
+	// Convert the 2D quad into a 3D object,
+	// always in front of the camera,
+	vec4 position = vec4(-1.0, aPosition * -0.2, 1.0);
+	// rotated to match the roll of the camera.
+	position = horizonTransform * position;
+	position = camera * position;
+
+	gl_Position = position;
+}
+#endif
+
+#if defined(FRAGMENT_SHADER)
+void frag() {
 	vec2 uv = vUV;
 
 	// Stretch the texture so that its size relative to the quad
@@ -63,4 +86,13 @@ void main() {
 
 	gl_FragColor = vec4(color, 1.0);
 
+}
+#endif
+
+void main() {
+#if defined(VERTEX_SHADER)
+	vert();
+#elif defined(FRAGMENT_SHADER)
+	frag();
+#endif
 }

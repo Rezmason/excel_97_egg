@@ -1,6 +1,4 @@
 Merge shaders
-	Use defines in renderer instead
-		vert and frag
 	Replace shadingOnly with a demo define
 
 Update the essay

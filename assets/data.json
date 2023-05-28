@@ -45,7 +45,7 @@
 		"fogFar": 750,
 		"fov": 26,
 		"maxDrawDistance": 640,
-		"quadBorder": 0.02,
+		"quadBorder": 0.005,
 		"resolution": [640, 480],
 		"targetFPS": 15,
 		"vertexJiggle": 2,
