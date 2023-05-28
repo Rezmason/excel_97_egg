@@ -38,7 +38,7 @@ uniform mat4 camera, transform;
 uniform vec3 position;
 uniform float terrainSize, maxDrawDistance;
 uniform float currentQuadID;
-uniform float birdsEyeView, lightingCutoff, limitDrawResolution, vertexJiggle;
+uniform float birdsEyeView, lightingCutoff, limitDrawResolution;
 uniform float fogNear, fogFar;
 uniform vec2 repeatOffset;
 
@@ -93,11 +93,6 @@ void vert() {
 	vec4 localPosition = vec4(aPosition + offset, 1.0);
 	vec4 worldPosition = transform * localPosition;
 	vec4 screenPosition = camera * worldPosition;
-
-	// Jiggle the screen position to simulate low precision calculation
-	if (limitDrawResolution == 1.0) {
-		screenPosition.xy = floor(screenPosition.xy * vertexJiggle + 0.5) / vertexJiggle;
-	}
 
 	gl_Position = screenPosition;
 
