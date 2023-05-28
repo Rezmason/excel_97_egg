@@ -1,4 +1,4 @@
-#if defined(TRUE_COLOR) && defined(GL_OES_standard_derivatives)
+#if defined(FRAGMENT_SHADER) && defined(GL_OES_standard_derivatives)
 #extension GL_OES_standard_derivatives: enable
 #endif
 
@@ -23,7 +23,7 @@ attribute vec3 aPosition0, aPosition1, aPosition2;
 varying float vWhichTexture;
 varying vec2 vUV;
 varying vec3 vBarycentrics;
-varying float vFogFactor, vBrightness, vSpotlight;
+varying float vDepth, vBrightness, vSpotlight;
 varying float vPointyQuad;
 
 varying vec2 vLeftVertex;
@@ -100,9 +100,9 @@ void vert() {
 	gl_Position = screenPosition;
 
 	// Compute fog
-	float fogDepth = -worldPosition.z;
-	float fogFactor = smoothstep( fogNear, fogFar, fogDepth );
-	vFogFactor = fogFactor;
+	float depth = -worldPosition.z;
+	vDepth = clamp(depth / maxDrawDistance, 0.0, 1.0);
+	float fogFactor = smoothstep( fogNear, fogFar, depth );
 
 	// Adjust brightness by wave amplitude and old school exponential-squared fog
 	vBrightness = aBrightness + wave * 0.08;
@@ -286,7 +286,13 @@ void frag() {
 			borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
 		}
 
-		float border = smoothstep(0.03, quadBorder * (2.0 + vFogFactor), borderDistance);
+		borderDistance /= 1.0 + vDepth;
+		float derivative = fwidth(borderDistance);
+		float border = smoothstep(quadBorder, quadBorder + derivative, borderDistance);
+
+		if (limitDrawResolution == 1.0) {
+			border = border > 0.5 ? 1.0 : 0.0;
+		}
 
 		vec3 borderColor;
 		if (vSpotlight == 1.0) {
@@ -294,7 +300,7 @@ void frag() {
 			borderColor = vec3(1.0, 0.8, 0.0);
 		} else {
 			// The other quads' border color varies with distance to camera, aka the fog factor
-			borderColor = mix(vec3(1.0, 0.0, 0.5), vec3(1.0, 0.5, 0.0), pow(vFogFactor, 2.0));
+			borderColor = mix(vec3(1.0, 0.0, 0.5), vec3(1.0, 0.5, 0.0), pow(vDepth, 2.0));
 		}
 		color = mix(borderColor, color, border);
 	}
