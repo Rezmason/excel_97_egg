@@ -1,27 +1,15 @@
+Merge shaders
+	Use defines in renderer instead
+	Replace shadingOnly with a demo define
+
 Update the essay
-	Change stated opinion
-		DirectDraw, sure
-		Descent, no
-		Flight Simulator, yes
-			Downplay Microsoft's acquisition of BAO
-		Flying carpet
-			No cockpit, simple controls
-		Maybe mention the Excel 95 egg
-		Just interview a charting team member already!
-	Rewrite or expand the "To reverse engineer..." section
-		The comment about the color palette is completely wrong now
-		color lookup table
-			indexed colors
-		scanline space dithering
-			Modern GPUs don't rasterize with scanlines
-		64x64 height/brightness/region bmp
-		Maybe show each image with a description
-	Rephrase "Why does it feel clunky?"
-	Rephrase "There are several design decisions at work here."
-	Acknowledgements section
-		Maybe say more about Pavone
-			Also replace "expertise in matters of reverse engineering" with "reverse engineering expertise"
-		Thank fSpy creator for fSpy
+	Interview a charting team member already!
+	Adding images and demo modes
+		Scanline image, gif or mode
+		Link to shadingOnly mode
+		Image gallery
+		Alt text every image
+		Flowchart of data recovery
 
 Spherical distortion could be neat
 	How do those Minecraft shaders do it?
