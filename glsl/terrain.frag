@@ -1,3 +1,7 @@
+#if defined(TRUE_COLOR) && defined(GL_OES_standard_derivatives)
+#extension GL_OES_standard_derivatives: enable
+#endif
+
 precision mediump float;
 
 uniform highp float time;
@@ -12,8 +16,8 @@ uniform float shadingOnly;
 uniform vec2 moonscapeUVDistort;
 
 uniform float colorTableWidth;
-uniform sampler2D colorTable;
-
+uniform sampler2D colorTable, linearColorTable;
+uniform float titleCreditColor, bodyCreditColor;
 
 varying float vWhichTexture;
 varying vec2 vUV;
@@ -47,6 +51,7 @@ void main() {
 
 	int whichTexture = int(vWhichTexture);
 
+#if defined(INDEXED_COLOR)
 	float src = 0.0;
 	float brightness = vBrightness;
 
@@ -103,6 +108,49 @@ void main() {
 
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
 	vec3 color = texture2D(colorTable, colorTableUV).rgb;
+#elif defined(TRUE_COLOR)
+	vec3 color = vec3(0.0);
+	float brightness = vBrightness;
+
+	// The first two textures are sampled normally
+	if (whichTexture == 0) {
+		color = texture2D(moonscapeTexture, vUV).rgb;
+	} else if (whichTexture == 1) {
+		color = texture2D(platformTexture, vUV).rgb;
+	} else if (whichTexture == 2) {
+		// The credits texture is mapped in a special way,
+		vec4 credits = texture2D(creditsTexture, fract(getCreditUV()));
+		// and contains SDFs in its green and blue channels
+		// with different color gradients applied with indexed colors
+		float scroll = 1.0 - abs(vUV.y - 0.5) * 2.0;
+		float colorIndex = (credits.g > credits.b) ? titleCreditColor : bodyCreditColor;
+		vec2 colorTableUV = vec2(scroll, (colorIndex + 0.5) / colorTableWidth);
+		color = texture2D(linearColorTable, colorTableUV).rgb;
+
+		float radius = 0.4;
+		float credit = max(credits.g, credits.b);
+		float derivative = 0.02;
+
+		// If the draw resolution isn't limited,
+		// the SDF smoothing envelope gets based on derivatives
+		if (limitDrawResolution == 0.0) {
+			derivative = fwidth(credit);
+			if (derivative > 0.1) {
+				derivative = 0.0;
+			}
+		}
+
+		if (shadingOnly == 0.0) {
+			brightness *= smoothstep(radius - derivative, radius, credit);
+		}
+	}
+
+	if (shadingOnly == 1.0) {
+		color = vec3(1.0);
+	}
+
+	color *= clamp(brightness, 0.0, 1.0);
+#endif
 
 	// The quad border is smaller in birds' eye view
 	float quadBorder = quadBorder;

@@ -21,11 +21,16 @@ attribute float aBrightness;
 attribute float aWaveAmplitude, aWavePhase;
 attribute float aPointyQuad;
 
+attribute vec3 aPosition0, aPosition1, aPosition2;
+
 varying float vWhichTexture;
 varying vec2 vUV;
 varying vec3 vBarycentrics;
 varying float vFogFactor, vBrightness, vSpotlight;
 varying float vPointyQuad;
+
+varying vec2 vLeftVertex;
+varying float vTopLeftSlope, vBottomLeftSlope;
 
 void main() {
 	// Pass these right along to the fragment shader.
@@ -81,4 +86,31 @@ void main() {
 	// Adjust brightness by wave amplitude and old school exponential-squared fog
 	vBrightness = aBrightness + wave * 0.08;
 	vBrightness = clamp(pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor), 0.0, 1.0);
+
+#if defined(INDEXED_COLOR)
+	// Project all three triangle vertices' positions from local to world to screen
+	vec2 pos0 = (camera * transform * vec4(aPosition0 + offset, 1.0)).xy;
+	vec2 pos1 = (camera * transform * vec4(aPosition1 + offset, 1.0)).xy;
+	vec2 pos2 = (camera * transform * vec4(aPosition2 + offset, 1.0)).xy;
+
+	// Identify the leftmost vertex
+	bool less01 = pos0.x < pos1.x;
+	bool less12 = pos1.x < pos2.x;
+	bool less20 = pos2.x < pos0.x;
+	vec2 deltaP, deltaQ;
+	if (less01 && !less20) vLeftVertex = pos0, deltaP = pos1, deltaQ = pos2;
+	if (less12 && !less01) vLeftVertex = pos1, deltaP = pos2, deltaQ = pos0;
+	if (less20 && !less12) vLeftVertex = pos2, deltaP = pos0, deltaQ = pos1;
+
+	deltaP -= vLeftVertex;
+	deltaQ -= vLeftVertex;
+
+	// Compute the slopes from the leftmost vertex to the other two vertices
+	float slopeP = deltaP.y == 0.0 ? 0.0 : clamp(deltaP.x / deltaP.y, -100.0, 100.0);
+	float slopeQ = deltaQ.y == 0.0 ? 0.0 : clamp(deltaQ.x / deltaQ.y, -100.0, 100.0);
+
+	// Identify the "top" and "bottom" slopes
+	vTopLeftSlope = abs(max(slopeP, slopeQ));
+	vBottomLeftSlope = abs(min(slopeP, slopeQ));
+#endif
 }

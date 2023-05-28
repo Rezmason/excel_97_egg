@@ -65,8 +65,8 @@ export default (async () => {
 	const camera = mat4.create();
 	const repeatOffset = vec2.create();
 
-	const indexedShaderSet = await loadShaderSet("indexed_color");
-	const trueColorShaderSet = await loadShaderSet("true_color");
+	const indexedShaderSet = await loadShaderSet(["INDEXED_COLOR"]);
+	const trueColorShaderSet = await loadShaderSet(["TRUE_COLOR"]);
 
 	const state = {
 		time: 0,

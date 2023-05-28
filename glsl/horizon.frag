@@ -21,6 +21,9 @@ void main() {
 	// Stretch the texture so that its size relative to the quad
 	// is proportional to the horizon's size on a 480-pixel-tall screen.
 	float y = (0.5 - uv.y) * 480.0 / horizonHeight + 1.0;
+
+#if defined(INDEXED_COLOR)
+
 	if (y > 1.0) {
 		y = 0.0;
 	}
@@ -38,6 +41,16 @@ void main() {
 	// column = int(colorTableWidth) - 1;
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
 	vec3 color = texture2D(colorTable, colorTableUV).rgb;
+
+#elif defined(TRUE_COLOR)
+
+	vec3 color = texture2D(horizonTexture, vec2(uv.x, y)).rgb;
+
+	if (shadingOnly == 1.0) {
+		color = vec3(max(color.r, max(color.g, color.b)));
+	}
+
+#endif
 
 	// "Sindogs" are a repeating glow evenly distributed across the horizon,
 	// which slowly circle over time.
