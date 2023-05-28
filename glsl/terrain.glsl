@@ -6,7 +6,10 @@ precision mediump float;
 
 #define PI 3.14159265359
 
-#if defined(VERTEX_SHADER)
+#if defined(FRAGMENT_SHADER)
+#define attribute //
+#endif
+
 attribute float aQuadID;
 attribute vec2 aCentroid;
 attribute vec3 aPosition;
@@ -18,7 +21,6 @@ attribute float aWaveAmplitude, aWavePhase;
 attribute float aPointyQuad;
 
 attribute vec3 aPosition0, aPosition1, aPosition2;
-#endif
 
 varying float vWhichTexture;
 varying vec2 vUV;

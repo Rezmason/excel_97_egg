@@ -2,9 +2,11 @@ precision mediump float;
 
 #define PI 3.14159265359
 
-#if defined(VERTEX_SHADER)
-attribute vec2 aPosition;
+#if defined(FRAGMENT_SHADER)
+#define attribute //
 #endif
+
+attribute vec2 aPosition;
 
 varying vec2 vUV;
 
