@@ -2,6 +2,8 @@ precision mediump float;
 
 #define PI 3.14159265359
 
+#define DEMO_SHADING 0
+
 #if defined(FRAGMENT_SHADER)
 #define attribute //
 #endif
@@ -16,7 +18,6 @@ uniform sampler2D horizonTexture;
 uniform float horizonHeight;
 uniform vec3 rotation;
 uniform float showSindogs;
-uniform float shadingOnly;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTable;
@@ -59,9 +60,9 @@ void frag() {
 	int numColumns = int(colorTableWidth);
 	int row = index / numColumns;
 	int column = index - row * numColumns;
-	if (shadingOnly == 1.0) {
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		row = int(colorTableWidth) - 1;
-	}
+#endif
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
@@ -71,9 +72,9 @@ void frag() {
 
 	vec3 color = texture2D(horizonTexture, vec2(uv.x, y)).rgb;
 
-	if (shadingOnly == 1.0) {
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		color = vec3(max(color.r, max(color.g, color.b)));
-	}
+#endif
 
 #endif
 

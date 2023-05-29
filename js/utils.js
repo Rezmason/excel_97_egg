@@ -1,5 +1,8 @@
-const loadShaderSet = async (defines) => {
-	const definesPrefix = defines.map((d) => `#define ${d}\n`).join();
+const loadShaderSet = async (flags, props) => {
+	const flagsPrefix = flags.map((flag) => `#define ${flag}\n`).join();
+	const propsPrefix = Object.entries(props)
+		.map(([key, value]) => `#define ${key} ${value}\n`)
+		.join();
 	const defineVert = `#define VERTEX_SHADER\n`;
 	const defineFrag = `#define FRAGMENT_SHADER\n`;
 	const [horizonShader, terrainShader] = (
@@ -8,7 +11,7 @@ const loadShaderSet = async (defines) => {
 				fetch(url).then((response) => response.text())
 			)
 		)
-	).map((shader) => definesPrefix + shader);
+	).map((shader) => flagsPrefix + propsPrefix + shader);
 	return {
 		horizonVert: defineVert + horizonShader,
 		horizonFrag: defineFrag + horizonShader,

@@ -4,6 +4,8 @@ import Controls from "./controls.js";
 import { loadShaderSet, loadColorTable, loadTexturePack } from "./utils.js";
 const { mat4, vec2 } = glMatrix;
 
+const supportedDemos = ["shading"];
+
 export default (async () => {
 	const { events, settings } = await GUI;
 	const { data, terrain } = await Model;
@@ -65,8 +67,14 @@ export default (async () => {
 	const camera = mat4.create();
 	const repeatOffset = vec2.create();
 
-	const indexedShaderSet = await loadShaderSet(["INDEXED_COLOR"]);
-	const trueColorShaderSet = await loadShaderSet(["TRUE_COLOR"]);
+	const demoId = supportedDemos.indexOf(settings.demo);
+
+	const indexedShaderSet = await loadShaderSet(["INDEXED_COLOR"], {
+		DEMO_ID: demoId,
+	});
+	const trueColorShaderSet = await loadShaderSet(["TRUE_COLOR"], {
+		DEMO_ID: demoId,
+	});
 
 	const state = {
 		time: 0,

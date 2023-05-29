@@ -6,6 +6,8 @@ precision mediump float;
 
 #define PI 3.14159265359
 
+#define DEMO_SHADING 0
+
 #if defined(FRAGMENT_SHADER)
 #define attribute //
 #endif
@@ -47,7 +49,6 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder;
 uniform vec2 screenSize;
-uniform float shadingOnly;
 uniform vec2 moonscapeUVDistort;
 
 uniform float colorTableWidth;
@@ -174,9 +175,9 @@ void frag() {
 		// with different color gradients applied with indexed colors
 		float credit = 1.0 - abs(vUV.y - 0.5) * 2.0;
 
-		if (shadingOnly == 0.0) {
-			brightness *= credit;
-		}
+#if !(defined(DEMO_ID) && DEMO_ID == DEMO_SHADING)
+		brightness *= credit;
+#endif
 	}
 
 	// Look up the indexed color in the palette.
@@ -206,9 +207,9 @@ void frag() {
 		}
 	}
 
-	if (shadingOnly == 1.0) {
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		row = int(colorTableWidth) - 1;
-	}
+#endif
 
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
@@ -247,14 +248,14 @@ void frag() {
 			}
 		}
 
-		if (shadingOnly == 0.0) {
-			brightness *= smoothstep(radius - derivative, radius, credit);
-		}
+#if !(defined(DEMO_ID) && DEMO_ID == DEMO_SHADING)
+		brightness *= smoothstep(radius - derivative, radius, credit);
+#endif
 	}
 
-	if (shadingOnly == 1.0) {
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		color = vec3(1.0);
-	}
+#endif
 
 	color *= clamp(brightness, 0.0, 1.0);
 #endif

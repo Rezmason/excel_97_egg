@@ -1,14 +1,11 @@
-Merge shaders
-	Replace shadingOnly with a demo define
+Essay additions
+	Scanline image
+	Scanline demo
+	Image gallery
+	Alt text every image
+	Flowchart of data recovery
 
-Update the essay
-	Interview a charting team member already!
-	Adding images and demo modes
-		Scanline image, gif or mode
-		Link to shadingOnly mode
-		Image gallery
-		Alt text every image
-		Flowchart of data recovery
+Interview a charting team member already!
 
 Spherical distortion could be neat
 	How do those Minecraft shaders do it?

@@ -12,15 +12,13 @@ export default (async () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const settings = {
 		location: urlParams.get("l"),
+		demo: urlParams.get("demo"),
 		sanitizePosition:
 			!urlParams.has("sanitizePosition") ||
 			urlParams.get("sanitizePosition").toLowerCase() !== "false",
 		interactive:
 			!urlParams.has("interactive") ||
 			urlParams.get("interactive").toLowerCase() !== "false",
-		shadingOnly:
-			urlParams.has("shadingOnly") &&
-			urlParams.get("shadingOnly").toLowerCase() !== "false",
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
