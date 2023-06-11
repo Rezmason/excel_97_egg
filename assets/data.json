@@ -51,7 +51,7 @@
 		"moonscapeUVDistort": [0.98828125, 1],
 		"titleCreditColor": 13,
 		"bodyCreditColor": 15,
-		"supported_demos": ["shading"],
+		"supported_demos": ["shading", "scanlines"],
 		"texture_packs": {
 			"indexed_color": {
 				"anisotropicLevels": 0,

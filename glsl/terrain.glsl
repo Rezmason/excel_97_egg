@@ -7,6 +7,7 @@ precision mediump float;
 #define PI 3.14159265359
 
 #define DEMO_SHADING 0
+#define DEMO_SCANLINES 1
 
 #if defined(FRAGMENT_SHADER)
 #define attribute //attribute
@@ -192,7 +193,7 @@ void frag() {
 		// with different color gradients applied with indexed colors
 		float credit = 1.0 - abs(vUV.y - 0.5) * 2.0;
 
-#if !(defined(DEMO_ID) && DEMO_ID == DEMO_SHADING)
+#if !(defined(DEMO_ID) && DEMO_ID == DEMO_SHADING || DEMO_ID == DEMO_SCANLINES)
 		brightness *= credit;
 #endif
 	}
@@ -229,6 +230,20 @@ void frag() {
 			column += 1;
 		}
 	}
+
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SCANLINES
+	if (!nearBorder) {
+		float scanlineStreaks = (scanlineColumn + 0.1) * (1.0 + vDepth * 2.0);
+		scanlineStreaks *= (birdsEyeView == 1.0) ? 1.0 : 0.25;
+		scanlineStreaks = fract((scanlineStreaks - (time + vDepth) * 10.0) / 10.0) * 10.0 + scanlineStreaks * 0.1;
+		scanlineStreaks = smoothstep(7.0, 8.0, scanlineStreaks);
+		column = int(min(float(column), (scanlineStreaks + 0.2) * colorTableWidth));
+	}
+#endif
+
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SCANLINES
+		row = (whichTexture == 0) ? 2 : 10;
+#endif
 
 #if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		row = int(colorTableWidth) - 1;
@@ -298,7 +313,7 @@ void frag() {
 
 		// A quad whose triangles are very steep
 		// earns an additional thick line along the edge between them
-		if (vPointyQuad > 24.0) {
+		if (vPointyQuad > 18.0) {
 			borderDistance = min(borderDistance, vBarycentrics.r);
 		}
 
