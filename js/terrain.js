@@ -150,7 +150,10 @@ export default async (data) => {
 	const numVertices = numVerticesPerQuad * numColumns * numRows;
 
 	const getQuadAt = (x, y) => {
-		const column = modulo(Math.round(-x * (numColumns / size) - 0.5), numColumns);
+		const column = modulo(
+			Math.round(-x * (numColumns / size) - 0.5),
+			numColumns
+		);
 		const row = modulo(Math.round(-y * (numRows / size) - 0.5), numRows);
 		return quads[row][column];
 	};

@@ -184,9 +184,7 @@ export default (async () => {
 	const lastScreenSize = vec2.fromValues(1, 1);
 	let lastFrameTime = -1;
 	const start = Date.now();
-	const raf = regl.frame(({ time }) => {
-		// raf.cancel();
-
+	const render = ({ time }) => {
 		const deltaTime = time - lastFrameTime;
 		const mustDraw =
 			!settings.limitDrawSpeed || deltaTime >= 1 / data.rendering.targetFPS;
@@ -224,5 +222,7 @@ export default (async () => {
 			vec2.set(repeatOffset, ...offset);
 			drawTerrain(state);
 		}
-	});
+	};
+	render({ time: 0 }); // If there's an error, the RAF is never constructed
+	const raf = regl.frame(render);
 })();
