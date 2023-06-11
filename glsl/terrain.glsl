@@ -9,7 +9,7 @@ precision mediump float;
 #define DEMO_SHADING 0
 
 #if defined(FRAGMENT_SHADER)
-#define attribute //
+#define attribute //attribute
 #endif
 
 attribute float aQuadID;
@@ -30,13 +30,14 @@ varying vec3 vBarycentrics;
 varying float vDepth, vBrightness, vSpotlight;
 varying float vPointyQuad;
 
-varying vec2 vLeftVertex;
-varying float vTopLeftSlope, vBottomLeftSlope;
+varying mat3 vBottomScanline, vTopScanline;
+varying float vScanlineCut;
 
 uniform highp float time;
 uniform vec2 timeOffset;
 
 uniform mat4 camera, transform;
+uniform mat3 viewport;
 uniform vec3 position;
 uniform float terrainSize, maxDrawDistance;
 uniform float currentQuadID;
@@ -54,6 +55,29 @@ uniform vec2 moonscapeUVDistort;
 uniform float colorTableWidth;
 uniform sampler2D colorTable, linearColorTable;
 uniform float titleCreditColor, bodyCreditColor;
+
+vec3 toNDC(vec4 p) {
+	return p.xyz / p.w;
+}
+
+mat3 createScanline(vec2 p, vec2 q) {
+
+	vec2 o, d;
+	if (p.x < q.x) o = -p, d = p - q;
+	else o = -q, d = q - p;
+
+	float skw = -d.x / d.y;
+
+	return mat3(
+		1.0, 0.0, 0.0,
+		skw, 1.0, 0.0,
+		0.0, 0.0, 1.0
+	) * mat3(
+		1.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,
+		o.x, o.y, 1.0
+	);
+}
 
 #if defined(VERTEX_SHADER)
 void vert() {
@@ -107,30 +131,23 @@ void vert() {
 	vBrightness = clamp(pow(vBrightness, (1.0 + fogFactor * 2.0)) * (1.0 - fogFactor), 0.0, 1.0);
 
 #if defined(INDEXED_COLOR)
-	// Project all three triangle vertices' positions from local to world to screen
-	vec2 pos0 = (camera * transform * vec4(aPosition0 + offset, 1.0)).xy;
-	vec2 pos1 = (camera * transform * vec4(aPosition1 + offset, 1.0)).xy;
-	vec2 pos2 = (camera * transform * vec4(aPosition2 + offset, 1.0)).xy;
 
-	// Identify the leftmost vertex
-	bool less01 = pos0.x < pos1.x;
-	bool less12 = pos1.x < pos2.x;
-	bool less20 = pos2.x < pos0.x;
-	vec2 deltaP, deltaQ;
-	if (less01 && !less20) vLeftVertex = pos0, deltaP = pos1, deltaQ = pos2;
-	if (less12 && !less01) vLeftVertex = pos1, deltaP = pos2, deltaQ = pos0;
-	if (less20 && !less12) vLeftVertex = pos2, deltaP = pos0, deltaQ = pos1;
+	// Project the whole triangle from local to world to screen to NDC
+	vec2 pos0 = (viewport * toNDC(camera * transform * vec4(aPosition0 + offset, 1.0))).xy;
+	vec2 pos1 = (viewport * toNDC(camera * transform * vec4(aPosition1 + offset, 1.0))).xy;
+	vec2 pos2 = (viewport * toNDC(camera * transform * vec4(aPosition2 + offset, 1.0))).xy;
 
-	deltaP -= vLeftVertex;
-	deltaQ -= vLeftVertex;
+	// Identify the lowest vertex
+	vec2 a, b, c;
+	if (pos0.y >= pos1.y && pos0.y >= pos2.y) a = pos0, b = pos1, c = pos2;
+	if (pos1.y >= pos2.y && pos1.y >= pos0.y) a = pos1, b = pos2, c = pos0;
+	if (pos2.y >= pos0.y && pos2.y >= pos1.y) a = pos2, b = pos0, c = pos1;
 
-	// Compute the slopes from the leftmost vertex to the other two vertices
-	float slopeP = deltaP.y == 0.0 ? 0.0 : clamp(deltaP.x / deltaP.y, -100.0, 100.0);
-	float slopeQ = deltaQ.y == 0.0 ? 0.0 : clamp(deltaQ.x / deltaQ.y, -100.0, 100.0);
+	vBottomScanline = createScanline(a, b);
+	vTopScanline = createScanline(b, c);
+	vScanlineCut = b.y;
 
-	// Identify the "top" and "bottom" slopes
-	vTopLeftSlope = abs(max(slopeP, slopeQ));
-	vBottomLeftSlope = abs(min(slopeP, slopeQ));
+
 #endif
 }
 #endif
@@ -185,23 +202,29 @@ void frag() {
 	int column = int(brightness * colorTableWidth);
 
 	// Terrain brightness is limited to 4-bit color depth, aka 16 shades,
-	// but the apparent color depth can be doubled by careful dithering
+	// but the apparent color depth can be doubled by careful dithering.
+	// The dithering just alternates between the two nearest shades,
+	// but that alternation is offset by the beginning of the raster scanline.
+	// Modern GPUs don't rasterize with scanlines, so these are homemade.
+
+	// Find how far along the virtual scanline this fragment is
+	mat3 scanline = gl_FragCoord.y < vScanlineCut ? vTopScanline : vBottomScanline;
+	float scanlineColumn = (scanline * gl_FragCoord.xyz).x;
+
+	// Not sure why, but some triangles very close to the camera
+	// do some strange things
+	if (scanlineColumn < 0.0) {
+		scanlineColumn = 100.0;
+	}
+
+	bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
+
 	if (fract(brightness * colorTableWidth) >= 0.5) {
 
-		// The dithering just alternates between the two nearest shades,
-		// but that alternation is offset by the beginning of the raster scanline.
-		// Modern GPUs don't rasterize with scanlines, so these are homemade.
-
-		// Find how far along the virtual scanline this fragment is
-		vec2 origin = gl_FragCoord.xy - vLeftVertex;
-		float slope = origin.y < 0.0 ? vTopLeftSlope : vBottomLeftSlope;
-		float hDist = origin.x - origin.y * slope;
-
 		// Alternate along that scanline
-		int everyOtherPixel = int(fract(hDist * 0.5) * 2.0);
+		int everyOtherPixel = int(fract(scanlineColumn / 2.0) * 2.0);
 
 		// For some reason the original program didn't dither near quad edges
-		bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
 		if (everyOtherPixel == 1 || nearBorder) {
 			column += 1;
 		}

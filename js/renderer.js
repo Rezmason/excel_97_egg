@@ -2,7 +2,7 @@ import Model from "./model.js";
 import GUI from "./gui.js";
 import Controls from "./controls.js";
 import { loadShaderSet, loadColorTable, loadTexturePack } from "./utils.js";
-const { mat4, vec2 } = glMatrix;
+const { vec2, mat3, mat4 } = glMatrix;
 
 export default (async () => {
 	const { events, settings } = await GUI;
@@ -63,6 +63,7 @@ export default (async () => {
 	let offsets = singleOffset;
 	const screenSize = vec2.create();
 	const camera = mat4.create();
+	const viewport = mat3.create();
 	const repeatOffset = vec2.create();
 
 	const demoId = data.rendering.supported_demos.indexOf(settings.demo);
@@ -77,6 +78,7 @@ export default (async () => {
 	const state = {
 		time: 0,
 		camera,
+		viewport,
 		repeatOffset,
 		screenSize,
 		currentQuadID: -1,
@@ -199,6 +201,14 @@ export default (async () => {
 			const aspectRatio = screenSize[0] / screenSize[1];
 			const fovRadians = (Math.PI / 180) * data.rendering.fov;
 			mat4.perspective(camera, fovRadians, aspectRatio, 0.01, terrain.size * 2);
+
+			mat3.identity(viewport);
+			mat3.scale(
+				viewport,
+				viewport,
+				vec2.scale(vec2.create(), screenSize, 0.5)
+			);
+			mat3.translate(viewport, viewport, vec2.fromValues(1, 1));
 		}
 
 		lastFrameTime = time;
