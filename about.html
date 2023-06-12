@@ -43,6 +43,7 @@
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="preload" href="assets/ui/self_portrait_grin.bmp" as="image" />
 
 		<link rel="stylesheet" type="text/css" href="assets/98/style.css" />
 		<style>
@@ -131,8 +132,37 @@
 				width: calc(21rem * 3);
 			}
 
+			@keyframes animatedPortrait {
+				0%,
+				10%,
+				20%,
+				30%,
+				40%,
+				50%,
+				60%,
+				70%,
+				80%,
+				90%,
+				100% {
+					content: url("assets/ui/self_portrait.bmp");
+				}
+				2%,
+				14%,
+				26%,
+				34%,
+				42%,
+				54%,
+				66%,
+				78%,
+				86%,
+				94% {
+					content: url("assets/ui/self_portrait_grin.bmp");
+				}
+			}
+
 			div:hover > img#self_portrait {
 				content: url("assets/ui/self_portrait_grin.bmp");
+				animation: animatedPortrait 1.75s linear infinite alternate;
 			}
 
 			img#palette {
