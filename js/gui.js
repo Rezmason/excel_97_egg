@@ -43,7 +43,10 @@ export default (async () => {
 		])
 	);
 
-	const showAboutBox = () => aboutBox.classList.remove("hidden");
+	const showAboutBox = () => {
+		aboutBox.classList.remove("hidden");
+		aboutBox.contentWindow.scrollTo(0, 0);
+	};
 
 	const hideAboutBox = () => aboutBox.classList.add("hidden");
 
