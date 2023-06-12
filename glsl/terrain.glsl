@@ -233,7 +233,7 @@ void frag() {
 
 #if defined(DEMO_ID) && DEMO_ID == DEMO_SCANLINES
 	if (!nearBorder) {
-		float scanlineStreaks = (scanlineColumn + 0.1) * (1.0 + vDepth * 2.0);
+		float scanlineStreaks = (scanlineColumn * 960.0 / screenSize.y + 0.1) * (1.0 + vDepth * 2.0);
 		scanlineStreaks *= (birdsEyeView == 1.0) ? 1.0 : 0.25;
 		scanlineStreaks = fract((scanlineStreaks - (time + vDepth) * 10.0) / 10.0) * 10.0 + scanlineStreaks * 0.1;
 		scanlineStreaks = smoothstep(7.0, 8.0, scanlineStreaks);
