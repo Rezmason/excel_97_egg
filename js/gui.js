@@ -43,8 +43,8 @@ export default (async () => {
 		])
 	);
 
-	const showAboutBox = () => {
-		aboutBox.classList.remove("hidden");
+	const toggleAboutBox = () => {
+		aboutBox.classList.toggle("hidden");
 		aboutBox.contentWindow.scrollTo(0, 0);
 	};
 
@@ -98,7 +98,7 @@ export default (async () => {
 	});
 
 	aboutButton.addEventListener("click", (event) => {
-		showAboutBox();
+		toggleAboutBox();
 	});
 
 	const fullscreenChangeEventType = document.fullscreenEnabled
@@ -154,7 +154,7 @@ export default (async () => {
 		}
 
 		if (event.code === "KeyA") {
-			showAboutBox();
+			toggleAboutBox();
 			return;
 		}
 		const checkbox = checkboxesByKeyCode[event.code];
