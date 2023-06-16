@@ -18,7 +18,7 @@ attribute vec2 aCentroid;
 attribute vec3 aPosition;
 attribute vec3 aBarycentrics;
 attribute float aWhichTexture;
-attribute vec2 aUV;
+attribute vec2 aTexCoord;
 attribute float aBrightness;
 attribute float aWaveAmplitude, aWavePhase;
 attribute float aPointyQuad;
@@ -26,7 +26,7 @@ attribute float aPointyQuad;
 attribute vec3 aPosition0, aPosition1, aPosition2;
 
 varying float vWhichTexture;
-varying vec2 vUV;
+varying vec2 vTexCoord;
 varying vec3 vBarycentrics;
 varying float vDepth, vBrightness, vSpotlight;
 varying float vPointyQuad;
@@ -51,7 +51,7 @@ uniform sampler2D platformTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder;
 uniform vec2 screenSize;
-uniform vec2 moonscapeUVDistort;
+uniform vec2 moonscapeTextureDistort;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTable, linearColorTable;
@@ -86,7 +86,7 @@ void vert() {
 	vWhichTexture = aWhichTexture;
 	vBarycentrics = aBarycentrics;
 	vPointyQuad = aPointyQuad;
-	vUV = aUV;
+	vTexCoord = aTexCoord;
 
 	vec2 quadCentroidLocalPosition = (
 			fract((aCentroid + position.xy) / terrainSize + 0.5) - 0.5
@@ -153,23 +153,23 @@ void vert() {
 }
 #endif
 
-// Maps the UV coordinates, time and time offset to the crawling credits UV
-highp vec2 getCreditUV() {
-	highp vec2 uv = vUV;
-	uv.y = fract((time + timeOffset.y) * -0.006 + uv.y * 0.03 - 0.0225);
+// Maps the texture coordinates, time and time offset to the crawling credits texture coordinates
+highp vec2 getCreditTexCoord() {
+	highp vec2 texCoord = vTexCoord;
+	texCoord.y = fract((time + timeOffset.y) * -0.006 + texCoord.y * 0.03 - 0.0225);
 
-	uv.y *= 0.92;
-	uv.y += 0.076;
+	texCoord.y *= 0.92;
+	texCoord.y += 0.076;
 
-	uv.y *= 5.0;
-	uv.x = uv.x * 0.2 + (1.0 - 1.0 * 0.2);
-	uv.x += 1.0 * 0.2 * (1.0 + floor(uv.y));
-	uv.y = fract(uv.y);
+	texCoord.y *= 5.0;
+	texCoord.x = texCoord.x * 0.2 + (1.0 - 1.0 * 0.2);
+	texCoord.x += 1.0 * 0.2 * (1.0 + floor(texCoord.y));
+	texCoord.y = fract(texCoord.y);
 
-	uv = vec2(1.0) - uv;
-	uv = fract(uv);
+	texCoord = vec2(1.0) - texCoord;
+	texCoord = fract(texCoord);
 
-	return uv;
+	return texCoord;
 }
 
 #if defined(FRAGMENT_SHADER)
@@ -183,15 +183,15 @@ void frag() {
 
 	// The first two textures are sampled normally
 	if (whichTexture == 0) {
-		src = texture2D(moonscapeTexture, vUV * moonscapeUVDistort).r;
+		src = texture2D(moonscapeTexture, vTexCoord * moonscapeTextureDistort).r;
 	} else if (whichTexture == 1) {
-		src = texture2D(platformTexture, vUV).r;
+		src = texture2D(platformTexture, vTexCoord).r;
 	} else if (whichTexture == 2) {
 		// The credits texture is mapped in a special way,
-		src = texture2D(creditsTexture, getCreditUV()).r;
+		src = texture2D(creditsTexture, getCreditTexCoord()).r;
 		// and contains text in its green and blue channels
 		// with different color gradients applied with indexed colors
-		float credit = 1.0 - abs(vUV.y - 0.5) * 2.0;
+		float credit = 1.0 - abs(vTexCoord.y - 0.5) * 2.0;
 
 #if !(defined(DEMO_ID) && DEMO_ID == DEMO_SHADING || DEMO_ID == DEMO_SCANLINES)
 		brightness *= credit;
@@ -252,26 +252,26 @@ void frag() {
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 
-	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
-	vec3 color = texture2D(colorTable, colorTableUV).rgb;
+	vec2 colorTableTexCoord = vec2(float(column), float(row)) / colorTableWidth;
+	vec3 color = texture2D(colorTable, colorTableTexCoord).rgb;
 #elif defined(TRUE_COLOR)
 	vec3 color = vec3(0.0);
 	float brightness = vBrightness;
 
 	// The first two textures are sampled normally
 	if (whichTexture == 0) {
-		color = texture2D(moonscapeTexture, vUV).rgb;
+		color = texture2D(moonscapeTexture, vTexCoord).rgb;
 	} else if (whichTexture == 1) {
-		color = texture2D(platformTexture, vUV).rgb;
+		color = texture2D(platformTexture, vTexCoord).rgb;
 	} else if (whichTexture == 2) {
 		// The credits texture is mapped in a special way,
-		vec4 credits = texture2D(creditsTexture, fract(getCreditUV()));
+		vec4 credits = texture2D(creditsTexture, fract(getCreditTexCoord()));
 		// and contains SDFs in its green and blue channels
 		// with different color gradients applied with indexed colors
-		float scroll = 1.0 - abs(vUV.y - 0.5) * 2.0;
+		float scroll = 1.0 - abs(vTexCoord.y - 0.5) * 2.0;
 		float colorIndex = (credits.g > credits.b) ? titleCreditColor : bodyCreditColor;
-		vec2 colorTableUV = vec2(scroll, (colorIndex + 0.5) / colorTableWidth);
-		color = texture2D(linearColorTable, colorTableUV).rgb;
+		vec2 colorTableTexCoord = vec2(scroll, (colorIndex + 0.5) / colorTableWidth);
+		color = texture2D(linearColorTable, colorTableTexCoord).rgb;
 
 		float radius = 0.4;
 		float credit = max(credits.g, credits.b);
@@ -319,7 +319,7 @@ void frag() {
 
 		// The credits shouldn't be obscured by the thick lines
 		if (whichTexture == 2) {
-			borderDistance = 1.0 - max(abs(vUV.x - 0.5), abs(vUV.y - 0.5)) * 2.0;
+			borderDistance = 1.0 - max(abs(vTexCoord.x - 0.5), abs(vTexCoord.y - 0.5)) * 2.0;
 		}
 
 		borderDistance /= 1.0 + vDepth;

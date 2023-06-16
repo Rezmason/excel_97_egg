@@ -10,7 +10,7 @@ precision mediump float;
 
 attribute vec2 aPosition;
 
-varying vec2 vUV;
+varying vec2 vTexCoord;
 
 uniform mat4 camera, horizonTransform;
 
@@ -27,7 +27,7 @@ uniform vec2 timeOffset;
 
 #if defined(VERTEX_SHADER)
 void vert() {
-	vUV = 0.5 * (aPosition + 1.0);
+	vTexCoord = 0.5 * (aPosition + 1.0);
 
 	// Convert the 2D quad into a 3D object,
 	// always in front of the camera,
@@ -42,18 +42,18 @@ void vert() {
 
 #if defined(FRAGMENT_SHADER)
 void frag() {
-	vec2 uv = vUV;
+	vec2 texCoord = vTexCoord;
 
 	// Stretch the texture so that its size relative to the quad
 	// is proportional to the horizon's size on a 480-pixel-tall screen.
-	float y = (0.5 - uv.y) * 480.0 / horizonHeight + 1.0;
+	float y = (0.5 - texCoord.y) * 480.0 / horizonHeight + 1.0;
 
 #if defined(INDEXED_COLOR)
 
 	if (y > 1.0) {
 		y = 0.0;
 	}
-	float src = texture2D(horizonTexture, vec2(uv.x, y)).r;
+	float src = texture2D(horizonTexture, vec2(texCoord.x, y)).r;
 
 	// Look up the indexed color in the palette.
 	int index = int(src * (colorTableWidth * colorTableWidth - 1.0));
@@ -65,12 +65,12 @@ void frag() {
 #endif
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
-	vec2 colorTableUV = vec2(float(column), float(row)) / colorTableWidth;
-	vec3 color = texture2D(colorTable, colorTableUV).rgb;
+	vec2 colorTableTexCoord = vec2(float(column), float(row)) / colorTableWidth;
+	vec3 color = texture2D(colorTable, colorTableTexCoord).rgb;
 
 #elif defined(TRUE_COLOR)
 
-	vec3 color = texture2D(horizonTexture, vec2(uv.x, y)).rgb;
+	vec3 color = texture2D(horizonTexture, vec2(texCoord.x, y)).rgb;
 
 #if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		color = vec3(max(color.r, max(color.g, color.b)));
@@ -82,7 +82,7 @@ void frag() {
 	// which slowly circle over time.
 	float brightness = 1.0;
 	if (showSindogs == 1.0) {
-		brightness += (sin((rotation.y + uv.x * 26.0 + (time + timeOffset.y)) * PI / 180.0 * 15.0) - (uv.y) + 1.0) * 0.5;
+		brightness += (sin((rotation.y + texCoord.x * 26.0 + (time + timeOffset.y)) * PI / 180.0 * 15.0) - (texCoord.y) + 1.0) * 0.5;
 	}
 
 	color *= brightness;

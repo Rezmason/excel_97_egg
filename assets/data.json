@@ -48,7 +48,7 @@
 		"quadBorder": 0.005,
 		"resolution": [640, 480],
 		"targetFPS": 15,
-		"moonscapeUVDistort": [0.98828125, 1],
+		"moonscapeTextureDistort": [0.98828125, 1],
 		"titleCreditColor": 13,
 		"bodyCreditColor": 15,
 		"supported_demos": ["shading", "scanlines"],
@@ -103,9 +103,9 @@
 		"brightnessMult": -0.025,
 		"brightnessAdd": 0.87,
 		"maps": {
-			"elevation": "assets/terrain/elevation.bmp",
-			"brightness": "assets/terrain/brightness.bmp",
-			"region": "assets/terrain/region.bmp"
+			"elevation": { "url": "assets/terrain/elevation.bmp", "offset": -128 },
+			"brightness": { "url": "assets/terrain/brightness.bmp", "offset": -128 },
+			"region": { "url": "assets/terrain/region.bmp", "offset": 0 }
 		},
 		"regions": [
 			{ "id": "moon", "texture": 0 },

@@ -132,9 +132,9 @@ const loadTexturePack = async (regl, pack) => {
 	);
 };
 
-const loadTerrainBitmap = async (url, baseline = 0) =>
+const loadTerrainBitmap = async ({ url, offset }) =>
 	(await loadIndexedBitmap(url)).image.data.map((row) =>
-		row.map((x) => x - baseline)
+		row.map((x) => x + offset)
 	);
 
 export { loadShaderSet, loadColorTable, loadTexturePack, loadTerrainBitmap };
