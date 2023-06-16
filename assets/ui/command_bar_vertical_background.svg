@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="26px" height="26px" viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+	<style>
+		.white {
+			fill: #ffffff;
+		}
+
+		.beige {
+			fill: #d4d0c8;
+		}
+
+		.gray {
+			fill: #808080;
+		}
+	</style>
+	<rect class="beige" width="26" height="26"/>
+	<rect class="white" width="1" height="25"/>
+	<rect x="1" class="white" width="24" height="1"/>
+	<rect x="2" y="4" class="white" width="1" height="2"/>
+	<rect x="3" y="4" class="white" width="21" height="1"/>
+	<rect x="2" y="7" class="white" width="1" height="2"/>
+	<rect x="3" y="7" class="white" width="21" height="1"/>
+	<rect x="25" class="gray" width="1" height="26"/>
+	<rect y="25" class="gray" width="25" height="1"/>
+	<rect x="23" y="5" class="gray" width="1" height="2"/>
+	<rect x="2" y="6" class="gray" width="21" height="1"/>
+	<rect x="23" y="8" class="gray" width="1" height="2"/>
+	<rect x="2" y="9" class="gray" width="21" height="1"/>
+</svg>

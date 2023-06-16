@@ -52,29 +52,60 @@ screenshot.hidden {
 command-bar {
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
-	font-size: 0.2vw;
-
 	display: flex;
-
-	margin: 3em 2em 3em 11em;
-	border-image-outset: 3em 2em 3em 11em;
 	border-image-repeat: stretch;
 	--svg-width: 26;
 	--svg-height: 26;
-	border-image-slice: calc(100% * 3 / var(--svg-height))
-		calc(100% * 2 / var(--svg-width)) calc(100% * 3 / var(--svg-height))
-		calc(100% * 11 / var(--svg-width)) fill;
-	border-image-source: url("ui/command_bar_background.svg");
-	border-image-width: 3em 2em 3em 11em;
-
 	cursor: pointer;
+	--margin: 3;
+	--grip-margin: 11;
+	--butt-margin: 2;
+
+	margin: var(--margins);
+	border-image-outset: var(--margins);
+	border-image-width: var(--margins);
+}
+
+command-bar.horizontal {
+	flex-direction: row;
+	font-size: 0.2vw;
+	--margins: calc(var(--margin) * 1em) calc(var(--butt-margin) * 1em)
+		calc(var(--margin) * 1em) calc(var(--grip-margin) * 1em);
+	border-image-source: url("ui/command_bar_horizontal_background.svg");
+	border-image-slice: calc(100% * var(--margin) / var(--svg-height))
+		calc(100% * var(--butt-margin) / var(--svg-width))
+		calc(100% * var(--margin) / var(--svg-height))
+		calc(100% * var(--grip-margin) / var(--svg-width)) fill;
+}
+
+command-bar.vertical {
+	flex-direction: column;
+	font-size: 0.3vh;
+	--margins: calc(var(--grip-margin) * 1em) calc(var(--margin) * 1em)
+		calc(var(--butt-margin) * 1em) calc(var(--margin) * 1em);
+	border-image-source: url("ui/command_bar_vertical_background.svg");
+	border-image-slice: calc(100% * var(--grip-margin) / var(--svg-height))
+		calc(100% * var(--margin) / var(--svg-width))
+		calc(100% * var(--butt-margin) / var(--svg-height))
+		calc(100% * var(--margin) / var(--svg-width)) fill;
 }
 
 command-bar divider {
-	background-image: url("ui/command_bar_divider.png");
 	background-size: cover;
-	width: 6em;
-	height: 22em;
+	--divider-length: 6em;
+	--divider-thickness: 22em;
+}
+
+command-bar.horizontal divider {
+	background-image: url("ui/command_bar_horizontal_divider.png");
+	width: var(--divider-length);
+	height: var(--divider-thickness);
+}
+
+command-bar.vertical divider {
+	background-image: url("ui/command_bar_vertical_divider.png");
+	width: var(--divider-thickness);
+	height: var(--divider-length);
 }
 
 button.mso,
