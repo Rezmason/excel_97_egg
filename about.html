@@ -128,10 +128,6 @@
 				width: calc(65rem * 2);
 			}
 
-			img#self_portrait {
-				width: calc(21rem * 3);
-			}
-
 			@keyframes animatedPortrait {
 				0%,
 				10%,
@@ -160,8 +156,17 @@
 				}
 			}
 
-			div:hover > img#self_portrait {
-				content: url("assets/ui/self_portrait_grin.bmp");
+			div#self_portrait,
+			div#self_portrait img {
+				width: calc(21rem * 3);
+				height: calc(25rem * 3);
+			}
+
+			div#self_portrait {
+				content: url("assets/ui/self_portrait.bmp");
+			}
+
+			div#self_portrait:hover {
 				animation: animatedPortrait 1.75s linear infinite alternate;
 			}
 
@@ -263,9 +268,7 @@
 				<div id="content">
 					<p id="title">Excel&nbsp;97 Egg</p>
 					<div id="author_info">
-						<div>
-							<img id="self_portrait" src="assets/ui/self_portrait.bmp" />
-						</div>
+						<div id="self_portrait"></div>
 						<div>
 							reproduced by Jeremy Sachs<br />
 							<strong>Rez-Mason Retrographic Services</strong><br />
