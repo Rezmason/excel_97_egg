@@ -23,7 +23,7 @@ gui {
 	position: absolute;
 	top: 0;
 	left: 0;
-	padding: 1vw;
+	padding: 1vh;
 	background: transparent;
 }
 
@@ -186,12 +186,12 @@ input#fullscreen {
 iframe#about_box {
 	position: absolute;
 	top: 0;
-	left: 0;
-	width: 100%;
+	left: 11vh;
+	width: calc(100% - 11vh);
 	height: 100%;
 	border: none;
 }
 
-iframe.hidden {
+iframe#about_box.hidden {
 	display: none;
 }

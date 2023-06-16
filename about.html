@@ -71,10 +71,14 @@
 			}
 
 			div.window {
-				margin: 10% 0;
 				display: inline-block;
 				text-align: left;
 				font-size: max(12rem, 0.875vw);
+				margin: 3em;
+			}
+
+			div.window.standalone {
+				margin: 10%;
 			}
 
 			div.window-body {
@@ -259,7 +263,7 @@
 		<a id="link_to_egg" class="standalone" href="index.html"
 			><img id="get_egg" src="assets/ui/get_egg.bmp"
 		/></a>
-		<div class="window">
+		<div class="window standalone">
 			<div class="title-bar">
 				<div class="title-bar-text">About This Web Site</div>
 			</div>
