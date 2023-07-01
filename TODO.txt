@@ -1,18 +1,36 @@
+Fix iframe logic on mobile
+
 Essay additions
-	Scanline image
-	Scanline demo
-	Image gallery
+	Scanline GIF
+		for each separately scanlined region,
+			one by one, light up the start of the rows from the top down
+			one by one, quickly "scan" each row from left to right, "leaving behind" the gradient
+			one by one, quickly "flash" each row's black-and-white pattern and then final pattern
+	More screenshots with thumbnails
 	Alt text every image
-	Flowchart of data recovery
+
+Replace repo screenshot
+
+Flowchart of data recovery
+	Create outline
+	generate document like ♅
+	feed it to yEd
+	Icons from screenshots
+	Or maybe draw it out and find an old program to create it in
 
 Interview a charting team member already!
 
-Spherical distortion could be neat
-	How do those Minecraft shaders do it?
+Spherical distortion in vertex shader ("trick to fake a sphere")
+	Alan Wright added it to Populous: The Beginning
+	How do PtB / Topia do it?
+		A similar effect appears in Tetrisphere
+		"Warped through like a fisheye lens"
 
 ATI TruForm type tesselation option, aka NPatches
 	N for Normals
 	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
+
+Try adding a carpet, obviously
 
 Custom palette support
 	indexed color BMP file (color table)
@@ -20,34 +38,11 @@ Custom palette support
 	Merveilles theme (generated)
 	ACT file
 
+Magic Carpet terrain?
 Procedural terrain?
 
 Improve brightness computation
 	It seems like geometry has lower brightness but greater contrast in relation to distance
 	It seems more dramatic in the original
 
-Essay based on interviews
-
-	Interview topics
-		The culture of Microsoft, Applications Group and Excel over time
-		The prevalence of easter eggs in software over time
-		Specific Easter eggs
-			Excel 97 flight simulator
-			Word 97 pinball
-			Excel 95 DOOM-inspired egg
-			Excel 4.0 and the buggy Lotus 1-2-3 icon
-		Creativity and self expression in the tech industry
-		The joy of restoring, recovering, preserving something
-		Spreadsheet software and digital imaging
-
-	Charting team
-		Jason Allen
-		Andy Verprauskus
-		Previously Matt Bamberger
-	Folks you actually got to talk to
-		Hank Chien
-		Ed Fries
-
-Add link to essay to readme file
-
-XENIUM/XENIOLUM LUNENSIS
+XENIUM/XENIOLUM LUNARIS
