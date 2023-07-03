@@ -16,7 +16,7 @@ your heading, and hold another at the top, bottom, or middle of the
 screen to accelerate, decelerate or brake.
 
 ### About
-This is a JS port of the flight simulator [hidden](https://eeggs.com/items/718.html)
+This is a JS port of the magic carpet simulator [hidden](https://eeggs.com/items/718.html)
 within [Microsoft Excel 97](https://en.wikipedia.org/wiki/Microsoft_Excel#Excel_97_(v8.0)).
 It's built on top of [regl](https://regl.party).
 
