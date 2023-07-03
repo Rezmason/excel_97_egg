@@ -50,8 +50,16 @@
 	</head>
 	<body
 		class="standalone"
-		onload="if (parent.document !== document) Array.from(document.querySelectorAll('.standalone')).forEach(el => el.classList.remove('standalone'))"
-		onclick="if (event.target === this) parent.document.querySelector('iframe#about_box').classList.add('hidden')"
+		onload="
+			if (parent.document !== document) {
+				Array.from(document.querySelectorAll('.standalone')).forEach(el => el.classList.remove('standalone'));
+			}
+		"
+		onclick="
+			if (parent.document !== document && event.target === document.body) {
+				parent.document.querySelector('iframe#about-box').classList.add('hidden');
+			}
+		"
 	>
 		<a id="link_to_egg" class="standalone" href="index.html"
 			><img id="get_egg" src="assets/ui/get_egg.bmp"

@@ -28,10 +28,6 @@ div.window {
 	margin: 3em;
 }
 
-div.window.standalone {
-	margin: 10%;
-}
-
 div.window-body {
 	display: flex;
 	gap: 12rem;
