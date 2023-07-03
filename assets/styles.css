@@ -12,44 +12,36 @@ body {
 	overflow: hidden;
 }
 
+gui,
 canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 100vw;
 	height: 100vh;
+}
+
+canvas {
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
 }
 
 gui {
-	position: absolute;
-	top: 0;
-	left: 0;
-	padding: 1vh;
-	background: transparent;
-}
-
-screenshot {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	border: none;
-
-	image-rendering: crisp-edges;
-	image-rendering: pixelated;
-	background: no-repeat top center/cover url("ui/excel_screenshot.bmp") fixed
-		#d4d0c8;
-	cursor: cell;
-
-	transition: opacity 0.05s ease-out;
-}
-
-screenshot.hidden {
-	opacity: 0;
+	display: flex;
 	pointer-events: none;
 }
 
-command-bar {
+gui * {
+	pointer-events: auto;
+}
+
+deadzone {
+	display: block;
+	border: 1vh solid transparent;
+	align-self: flex-start;
+}
+
+.mso-command-bar {
 	image-rendering: optimizeSpeed; /* revisit; no browser is using this */
 	image-rendering: pixelated; /* firefox doesn't use this, but pixelates anyhow */
 	display: flex;
@@ -61,51 +53,66 @@ command-bar {
 	--grip-margin: 11;
 	--butt-margin: 2;
 
+	width: fit-content;
+	height: fit-content;
+
 	margin: var(--margins);
 	border-image-outset: var(--margins);
 	border-image-width: var(--margins);
 }
 
-command-bar.horizontal {
-	flex-direction: row;
-	font-size: 0.2vw;
-	--margins: calc(var(--margin) * 1em) calc(var(--butt-margin) * 1em)
-		calc(var(--margin) * 1em) calc(var(--grip-margin) * 1em);
-	border-image-source: url("ui/command_bar_horizontal_background.svg");
-	border-image-slice: calc(100% * var(--margin) / var(--svg-height))
-		calc(100% * var(--butt-margin) / var(--svg-width))
-		calc(100% * var(--margin) / var(--svg-height))
-		calc(100% * var(--grip-margin) / var(--svg-width)) fill;
+@media (max-aspect-ratio: 1/1) {
+	gui {
+		flex-direction: column;
+	}
+
+	.mso-command-bar {
+		flex-direction: row;
+		font-size: 0.25vw;
+		--margins: calc(var(--margin) * 1em) calc(var(--butt-margin) * 1em)
+			calc(var(--margin) * 1em) calc(var(--grip-margin) * 1em);
+		border-image-source: url("ui/command_bar_horizontal_background.svg");
+		border-image-slice: calc(100% * var(--margin) / var(--svg-height))
+			calc(100% * var(--butt-margin) / var(--svg-width))
+			calc(100% * var(--margin) / var(--svg-height))
+			calc(100% * var(--grip-margin) / var(--svg-width)) fill;
+	}
+
+	.mso-command-bar divider {
+		background-image: url("ui/command_bar_horizontal_divider.png");
+		width: var(--divider-length);
+		height: var(--divider-thickness);
+	}
 }
 
-command-bar.vertical {
-	flex-direction: column;
-	font-size: 0.3vh;
-	--margins: calc(var(--grip-margin) * 1em) calc(var(--margin) * 1em)
-		calc(var(--butt-margin) * 1em) calc(var(--margin) * 1em);
-	border-image-source: url("ui/command_bar_vertical_background.svg");
-	border-image-slice: calc(100% * var(--grip-margin) / var(--svg-height))
-		calc(100% * var(--margin) / var(--svg-width))
-		calc(100% * var(--butt-margin) / var(--svg-height))
-		calc(100% * var(--margin) / var(--svg-width)) fill;
+@media (min-aspect-ratio: 1/1) {
+	gui {
+		flex-direction: row;
+	}
+
+	.mso-command-bar {
+		flex-direction: column;
+		font-size: 0.25vh;
+		--margins: calc(var(--grip-margin) * 1em) calc(var(--margin) * 1em)
+			calc(var(--butt-margin) * 1em) calc(var(--margin) * 1em);
+		border-image-source: url("ui/command_bar_vertical_background.svg");
+		border-image-slice: calc(100% * var(--grip-margin) / var(--svg-height))
+			calc(100% * var(--margin) / var(--svg-width))
+			calc(100% * var(--butt-margin) / var(--svg-height))
+			calc(100% * var(--margin) / var(--svg-width)) fill;
+	}
+
+	.mso-command-bar divider {
+		background-image: url("ui/command_bar_vertical_divider.png");
+		width: var(--divider-thickness);
+		height: var(--divider-length);
+	}
 }
 
-command-bar divider {
+.mso-command-bar divider {
 	background-size: cover;
 	--divider-length: 6em;
 	--divider-thickness: 22em;
-}
-
-command-bar.horizontal divider {
-	background-image: url("ui/command_bar_horizontal_divider.png");
-	width: var(--divider-length);
-	height: var(--divider-thickness);
-}
-
-command-bar.vertical divider {
-	background-image: url("ui/command_bar_vertical_divider.png");
-	width: var(--divider-thickness);
-	height: var(--divider-length);
 }
 
 .mso-button {
@@ -153,15 +160,33 @@ command-bar.vertical divider {
 	cursor: help;
 }
 
-iframe#about_box {
-	position: absolute;
-	top: 0;
-	left: 11vh;
-	width: calc(100% - 11vh);
-	height: 100%;
+iframe#about-box {
 	border: none;
+	flex-grow: 1;
 }
 
-iframe#about_box.hidden {
+iframe#about-box.hidden {
 	display: none;
+}
+
+screenshot {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+	background: no-repeat top center/cover url("ui/excel_screenshot.bmp") fixed
+		#d4d0c8;
+	cursor: cell;
+
+	transition: opacity 0.05s ease-out;
+}
+
+screenshot.hidden {
+	opacity: 0;
+	pointer-events: none;
 }

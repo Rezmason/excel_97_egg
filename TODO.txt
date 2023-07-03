@@ -1,4 +1,5 @@
-Fix iframe logic on mobile
+Essay needs to be readable on mobile
+	Media query in about box
 
 Essay additions
 	Scanline GIF
@@ -8,6 +9,8 @@ Essay additions
 			one by one, quickly "flash" each row's black-and-white pattern and then final pattern
 	More screenshots with thumbnails
 	Alt text every image
+
+Rename lighting cutoff to draw distance
 
 Replace repo screenshot
 

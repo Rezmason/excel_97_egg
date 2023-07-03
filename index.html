@@ -52,98 +52,100 @@
 	<body>
 		<canvas></canvas>
 		<gui>
-			<command-bar class="vertical">
-				<button
-					class="mso-button"
-					style="--icon: 0"
-					id="about"
-					title="About... (A)"
-				></button>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 1"
-					id="birds_eye_view"
-					name="birds_eye_view"
-					data-key="b"
-					title="Bird's Eye View (B)"
-				/>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 2"
-					id="lighting_cutoff"
-					name="lighting_cutoff"
-					data-key="c"
-					title="Lighting Cutoff (C)"
-				/>
-				<divider></divider>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 3"
-					id="show_quad_edges"
-					name="show_quad_edges"
-					data-key="q"
-					title="Show Quad Edges (Q)"
-				/>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 4"
-					id="true_color_textures"
-					name="true_color_textures"
-					data-key="t"
-					title="Use True-Color Textures (T)"
-				/>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 5"
-					id="limit_draw_resolution"
-					name="limit_draw_resolution"
-					data-key="r"
-					title="Limit Drawing Resolution (R)"
-				/>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 6"
-					id="limit_draw_speed"
-					name="limit_draw_speed"
-					data-key="s"
-					title="Limit Simulation Speed (S)"
-				/>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 7"
-					id="show_sindogs"
-					name="show_sindogs"
-					data-key="g"
-					title="Show Sindogs (G)"
-				/>
-				<divider></divider>
-				<input
-					autocomplete="off"
-					class="mso-button"
-					type="checkbox"
-					style="--icon: 8"
-					id="fullscreen"
-					name="fullscreen"
-					data-key="f"
-					title="Full Screen (F)"
-				/>
-			</command-bar>
+			<deadzone>
+				<command-bar class="mso-command-bar">
+					<button
+						class="mso-button"
+						style="--icon: 0"
+						id="about"
+						title="About... (A)"
+					></button>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 1"
+						id="birds_eye_view"
+						name="birds_eye_view"
+						data-key="b"
+						title="Bird's Eye View (B)"
+					/>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 2"
+						id="lighting_cutoff"
+						name="lighting_cutoff"
+						data-key="c"
+						title="Lighting Cutoff (C)"
+					/>
+					<divider></divider>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 3"
+						id="show_quad_edges"
+						name="show_quad_edges"
+						data-key="q"
+						title="Show Quad Edges (Q)"
+					/>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 4"
+						id="true_color_textures"
+						name="true_color_textures"
+						data-key="t"
+						title="Use True-Color Textures (T)"
+					/>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 5"
+						id="limit_draw_resolution"
+						name="limit_draw_resolution"
+						data-key="r"
+						title="Limit Drawing Resolution (R)"
+					/>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 6"
+						id="limit_draw_speed"
+						name="limit_draw_speed"
+						data-key="s"
+						title="Limit Simulation Speed (S)"
+					/>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 7"
+						id="show_sindogs"
+						name="show_sindogs"
+						data-key="g"
+						title="Show Sindogs (G)"
+					/>
+					<divider></divider>
+					<input
+						autocomplete="off"
+						class="mso-button"
+						type="checkbox"
+						style="--icon: 8"
+						id="fullscreen"
+						name="fullscreen"
+						data-key="f"
+						title="Full Screen (F)"
+					/>
+				</command-bar>
+			</deadzone>
+			<iframe id="about-box" class="hidden" src="about.html"></iframe>
 		</gui>
-		<iframe id="about_box" class="hidden" src="about.html"></iframe>
 		<screenshot class="hidden"></screenshot>
 	</body>
 </html>

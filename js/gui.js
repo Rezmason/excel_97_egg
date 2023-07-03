@@ -23,17 +23,17 @@ export default (async () => {
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
 
-	const commandBar = document.querySelector("command-bar");
-	const aboutButton = commandBar.querySelector("button#about");
-	const aboutBox = document.querySelector("iframe#about_box");
+	const toolbar = document.querySelector("command-bar");
+	const aboutButton = toolbar.querySelector(".mso-button#about");
+	const aboutBox = document.querySelector("#about-box");
 	const screenshot = document.querySelector("screenshot");
 	const canvas = document.querySelector("canvas");
-	const fullscreenCheckbox = commandBar.querySelector("input#fullscreen");
+	const fullscreenCheckbox = toolbar.querySelector(".mso-button#fullscreen");
 	fullscreenCheckbox.disabled = !(
 		document.fullscreenEnabled || document.webkitFullscreenEnabled
 	);
 	const checkboxes = Array.from(
-		commandBar.querySelectorAll("input[type='checkbox']")
+		toolbar.querySelectorAll("input[type='checkbox']")
 	);
 
 	const checkboxesByKeyCode = Object.fromEntries(
@@ -91,7 +91,7 @@ export default (async () => {
 		events.dispatchEvent(settingsChangedEvent);
 	};
 
-	commandBar.addEventListener("click", (event) => {
+	toolbar.addEventListener("click", (event) => {
 		if (event.target.tagName.toLowerCase() === "input") {
 			updateSettings();
 		}
@@ -148,7 +148,7 @@ export default (async () => {
 			hideScreenshot();
 		}
 
-		if (event.code === "Space" && commandBar.contains(event.target)) {
+		if (event.code === "Space" && toolbar.contains(event.target)) {
 			event.preventDefault();
 			return;
 		}
@@ -166,7 +166,7 @@ export default (async () => {
 	});
 
 	document.addEventListener("keyup", async (event) => {
-		if (event.code === "Space" && commandBar.contains(event.target)) {
+		if (event.code === "Space" && toolbar.contains(event.target)) {
 			event.preventDefault();
 		}
 	});
