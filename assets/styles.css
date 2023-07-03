@@ -108,8 +108,7 @@ command-bar.vertical divider {
 	height: var(--divider-length);
 }
 
-button.mso,
-input[type="checkbox"].mso {
+.mso-button {
 	-webkit-appearance: unset;
 	font-size: unset;
 	border: none;
@@ -119,68 +118,39 @@ input[type="checkbox"].mso {
 	display: block;
 	width: 23em;
 	height: 22em;
+	cursor: pointer;
 
 	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
 	background-image: url("ui/icon_spritesheet_with_margin.png");
-	background-position: calc(1em * (-25 * var(--sprite-x) - 1))
-		calc(1em * (-24 * var(--sprite-y) - 1));
+	background-position: calc(1em * (-25 * var(--icon) - 1))
+		calc(1em * (-24 * var(--button-state) - 1));
 }
 
-input[type="checkbox"].mso:disabled {
+.mso-button {
+	--button-state: 0;
+}
+.mso-button:hover {
+	--button-state: 1;
+}
+.mso-button:active {
+	--button-state: 2;
+}
+.mso-button:checked {
+	--button-state: 3;
+}
+.mso-button:checked:hover {
+	--button-state: 4;
+}
+.mso-button:checked:active {
+	--button-state: 5;
+}
+.mso-button:disabled {
 	pointer-events: none;
 	opacity: 0.5;
 }
 
-button.mso,
-input[type="checkbox"].mso {
-	cursor: pointer;
-	--sprite-y: 0;
-}
-button.mso:hover,
-input[type="checkbox"].mso:hover {
-	--sprite-y: 1;
-}
-button.mso:active,
-input[type="checkbox"].mso:active {
-	--sprite-y: 2;
-}
-input[type="checkbox"].mso:checked {
-	--sprite-y: 3;
-}
-input[type="checkbox"].mso:checked:hover {
-	--sprite-y: 4;
-}
-input[type="checkbox"].mso:checked:active {
-	--sprite-y: 5;
-}
-
-button#about {
+.mso-button#about {
 	cursor: help;
-	--sprite-x: 0;
-}
-input#birds_eye_view {
-	--sprite-x: 1;
-}
-input#lighting_cutoff {
-	--sprite-x: 2;
-}
-input#show_quad_edges {
-	--sprite-x: 3;
-}
-input#true_color_textures {
-	--sprite-x: 4;
-}
-input#limit_draw_resolution {
-	--sprite-x: 5;
-}
-input#limit_draw_speed {
-	--sprite-x: 6;
-}
-input#show_sindogs {
-	--sprite-x: 7;
-}
-input#fullscreen {
-	--sprite-x: 8;
 }
 
 iframe#about_box {
