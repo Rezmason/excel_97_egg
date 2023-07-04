@@ -14,13 +14,6 @@ body {
 	text-align: center;
 }
 
-body.standalone {
-	background: url("textures/horizon.bmp") fixed black;
-	background-repeat: repeat-x;
-	background-position: 0 30%;
-	background-size: 1em 5em;
-}
-
 div.window {
 	display: inline-block;
 	text-align: left;
@@ -59,13 +52,8 @@ a {
 }
 
 a#link_to_egg {
-	display: none;
 	text-align: center;
 	margin-top: 40rem;
-}
-
-a#link_to_egg.standalone {
-	display: inline-block;
 }
 
 a#link_to_egg:hover img#get_egg {
@@ -77,6 +65,66 @@ img#about_banner {
 	position: sticky;
 	top: 8rem;
 	width: calc(65rem * 2);
+}
+
+div#self_portrait,
+div#self_portrait img {
+	width: calc(21rem * 3);
+	height: calc(25rem * 3);
+}
+
+img#palette {
+	width: 8em;
+	float: right;
+	padding: 0 0 10rem 10rem;
+}
+
+img#heightmap {
+	width: 8em;
+	float: left;
+	padding: 0 10rem 10rem 0;
+}
+
+table#command_bar_legend {
+	border-collapse: collapse;
+	width: 100%;
+	text-align: left;
+}
+
+table#command_bar_legend span.key {
+	font-weight: bold;
+	padding: 12rem;
+}
+
+div.legend_icon {
+	display: block;
+	width: 46rem;
+	height: 44rem;
+
+	--button-state: 1;
+
+	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
+	background-image: url("ui/icon_spritesheet_with_margin.png");
+	background-position: calc(2rem * (-25 * var(--icon) - 1))
+	calc(2rem * (-24 * var(--button-state) - 1));
+}
+
+p#jump_to_top {
+	text-align: center;
+	padding-top: 2em;
+}
+
+body.standalone {
+	background: url("textures/horizon.bmp") fixed black;
+	background-repeat: repeat-x;
+	background-position: 0 30%;
+	background-size: 1em 5em;
+}
+
+a#link_to_egg:not(.standalone),
+p#jump_to_top:not(.standalone),
+button.ok.standalone {
+	display: none;
 }
 
 @keyframes animatedPortrait {
@@ -107,96 +155,10 @@ img#about_banner {
 	}
 }
 
-div#self_portrait,
-div#self_portrait img {
-	width: calc(21rem * 3);
-	height: calc(25rem * 3);
-}
-
 div#self_portrait {
 	content: url("ui/self_portrait.bmp");
 }
 
 div#self_portrait:hover {
 	animation: animatedPortrait 1.75s linear infinite alternate;
-}
-
-img#palette {
-	width: 8em;
-	float: right;
-	padding: 0 0 10rem 10rem;
-}
-
-img#heightmap {
-	width: 8em;
-	float: left;
-	padding: 0 10rem 10rem 0;
-}
-
-table#command_bar_legend {
-	border-collapse: collapse;
-	width: 100%;
-	text-align: left;
-}
-
-table#command_bar_legend td:nth-child(2) {
-	padding: 12rem;
-}
-
-table#command_bar_legend td:nth-child(3) {
-}
-
-table#command_bar_legend td:nth-child(4) {
-}
-
-div.legend_icon {
-	display: block;
-	width: 46rem;
-	height: 44rem;
-
-	--sprite-y: 1;
-
-	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
-	background-image: url("ui/icon_spritesheet_with_margin.png");
-	background-position: calc(2rem * (-25 * var(--sprite-x) - 1))
-	calc(2rem * (-24 * var(--sprite-y) - 1));
-}
-
-div.legend_icon#birds_eye_view {
-	--sprite-x: 1;
-}
-div.legend_icon#lighting_cutoff {
-	--sprite-x: 2;
-}
-div.legend_icon#show_quad_edges {
-	--sprite-x: 3;
-}
-div.legend_icon#true_color_textures {
-	--sprite-x: 4;
-}
-div.legend_icon#limit_draw_resolution {
-	--sprite-x: 5;
-}
-div.legend_icon#limit_draw_speed {
-	--sprite-x: 6;
-}
-div.legend_icon#show_sindogs {
-	--sprite-x: 7;
-}
-div.legend_icon#fullscreen {
-	--sprite-x: 8;
-}
-
-p#jump_to_top {
-	display: none;
-	text-align: center;
-	padding-top: 2em;
-}
-
-p#jump_to_top.standalone {
-	display: block;
-}
-
-button.ok.standalone {
-	display: none;
 }
