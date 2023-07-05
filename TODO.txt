@@ -1,5 +1,19 @@
-Essay needs to be readable on mobile
-	Media query in about box
+about.html
+	Make readable on mobile
+		Min width media query
+			Hide banner
+			Images become full width
+	BEM, hyphens not underscores
+	Semantic tags in essay
+		main
+			article
+				header
+				section*
+				footer
+
+Give toolbars a minimum size
+	horizontal: width of window
+	vertical: height of window
 
 Essay additions
 	Scanline GIF

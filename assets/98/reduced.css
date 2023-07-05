@@ -9,8 +9,6 @@
  */
 
 :root {
-	/*font-size: 1.2px;*/
-	font-size: max(0.12vw, 0.8px);
 	/* Color */
 	--surface: #c0c0c0;
 	--button-highlight: #ffffff;
@@ -20,23 +18,23 @@
 	--link-blue: #0000ff;
 
 	/* Spacing */
-	--element-spacing: 8rem;
+	--element-spacing: 8px;
 
 	/* Borders */
-	--border-raised-outer: inset -1rem -1rem var(--window-frame),
-		inset 1rem 1rem var(--button-highlight);
-	--border-raised-inner: inset -2rem -2rem var(--button-shadow),
-		inset 2rem 2rem var(--button-face);
-	--border-sunken-outer: inset -1rem -1rem var(--button-highlight),
-		inset 1rem 1rem var(--window-frame);
-	--border-sunken-inner: inset -2rem -2rem var(--button-face),
-		inset 2rem 2rem var(--button-shadow);
+	--border-raised-outer: inset -1px -1px var(--window-frame),
+		inset 1px 1px var(--button-highlight);
+	--border-raised-inner: inset -2px -2px var(--button-shadow),
+		inset 2px 2px var(--button-face);
+	--border-sunken-outer: inset -1px -1px var(--button-highlight),
+		inset 1px 1px var(--window-frame);
+	--border-sunken-inner: inset -2px -2px var(--button-face),
+		inset 2px 2px var(--button-shadow);
 
 	/* Window borders flip button-face and button-highlight */
-	--border-window-outer: inset -1rem -1rem var(--window-frame),
-		inset 1rem 1rem var(--button-face);
-	--border-window-inner: inset -2rem -2rem var(--button-shadow),
-		inset 2rem 2rem var(--button-highlight);
+	--border-window-outer: inset -1px -1px var(--window-frame),
+		inset 1px 1px var(--button-face);
+	--border-window-inner: inset -2px -2px var(--button-shadow),
+		inset 2px 2px var(--button-highlight);
 }
 
 @font-face {
@@ -49,15 +47,15 @@
 
 @font-face {
 	font-family: "Pixelated MS Sans Serif";
-	src: url("fonts/converted/ms_sans_serif_bold_fixed.woff") format("woff");
-	src: url("fonts/converted/ms_sans_serif_bold_fixed.woff2") format("woff2");
+	src: url("fonts/converted/ms_sans_serif_bold.woff") format("woff");
+	src: url("fonts/converted/ms_sans_serif_bold.woff2") format("woff2");
 	font-weight: bold;
 	font-style: normal;
 }
 
 body {
 	font-family: Arial;
-	font-size: 12rem;
+	font-size: 12px;
 	color: #222222;
 }
 
@@ -66,30 +64,24 @@ button,
 .title-bar {
 	font-family: "Pixelated MS Sans Serif", Arial;
 	-webkit-font-smoothing: none;
-	font-size: 11rem;
-}
-
-u {
-	text-decoration: none;
-	border-bottom: 1.5rem solid #222222;
+	font-size: 11px;
 }
 
 button {
-	cursor: pointer;
 	box-sizing: border-box;
 	border: none;
 	background: var(--surface);
 	box-shadow: var(--border-raised-outer), var(--border-raised-inner);
 	border-radius: 0;
 
-	min-width: 75rem;
-	min-height: 23rem;
-	padding: 0 12rem;
+	min-width: 75px;
+	min-height: 23px;
+	padding: 0 12px;
 }
 
 button:not(:disabled):active {
 	box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
-	padding: 2rem 11rem 0 13rem;
+	padding: 2px 11px 0 13px;
 }
 
 @media (not(hover)) {
@@ -99,8 +91,8 @@ button:not(:disabled):active {
 }
 
 button:focus {
-	outline: 1rem dotted #000000;
-	outline-offset: -4rem;
+	outline: 1px dotted #000000;
+	outline-offset: -4px;
 }
 
 button::-moz-focus-inner {
@@ -110,12 +102,12 @@ button::-moz-focus-inner {
 .window {
 	box-shadow: var(--border-window-outer), var(--border-window-inner);
 	background: var(--surface);
-	padding: 3rem;
+	padding: 3px;
 }
 
 .title-bar {
-	background: #69199d;
-	padding: 3rem 2rem 3rem 3rem;
+	background: #000080;
+	padding: 3px 2px 3px 3px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -125,7 +117,7 @@ button::-moz-focus-inner {
 	font-weight: bold;
 	color: white;
 	letter-spacing: 0;
-	margin-right: 24rem;
+	margin-right: 24px;
 }
 
 .window-body {
@@ -137,10 +129,10 @@ button::-moz-focus-inner {
 	align-items: center;
 }
 
-p a {
+a {
 	color: var(--link-blue);
 }
 
-p a:focus {
-	outline: 1rem dotted var(--link-blue);
+a:focus {
+	outline: 1px dotted var(--link-blue);
 }

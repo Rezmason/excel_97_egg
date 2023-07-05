@@ -45,6 +45,7 @@ div#content {
 img#get_egg {
 	box-shadow: blueviolet 0 0 20rem 3rem;
 	width: calc(176rem);
+	margin-top: 3em;
 }
 
 a {

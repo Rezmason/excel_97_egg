@@ -1,0 +1,138 @@
+/**
+ * 98.css
+ * Copyright (c) 2020 Jordan Scales <thatjdanisso.cool>
+ * https://github.com/jdan/98.css/blob/main/LICENSE
+ */
+
+/**
+ * Substantially reduced for use in this project by Rezmason
+ */
+
+:root {
+	/* Color */
+	--surface: #c0c0c0;
+	--button-highlight: #ffffff;
+	--button-face: #dfdfdf;
+	--button-shadow: #808080;
+	--window-frame: #0a0a0a;
+	--link-blue: #0000ff;
+
+	/* Spacing */
+	--element-spacing: 8rem;
+
+	/* Borders */
+	--border-raised-outer: inset -1rem -1rem var(--window-frame),
+		inset 1rem 1rem var(--button-highlight);
+	--border-raised-inner: inset -2rem -2rem var(--button-shadow),
+		inset 2rem 2rem var(--button-face);
+	--border-sunken-outer: inset -1rem -1rem var(--button-highlight),
+		inset 1rem 1rem var(--window-frame);
+	--border-sunken-inner: inset -2rem -2rem var(--button-face),
+		inset 2rem 2rem var(--button-shadow);
+
+	/* Window borders flip button-face and button-highlight */
+	--border-window-outer: inset -1rem -1rem var(--window-frame),
+		inset 1rem 1rem var(--button-face);
+	--border-window-inner: inset -2rem -2rem var(--button-shadow),
+		inset 2rem 2rem var(--button-highlight);
+}
+
+@font-face {
+	font-family: "Pixelated MS Sans Serif";
+	src: url("fonts/converted/ms_sans_serif.woff") format("woff");
+	src: url("fonts/converted/ms_sans_serif.woff2") format("woff2");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Pixelated MS Sans Serif";
+	src: url("fonts/converted/ms_sans_serif_bold.woff") format("woff");
+	src: url("fonts/converted/ms_sans_serif_bold.woff2") format("woff2");
+	font-weight: bold;
+	font-style: normal;
+}
+
+body {
+	font-family: Arial;
+	font-size: 12rem;
+	color: #222222;
+}
+
+button,
+.window,
+.title-bar {
+	font-family: "Pixelated MS Sans Serif", Arial;
+	-webkit-font-smoothing: none;
+	font-size: 11rem;
+}
+
+button {
+	box-sizing: border-box;
+	border: none;
+	background: var(--surface);
+	box-shadow: var(--border-raised-outer), var(--border-raised-inner);
+	border-radius: 0;
+
+	min-width: 75rem;
+	min-height: 23rem;
+	padding: 0 12rem;
+}
+
+button:not(:disabled):active {
+	box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+	padding: 2rem 11rem 0 13rem;
+}
+
+@media (not(hover)) {
+	button:not(:disabled):hover {
+		box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+	}
+}
+
+button:focus {
+	outline: 1rem dotted #000000;
+	outline-offset: -4rem;
+}
+
+button::-moz-focus-inner {
+	border: 0;
+}
+
+.window {
+	box-shadow: var(--border-window-outer), var(--border-window-inner);
+	background: var(--surface);
+	padding: 3rem;
+}
+
+.title-bar {
+	background: #000080;
+	padding: 3rem 2rem 3rem 3rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.title-bar-text {
+	font-weight: bold;
+	color: white;
+	letter-spacing: 0;
+	margin-right: 24rem;
+}
+
+.window-body {
+	margin: var(--element-spacing);
+}
+
+.field-row {
+	display: flex;
+	align-items: center;
+}
+
+a {
+	color: var(--link-blue);
+}
+
+a:focus {
+	outline: 1rem dotted var(--link-blue);
+}

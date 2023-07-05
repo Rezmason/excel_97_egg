@@ -1,0 +1,16 @@
+:root {
+	font-size: 0.12vw;
+}
+
+u {
+	text-decoration: none;
+	border-bottom: 1.5rem solid #222222;
+}
+
+button {
+	cursor: pointer;
+}
+
+.title-bar {
+	background: #69199d;
+}
