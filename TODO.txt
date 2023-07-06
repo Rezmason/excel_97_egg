@@ -1,9 +1,4 @@
 about.html
-	Make readable on mobile
-		Min width media query
-			Hide banner
-			Images become full width
-	BEM, hyphens not underscores
 	Semantic tags in essay
 		main
 			article

@@ -7,6 +7,10 @@ u {
 	border-bottom: 1.5rem solid #222222;
 }
 
+p a, td a {
+	white-space: nowrap;
+}
+
 button {
 	cursor: pointer;
 }

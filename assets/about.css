@@ -17,7 +17,7 @@ body {
 div.window {
 	display: inline-block;
 	text-align: left;
-	font-size: max(12rem, 0.875vw);
+	font-size: 12rem;
 	margin: 3em;
 }
 
@@ -26,7 +26,7 @@ div.window-body {
 	gap: 12rem;
 }
 
-div#author_info {
+div#author-info {
 	text-align: left;
 	display: flex;
 	gap: 12rem;
@@ -38,40 +38,37 @@ div#author_info {
 }
 
 div#content {
+	margin-top: 1em;
 	max-width: 50em;
+	line-height: 1.25em;
 	text-align: justify;
 }
 
-img#get_egg {
+div#get-egg {
+	text-align: center;
+}
+
+a#link-to-egg img {
 	box-shadow: blueviolet 0 0 20rem 3rem;
 	width: calc(176rem);
 	margin-top: 3em;
 }
 
-a {
-	white-space: nowrap;
-}
-
-a#link_to_egg {
-	text-align: center;
-	margin-top: 40rem;
-}
-
-a#link_to_egg:hover img#get_egg {
+a#link-to-egg:hover img {
 	box-shadow: fuchsia 0 0 24rem 5rem;
 }
 
-img#about_banner {
-	align-self: flex-start;
+img#about-banner {
 	position: sticky;
 	top: 8rem;
 	width: calc(65rem * 2);
+	height: calc(216rem * 2);
 }
 
-div#self_portrait,
-div#self_portrait img {
-	width: calc(21rem * 3);
-	height: calc(25rem * 3);
+div#self-portrait,
+div#self-portrait img {
+	width: calc(21rem * 2);
+	height: calc(25rem * 2);
 }
 
 img#palette {
@@ -86,18 +83,18 @@ img#heightmap {
 	padding: 0 10rem 10rem 0;
 }
 
-table#command_bar_legend {
+table#command-bar-legend {
 	border-collapse: collapse;
 	width: 100%;
 	text-align: left;
 }
 
-table#command_bar_legend span.key {
+table#command-bar-legend span.key {
 	font-weight: bold;
 	padding: 12rem;
 }
 
-div.legend_icon {
+div.legend-icon {
 	display: block;
 	width: 46rem;
 	height: 44rem;
@@ -110,7 +107,7 @@ div.legend_icon {
 	calc(2rem * (-24 * var(--button-state) - 1));
 }
 
-p#jump_to_top {
+p#jump-to-top {
 	text-align: center;
 	padding-top: 2em;
 }
@@ -122,10 +119,41 @@ body.standalone {
 	background-size: 1em 5em;
 }
 
-a#link_to_egg:not(.standalone),
-p#jump_to_top:not(.standalone),
+div#get-egg:not(.standalone),
+p#jump-to-top:not(.standalone),
 button.ok.standalone {
 	display: none;
+}
+
+@media (max-width: 400px) {
+	:root {
+		font-size: 0.3vw;
+	}
+
+	div.window {
+		margin: unset;
+	}
+
+	div#content {
+		max-width: 50em;
+		text-align: left;
+		line-height: 1.5em;
+	}
+
+	img#about-banner {
+		display: none;
+	}
+
+	img#palette, img#heightmap {
+		width: calc(100% - 20rem);
+		max-width: 50em;
+		float: unset;
+		padding: 10rem;
+	}
+
+	table#command-bar-legend td {
+		padding: 1em 0;
+	}
 }
 
 @keyframes animatedPortrait {
@@ -156,10 +184,10 @@ button.ok.standalone {
 	}
 }
 
-div#self_portrait {
+div#self-portrait {
 	content: url("ui/self_portrait.bmp");
 }
 
-div#self_portrait:hover {
+div#self-portrait:hover {
 	animation: animatedPortrait 1.75s linear infinite alternate;
 }
