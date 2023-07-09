@@ -136,3 +136,19 @@ a {
 a:focus {
 	outline: 1rem dotted var(--link-blue);
 }
+
+h1 {
+	font-size: calc(5rem * 10);
+}
+
+h2 {
+	font-size: calc(2.5rem * 10);
+}
+
+h3 {
+	font-size: calc(2rem * 10);
+}
+
+h4 {
+	font-size: calc(1.5rem * 10);
+}

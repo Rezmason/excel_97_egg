@@ -1,34 +1,41 @@
-about.html
-	Semantic tags in essay
-		main
-			article
-				header
-				section*
-				footer
+Essay changes
+	Pictures
+		Behind the Sheens img should be the three terrain bitmaps
+		Torus trap img should be div, animate position with CSS animation
+			Noscript the img tag
+		Stripes GIF: banded close-up
+			light up each band one by one (16 shades)
+			draw lines over left edges
+			move lines one pixel at a time, alternating between black and white
+				leaving behind dithered pixels
+			light up each band one by one (32 shades)
+		Indexed colors GIFs
+			GIF 1: show textured, unshaded terrain next to bright column of palette
+				Animate highlights on each used indexed color with marching ants, and highlight that color in the column
+			GIF 2: show untextured, shaded terrain next to white row of palette, rotated into a column
+				Animate highlights on each used indexed shade with marching ants, and highlight that shade in the column
+			Combined screenshot paired with palette?
+				Highlight a region in one that matches the other
+		Baked vertex lighting image?
+		Alt text every image
+		Semantic tags
+			figure
+				img
+				figcaption
+	Flowchart of data recovery
+		Create outline
+		Draw it out and find an old program to create it in
+			Micrografx Flowcharter
+			Old Visio
+
+Rename lighting cutoff to draw distance
+Reorder the toolbar
 
 Give toolbars a minimum size
 	horizontal: width of window
 	vertical: height of window
 
-Essay additions
-	Scanline GIF
-		for each separately scanlined region,
-			one by one, light up the start of the rows from the top down
-			one by one, quickly "scan" each row from left to right, "leaving behind" the gradient
-			one by one, quickly "flash" each row's black-and-white pattern and then final pattern
-	More screenshots with thumbnails
-	Alt text every image
-
-Rename lighting cutoff to draw distance
-
 Replace repo screenshot
-
-Flowchart of data recovery
-	Create outline
-	generate document like ♅
-	feed it to yEd
-	Icons from screenshots
-	Or maybe draw it out and find an old program to create it in
 
 Interview a charting team member already!
 

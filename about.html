@@ -73,541 +73,567 @@
 			</div>
 			<div class="window-body">
 				<img id="about-banner" src="assets/ui/about_banner.png" />
-				<div id="content">
-					<p id="title">Excel&nbsp;97 Egg</p>
-					<div id="author-info">
-						<div id="self-portrait"></div>
-						<div>
-							reproduced by Jeremy&nbsp;Sachs<br />
-							<strong>Rez&#8209;Mason Retrographic Services</strong><br />
-							Vallejo, California
-							<p style="font-size: 0.8em">
-								<em>Visit us on the World Wide Web!</em><br />
-								<a target="_blank" href="https://www.rezmason.net/"
-									>https://www.rezmason.net/
-								</a>
-							</p>
-						</div>
-					</div>
-					<h2>What is all this?</h2>
-					<p>
-						Artists and craftspeople often leave their mark on what they make.
-						Programmers are no different.
-					</p>
-					<p>
-						The basic magic&nbsp;carpet&nbsp;simulator you see here is an
-						example of an
-						<a target="_blank" href="https://eeggs.com/items/718.html"
-							>"easter&nbsp;egg"</a
-						>— a game, image, sound, or written message hidden in a creative
-						work, which in this case is
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Microsoft_Excel#Excel_97_(v8.0)"
-							>Microsoft&nbsp;Excel&nbsp;97</a
-						>.
-					</p>
-					<p>
-						Users who performed a secret combination of actions in an empty
-						spreadsheet were taken to a whole new world created by members of
-						Excel's "Charting&nbsp;Team", where a scrolling stele glorifies the
-						application and credits everyone who worked on it.
-					</p>
-					<p>
-						It hid in every copy of Excel&nbsp;97 ever sold, whether you knew it
-						or not.
-					</p>
-					<h2>How and why did they hide it there?</h2>
-					<p>
-						With alacrity, wit, guile, and a healthy defiance of authority, I
-						imagine. Let me go ask them. Here's what I know so far:
-					</p>
-					<p>
-						In the eighties and nineties, Microsoft's software&nbsp;developers
-						had a lot of time on their hands while their large projects compiled
-						or underwent months of testing and stabilization. Many games
-						Microsoft later bundled with Windows or sold in
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Microsoft_Entertainment_Pack"
-							>"Entertainment Packs"</a
-						>
-						were originally the side&nbsp;projects of developers learning new
-						APIs and showing off to one another in their downtime. Some of them
-						chose to use their projects to secretly shine a spotlight on the
-						teams they worked on. Whether these secrets were ever discovered was
-						beside the point.
-					</p>
-					<p>
-						In my opinion, this easter&nbsp;egg was originally how someone
-						planned to learn
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Graphics_Device_Interface"
-							>GDI</a
-						>
-						and
-						<a target="_blank" href="https://en.wikipedia.org/wiki/DirectDraw"
-							>DirectDraw</a
-						>, and is a tribute to
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Magic_Carpet_(video_game)"
-							>Bullfrog Productions</a
-						>'s game series
-						<a
-							target="_blank"
-							href="https://archive.org/details/msdos_Magic_Carpet_Plus_1995"
-							>Magic Carpet</a
-						>— taking direct inspiration from the
-						<a
-							target="_blank"
-							href="https://web.archive.org/web/20181129132248/https://www.gamestm.co.uk/features/behind-the-scenes-of-magic-carpet/"
-							>techniques</a
-						>
-						that
-						<a target="_blank" href="https://en.wikipedia.org/wiki/Glenn_Corpes"
-							>Glenn Corpes</a
-						>
-						used to efficiently render 3D terrain and water.
-					</p>
-					<p>
-						It can be considered a followup to the Excel&nbsp;95
-						Doom&#8209;inspired easter&nbsp;egg,
-						<a
-							target="_blank"
-							href="https://archive.org/details/microsoft-office-95-hall-of-tortured-souls"
-							>"Hall&nbsp;of&nbsp;Tortured&nbsp;Souls"</a
-						>, and they have a couple minor things in common, though they're
-						rendered with very different techniques.
-					</p>
-					<p>
-						Astonishingly, from Excel's first version through the nineties,
-						Microsoft developers
-						<em>were allowed to add easter&nbsp;eggs to products</em>, as long
-						as they weren't directly referenced from the main application. That
-						stipulation might've given the company some cover in case a
-						PR&nbsp;disaster struck. It also meant the authors needed to work
-						out a clever way to load and run the easter&nbsp;egg without
-						referencing it— by overwriting a function pointer when certain keys
-						were held down at once, for instance.
-					</p>
-					<p>
-						Outside the game industry, this leniency toward easter&nbsp;eggs is
-						almost extinct today. Originally, most industries and consumers
-						weren't suspicious of the code in applications, but as software
-						vulnerabilities made more headlines, developers faced mounting
-						pressure to leave out any surprises that could compromise a user's
-						productivity, stability or security. Microsoft's response, a 2002
-						campaign called the
-						<a
-							target="_blank"
-							href="http://web.archive.org/web/20020405060312/http://www.wired.com/news/business/0,1367,49826,00.html"
-							>"Trustworthy Computing Initiative"</a
-						>, prescribed major changes to how the company wrote software, which
-						in turn made easter&nbsp;eggs impossible to ship.
-					</p>
-					<h2>What's it doing here?</h2>
-					<p>
-						This web port aims to be a
-						<strong>faithful&nbsp;reproduction</strong> of the original
-						easter&nbsp;egg, and to preserve computer history. Web&#8209;based
-						experiences have very few barriers to entry, so more people can
-						marvel at what a small team of imaginative programmers managed to
-						once conceal in the world's foremost spreadsheet application.
-					</p>
-					<p>
-						The project is
-						<a target="_blank" href="https://github.com/Rezmason/excel_97_egg"
-							>fully open source</a
-						>
-						and
-						<a
-							target="_blank"
-							href="https://github.com/Rezmason/excel_97_egg/blob/main/LICENSE"
-						>
-							MIT licensed</a
-						>, and has taught me many things.
-					</p>
-					<h2>How do you make an old easter&nbsp;egg into a website?</h2>
-					<a target="_blank" href="assets/ui/palette_larger.png"
-						><img id="palette" src="assets/ui/palette.png" />
-					</a>
-					<p>
-						First you have to examine and recover information from it, which is
-						called
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Reverse_engineering"
-						>
-							"reverse&nbsp;engineering"</a
-						>. Then you have to write a lot of JavaScript.
-					</p>
-					<p>
-						To reverse&nbsp;engineer the original program, its memory was
-						recorded with
-						<a
-							target="_blank"
-							href="https://docs.microsoft.com/en-us/sysinternals/downloads/procdump"
-						>
-							ProcDump</a
-						>
-						as it ran on Windows&nbsp;XP in
-						<a target="_blank" href="https://www.virtualbox.org/"
-							>Virtual&nbsp;Box</a
-						>, and the hex&nbsp;dumps were compared and inspected with
-						<a target="_blank" href="https://hexfiend.com/">Hex Fiend</a>. The
-						credit&nbsp;text, terrain&nbsp;data, framebuffer and
-						indexed&#8209;color textures were recovered this way. A custom Win32
-						program was written to collect the 8&#8209;bit
-						color&nbsp;lookup&nbsp;table, which is used in indexed&#8209;color
-						mode. Several small details, like the original key bindings and
-						text&nbsp;formatting, were found with a decompiler; others, such as
-						the brightness dithering technique, were discovered in an analysis
-						of the framebuffer in Photoshop. Lastly, camera properties and the
-						starting position and rotation were recovered from the framebuffer
-						with a great free tool called
-						<a target="_blank" href="https://fspy.io">fSpy</a>.
-					</p>
-					<p>
-						A simple, earlier port of the easter&nbsp;egg was thrown together in
-						<a target="_blank" href="https://threejs.org">Three.js</a>, before
-						this more detailed port was made in
-						<a target="_blank" href="http://regl.party">regl</a>. The controls,
-						the data&nbsp;parser, the renderer and the shaders were all custom
-						made and updated over time to load in more reformatted data from the
-						original, transform it into something that looks the same, and
-						present it in a way that feels the same.
-					</p>
-					<p>
-						For instance, the original program can only display 256 specific
-						colors onscreen. Modern graphics systems support millions of colors,
-						so the original textures converted to a modern direct&#8209;color
-						would have too high color&nbsp;depth. Instead, this project loads
-						the indexed&#8209;color textures straight into video&nbsp;memory,
-						along with the entire color&nbsp;lookup&nbsp;table, and the shaders
-						map the color indices in the texels to colors in the table, like how
-						computers used to do it.
-					</p>
-					<p>
-						Another good example is the baked&nbsp;vertex&nbsp;lighting. Modern
-						renderers that can't afford to compute lighting for every pixel use
-						<a target="_blank" href="https://en.wikipedia.org/wiki/Lightmap"
-							>lightmaps</a
-						>
-						to render light and shadow across stationary objects. The
-						easter&nbsp;egg uses an older technique: it assigns a precomputed
-						light value to each vertex, and
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Gouraud_shading"
-						>
-							blends between them</a
-						>
-						to look smooth. The busy textures the authors chose also help hide
-						<a
-							target="_blank"
-							href="http://localhost:8000/?o=c&interactive=false&l=spikes&demo=shading"
-							>the coarseness of the lighting data</a
-						>, even at
-						<a
-							target="_blank"
-							href="http://localhost:8000/?o=c&interactive=false&l=spikes"
-							>higher resolutions</a
-						>.
-					</p>
-					<h2>Why is it clunky? And what do the buttons do?</h2>
-					<p>
-						Computers were clunky in 1997, but you can change it in the options:
-					</p>
-					<table id="command-bar-legend">
-						<tbody>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 1"
-										id="birds-eye-view"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;B&nbsp;)</span></td>
-								<td><u>B</u>ird's Eye View</td>
-								<td>
-									A third person perspective to help navigate<br />
-									and understand the terrain.
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 2"
-										id="lighting-cutoff"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;C&nbsp;)</span></td>
-								<td>Lighting <u>C</u>utoff</td>
-								<td>
-									Changes the maximum distance of the fog and drawn terrain.
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 3"
-										id="show-quad-edges"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;Q&nbsp;)</span></td>
-								<td>Show <u>Q</u>uad Edges</td>
-								<td>
-									Highlights the boundaries of the tiled terrain geometry.
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 4"
-										id="true-color-textures"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;T&nbsp;)</span></td>
-								<td>True&#8209;Color <u>T</u>extures</td>
-								<td>
-									Renders smoother textures in
-									<a
-										target="_blank"
-										href="https://en.wikipedia.org/wiki/Color_depth#True_color_(24-bit)"
-									>
-										millions of colors</a
-									>,<br />
-									rather than the original indexed&#8209;color textures.
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 5"
-										id="limit-draw-resolution"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;R&nbsp;)</span></td>
-								<td>Limit Draw <u>R</u>esolution</td>
-								<td>
-									Constrains the dimensions of the rendered scene to
-									640&nbsp;x&nbsp;480,<br />
-									the prevailing screen resolution of the early nineties.
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 6"
-										id="limit-draw-speed"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;S&nbsp;)</span></td>
-								<td>Limit Draw <u>S</u>peed</td>
-								<td>Constrains the frame rate to approximately 15&nbsp;FPS.</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 7"
-										id="show-sindogs"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;G&nbsp;)</span></td>
-								<td>Show Sindo<u>g</u>s</td>
-								<td>
-									Gives the horizon texture a sinusoidal glow.<br />
-									<span style="font-size: 0.7em">
-										( Named after a notorious
-										<a
-											target="_blank"
-											href="https://www.youtube.com/watch?v=0XllTdSi5hY&t=2720s"
-										>
-											Excel&#8209;related bug
+				<main>
+					<article id="content">
+						<h1 id="title">Excel&nbsp;97 Egg</h1>
+						<header>
+							<div id="author-info">
+								<div id="self-portrait"></div>
+								<div>
+									reproduced by Jeremy&nbsp;Sachs<br />
+									<strong>Rez&#8209;Mason Retrographic Services</strong><br />
+									Vallejo, California
+									<p>
+										<em>Visit us on the World Wide Web!</em><br />
+										<a target="_blank" href="https://www.rezmason.net/"
+											>https://www.rezmason.net/
 										</a>
-										in Windows )
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div
-										class="legend-icon"
-										style="--icon: 8"
-										id="fullscreen"
-									></div>
-								</td>
-								<td><span class="key">(&nbsp;F&nbsp;)</span></td>
-								<td><u>F</u>ullscreen</td>
-								<td>
-									Expands to fill the entire screen, just as the original did.
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<h2>Flight Manual</h2>
-					<p>
-						<strong>On devices with a pointer :</strong> move the pointer to
-						change your heading, left&#8209;click and right&#8209;click to speed
-						up and slow down, and hold the spacebar to brake. You can also
-						scroll through the credits the way you scroll through a conventional
-						web page. Look at you, you're a natural.
-					</p>
-					<p>
-						<strong>On devices with a touch screen:</strong> move one finger
-						around to change your heading, and hold another at the top, bottom,
-						or middle of the screen to speed up, slow down or brake. Not bad,
-						eh?
-					</p>
-					<p>
-						In the unlikely event of a water landing, you may find a flotation
-						simulation device under
-						<a
-							target="_blank"
-							href="https://usb.org/sites/default/files/hut1_4.pdf#chapter.5"
-							>Section 5</a
-						>
-						of the HID&nbsp;Usage&nbsp;Tables.
-					</p>
-					<h2>Torus Trap</h2>
-					<a target="_blank" href="assets/ui/utf16.png"
-						><img id="heightmap" src="assets/ui/heightmap_colorized.png" />
-					</a>
-					<p>
-						After a minute of flying, it'll dawn on you that the landscape loops
-						around— you can fly forever in any direction, and the ground just
-						repeats. Surprisingly, this whole world— its elevation, brightness
-						and region data— is "charted" from a square "spreadsheet"
-						<em>only 64 cells wide.</em>
-					</p>
-					<p>And here it is. So, how is it so easy to get lost?</p>
-					<p>
-						Several design decisions are at play here. There are no navigational
-						instruments or vantage&nbsp;points; the world has the same texture
-						almost everywhere; the terrain has few landmarks to help you get
-						your bearings; the short drawing distance hides the terrain's
-						repetition; and in fact, many of its features loop around the edge
-						of the world to join back with themselves, so there's no detectable
-						seam.
-					</p>
-					<p>
-						Most importantly, the camera is tightly zoomed in, with a
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Field_of_view"
-						>
-							field of view</a
-						>
-						of only around <em>26&nbsp;degrees</em>. That is like seeing the
-						world through a porthole the size of a dinner plate held two feet
-						from your face. So of course you're lost. Relish it.
-					</p>
-					<h2>Earning Their Stripes</h2>
-					<p>
-						If you squint at the terrain in indexed&#8209;color mode, you'll
-						find pixelated streaks here and there. That's a part of the authors'
-						lighting technique. Their limited color palette gave them only
-						sixteen shades for the apparent brightness of each terrain pixel,
-						but by
-						<a target="_blank" href="https://en.wikipedia.org/wiki/Dither"
-							>dithering</a
-						>
-						some areas with the two closest shades, they essentially doubled
-						their color&nbsp;depth to thirty&#8209;two shades, and hid banding
-						artifacts.
-					</p>
-					<p>
-						Most dithering techniques don't produce these cool streaks, but they
-						appear here because the authors wrote it into their rasterizer— the
-						code that draws the pixels that make up a shape. Old rasterizers
-						would
-						<a
-							target="_blank"
-							href="https://en.wikipedia.org/wiki/Scanline_rendering"
-							>draw each row of pixels</a
-						>
-						from left to right. In the easter&nbsp;egg, the shades alternate
-						along the way, creating repeating lines that run parallel to the
-						shape's left edge. <em>Alakazam!</em>
-					</p>
-					<p>
-						Modern rasterizers don't work this way anymore, but this project
-						pretends they do. The vertex&nbsp;shader finds the leftmost edges of
-						a given triangle, and the fragment&nbsp;shader can measure
-						<a
-							target="_blank"
-							href="http://localhost:8000/?o=c&interactive=false&l=poolside&demo=scanlines"
-							>the fragment's distance to its row's left end</a
-						>, which is all that's needed to recreate the streak effect. Well,
-						that and a peculiar attention to detail. But working it all out was
-						a fun challenge, and considering you've read this far, it was worth
-						it.
-					</p>
-					<h2>Acknowledgements</h2>
-					<p>
-						Thank you
-						<a target="_blank" href="https://edfries.wordpress.com/"
-							>Ed Fries</a
-						>
-						for
-						<a target="_blank" href="research/ed_fries_1_27_22.html"
-							>providing insight</a
-						>
-						into the culture at early Microsoft, and
-						<a target="_blank" href="https://en.wikipedia.org/wiki/Hank_Chien"
-							>Hank Chien</a
-						>
-						for describing the charting team and pointing me in the right
-						direction.
-					</p>
-					<p>
-						<a target="_blank" href="https://hexfiend.com/">Peter Ammon</a>'s
-						tool was (and is) indispensible, as was (and is)
-						<a target="_blank" href="https://www.retrodev.com/"
-							>Mike Pavone's</a
-						>
-						reverse&nbsp;engineering expertise, computer history familiarity and
-						general camaraderie.
-					</p>
-					<p>
-						<a target="_blank" href="https://thatjdanisso.cool/98-dot-css"
-							>Jordan Scales</a
-						>
-						provided the excellent CSS and web font basis for this about page.
-						<a
-							target="_blank"
-							href="https://twitter.com/kurtruslfanclub/status/1080620576547303424"
-							>Mike Blackney</a
-						>
-						demonstrated a technique for generating SDFs in Photoshop, which
-						saved me the hassle of buying a specialized tool.
-					</p>
-					<p>
-						Thank you
-						<a target="_blank" href="https://bohemianalibi.com/">Tyler Lyn</a>
-						for your continued love and support. 🥰
-					</p>
-					<p id="jump-to-top" class="standalone">
-						<a href="#top">Jump to top of page</a>
-					</p>
-					<div class="field-row" style="justify-content: flex-end">
-						<button
-							class="ok standalone"
-							onclick="parent.document.querySelector('iframe#about-box').classList.add('hidden')"
-						>
-							OK
-						</button>
-					</div>
-				</div>
+									</p>
+								</div>
+							</div>
+							<div>
+								This project is licensed under:
+								<fieldset id="license-box">
+									<p>Massachusetts Institute of Technology License</p>
+								</fieldset>
+							</div>
+						</header>
+						<hr />
+						<section id="introduction">
+							<h2>What's this?</h2>
+							<p>
+								You're looking at the magic carpet simulator hidden in
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Microsoft_Excel#Excel_97_(v8.0)"
+									>Microsoft&nbsp;Excel&nbsp;97</a
+								>
+								by programmers on its charting team.
+							</p>
+							<p>
+								Hiding things in your work for people to find is known as an
+								<a target="_blank" href="https://eeggs.com/items/718.html"
+									>"easter&nbsp;egg"</a
+								>. To find Excel&nbsp;97's, you perform a secret series of
+								actions in an empty spreadsheet, and the Chart&nbsp;Wizard
+								transports you here. In front of you on a stone monument, it
+								lists the whole Excel team, which is a common easter&nbsp;egg
+								characteristic.
+							</p>
+						</section>
+						<section id="goal">
+							<h2>What's it doing on a web site?</h2>
+							<p>
+								This is a
+								<em>faithful&nbsp;reproduction</em> of that original
+								easter&nbsp;egg, meant to preserve a part of computer history.
+							</p>
+							<p>
+								The World Wide Web has very low barriers to entry, and web pages
+								like this one can be made to last a fairly long time.
+							</p>
+							<p>
+								This project is
+								<a
+									target="_blank"
+									href="https://github.com/Rezmason/excel_97_egg"
+									>fully open source</a
+								>
+								and
+								<a
+									target="_blank"
+									href="https://github.com/Rezmason/excel_97_egg/blob/main/LICENSE"
+								>
+									MIT licensed</a
+								>, and it's taught me many things.
+							</p>
+						</section>
+						<section id="legend">
+							<h2>It's so clunky. What do all those buttons do?</h2>
+							<p>
+								Computers were clunky in 1997. You can change it in the options:
+							</p>
+							<table id="command-bar-legend">
+								<tbody>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 1"
+												id="birds-eye-view"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;B&nbsp;)</span></td>
+										<td><u>B</u>ird's Eye View</td>
+										<td>
+											A third person perspective to help navigate<wbr />
+											and understand the terrain.
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 2"
+												id="lighting-cutoff"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;C&nbsp;)</span></td>
+										<td>Lighting <u>C</u>utoff</td>
+										<td>
+											Changes the maximum distance of the fog and drawn terrain.
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 3"
+												id="show-quad-edges"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;Q&nbsp;)</span></td>
+										<td>Show <u>Q</u>uad Edges</td>
+										<td>
+											Highlights the boundaries of the tiled terrain geometry.
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 4"
+												id="true-color-textures"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;T&nbsp;)</span></td>
+										<td>True&#8209;Color <u>T</u>extures</td>
+										<td>
+											Renders smoother textures in
+											<a
+												target="_blank"
+												href="https://en.wikipedia.org/wiki/Color_depth#True_color_(24-bit)"
+											>
+												millions of colors</a
+											>, rather than the original
+											<a
+												target="_blank"
+												href="https://en.wikipedia.org/wiki/Indexed_color"
+												>indexed&#8209;color</a
+											>
+											textures.
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 5"
+												id="limit-draw-resolution"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;R&nbsp;)</span></td>
+										<td>Limit Draw <u>R</u>esolution</td>
+										<td>
+											Forces the dimensions of the rendered scene to
+											640&nbsp;x&nbsp;480, also known as
+											<a
+												target="_blank"
+												href="https://en.wikipedia.org/wiki/Video_Graphics_Array#640_%C3%97_480_graphics_mode"
+												>VGA graphics mode</a
+											>.
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 6"
+												id="limit-draw-speed"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;S&nbsp;)</span></td>
+										<td>Limit Draw <u>S</u>peed</td>
+										<td>Caps the frame rate at approximately 15&nbsp;FPS.</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 7"
+												id="show-sindogs"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;G&nbsp;)</span></td>
+										<td>Show Sindo<u>g</u>s</td>
+										<td>
+											Gives the horizon texture a sinusoidal glow.<br />
+											(Named after a sneaky
+											<a
+												target="_blank"
+												href="https://www.youtube.com/watch?v=0XllTdSi5hY&t=2720s"
+											>
+												Windows bug
+											</a>
+											)
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<legend-icon
+												style="--icon: 8"
+												id="fullscreen"
+											></legend-icon>
+										</td>
+										<td><span class="key">(&nbsp;F&nbsp;)</span></td>
+										<td><u>F</u>ullscreen</td>
+										<td>Expands the page to fill the entire screen.</td>
+									</tr>
+								</tbody>
+							</table>
+						</section>
+						<section id="controls">
+							<h2>Flight Manual</h2>
+							<p>
+								<strong>On devices with a pointer :</strong> move the pointer to
+								change your heading, left&#8209;click and right&#8209;click to
+								speed up and slow down, and hold the spacebar to brake. You can
+								also scroll through the credits the way you scroll through an
+								ordinary web page.
+							</p>
+							<p>Look at you, you're a natural.</p>
+							<p>
+								<strong>On devices with a touch screen:</strong> move one finger
+								around to change your heading, and hold another at the top,
+								bottom, or middle of the screen to speed up, slow down or brake.
+								Not bad, eh?
+							</p>
+							<p>
+								In the unlikely event of a water landing, you may find a
+								flotation simulation device under
+								<a
+									target="_blank"
+									href="https://usb.org/sites/default/files/hut1_4.pdf#section.5.7"
+									>Section 5.7</a
+								>
+								of the USB HID&nbsp;Usage&nbsp;Tables.
+							</p>
+						</section>
+						<section id="history">
+							<h2>How and why did someone hide this in Excel&nbsp;97?</h2>
+							<p>
+								Shrewdly in their downtime, because some people are just fun.
+							</p>
+
+							<p>
+								Big programs took a very long time to compile, test and
+								stabilize back in the nineties. While they waited, Microsoft's
+								software&nbsp;developers pranked each other, learned to juggle,
+								and made their own games with the new tools at their disposal.
+							</p>
+							<p>
+								Some games got
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/List_of_games_included_with_Windows"
+									>bundled with Windows</a
+								>
+								or sold in
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Microsoft_Entertainment_Pack"
+									>"Entertainment Packs"</a
+								>. Others stowed away in published software as easter&nbsp;eggs.
+							</p>
+							<p>
+								In my opinion, this specific easter&nbsp;egg was how someone
+								taught themselves to use
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Graphics_Device_Interface"
+									>GDI</a
+								>,
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/DirectDraw"
+									>DirectDraw</a
+								>
+								in a
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Software_rendering#Real-time_software_rendering"
+									>real&#8209;time software renderer</a
+								>
+								, and is an homage to Bullfrog Productions's game series
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Magic_Carpet_(video_game)"
+									>Magic Carpet</a
+								>— taking direct inspiration from the
+								<a
+									target="_blank"
+									href="https://web.archive.org/web/20181129132248/https://www.gamestm.co.uk/features/behind-the-scenes-of-magic-carpet/"
+									>techniques</a
+								>
+								Glenn Corpes used to efficiently render 3D terrain and water.
+							</p>
+							<p>
+								It can be considered a followup to Excel&nbsp;95's
+								Doom&#8209;inspired easter&nbsp;egg,
+								<a
+									target="_blank"
+									href="https://archive.org/details/microsoft-office-95-hall-of-tortured-souls"
+									>"Hall&nbsp;of&nbsp;Tortured&nbsp;Souls"</a
+								>. The two have some minor things in common, though they're
+								rendered very differently.
+							</p>
+							<p>
+								Microsoft didn't mind any of this at the time, as long as the
+								easter&nbsp;eggs weren't directly linked to the main program.
+								That might've given the company some cover in case a
+								PR&nbsp;disaster struck. It also meant the authors had to work
+								out how to load and run the easter&nbsp;egg code without
+								referencing it— by overwriting a function pointer when certain
+								keys were held down at once, for instance.
+							</p>
+							<p>
+								Redmond's lenience wouldn't last. Its
+								<a
+									target="_blank"
+									href="http://web.archive.org/web/20020405060312/http://www.wired.com/news/business/0,1367,49826,00.html"
+									>"Trustworthy Computing Initiative"</a
+								>
+								in 2002 prescribed major changes to how its developers wrote
+								software, making a program's user productivity, stability and
+								security paramount— which in turn made easter&nbsp;eggs
+								unshippable.
+							</p>
+							<p>
+								Today, software easter&nbsp;eggs are almost unheard of outside
+								the game industry.
+							</p>
+						</section>
+						<section id="recovery">
+							<h2>How'd you turn it into a web site?</h2>
+							<p>I'm so glad you asked!</p>
+							<p>
+								To
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Reverse_engineering"
+									>reverse&nbsp;engineer</a
+								>
+								the original program, its memory was recorded with
+								<a
+									target="_blank"
+									href="https://docs.microsoft.com/en-us/sysinternals/downloads/procdump"
+								>
+									ProcDump</a
+								>
+								as it ran on Windows&nbsp;XP in
+								<a target="_blank" href="https://www.virtualbox.org/"
+									>Virtual&nbsp;Box</a
+								>. Memory snapshots were inspected and compared with
+								<a target="_blank" href="https://hexfiend.com/">Hex Fiend</a>.
+								The credit&nbsp;text, terrain&nbsp;data, framebuffer and
+								textures were recovered this way. A custom Win32 program was
+								written to collect the color&nbsp;lookup&nbsp;table, which the
+								project uses in indexed&#8209;color mode. Larger
+								True&#8209;Color textures were custom made in Photoshop.
+							</p>
+							<p>
+								Several small details, like the key bindings and
+								text&nbsp;formatting, were found with a decompiler; others, such
+								as the dithering technique, were discovered by analyzing
+								framebuffers in Photoshop. Lastly, the framebuffers were fed
+								into <a target="_blank" href="https://fspy.io">fSpy</a> to
+								recover the camera properties and the player's starting position
+								and rotation.
+							</p>
+							<p>
+								A prototype was built in
+								<a target="_blank" href="https://threejs.org">Three.js</a>
+								before this more detailed port was made in
+								<a target="_blank" href="http://regl.party">regl</a>. The
+								controls, data&nbsp;parser, renderer and shaders were all custom
+								made and updated over time to recapture the original experience.
+							</p>
+						</section>
+						<section id="torus">
+							<h2>Torus Trap</h2>
+							<img id="heightmap" src="assets/ui/heightmap_colorized.png" />
+							<p>
+								Notice the landscape repeats in every direction, so you can fly
+								forever. In fact this whole world is "charted" from a square
+								"spreadsheet"
+								<em>only 64 cells wide.</em>
+							</p>
+							<p>So, how is it so easy to get lost?</p>
+							<p>
+								There are a few tricks to make small worlds feel big. Provide no
+								navigational instruments or vantage&nbsp;points; give the world
+								a uniform texture and few distinct landmarks; the short drawing
+								distance hides the terrain's repetition; and in fact, many of
+								its features loop around the edge of the world to join back with
+								themselves, so there's no visible seam.
+							</p>
+							<p>
+								Above all, the camera is tightly zoomed in, with a
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Field_of_view"
+								>
+									field of view</a
+								>
+								of only <em>26&nbsp;degrees</em>. That's like piloting a plane
+								through a porthole the size of a dinner plate two feet in front
+								of your face. Of course you're lost. Relish it.
+							</p>
+						</section>
+						<section id="lighting">
+							<h2>Behind the Sheens</h2>
+							<p>
+								Rapid lighting and texturing are the enduring pillars of 3D
+								graphics cards, but in the nineties most Excel users and even
+								gamers didn't have those. Rendering was done in software, not
+								hardware, and making something look good and draw fast while
+								running on a Pentium was a real challenge.
+							</p>
+							<p>
+								A common way to light things quickly is to only do it once,
+								ahead of time. This is called "pre&#8209;computed" or "baked"
+								lighting, and while we bake data into special textures nowadays,
+								back then it was common to bake to <em>vertices</em>, which are
+								the points that define shapes.
+							</p>
+							<p>
+								The easter&nbsp;egg's terrain data is like a baked lasagna— the
+								elevation, lighting, and material of each point is baked into a
+								corresponding 64x64 grid.
+							</p>
+							<p>
+								It's clear just by looking at them that the lighting data was
+								created from the elevation data, but it's not a realistic
+								lighting calculation. Instead, like an early form of
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Ambient_occlusion"
+									>ambient occlusion</a
+								>, the pointy areas were made darker than the smooth ones, which
+								is <em>also</em> like a baked lasagna.
+							</p>
+						</section>
+						<section id="stripes">
+							<h2>Earning Their Stripes</h2>
+							<img id="palette" src="assets/ui/palette.png" />
+							<p>
+								By default, this simulator draws with only the original 256
+								colors, which took some effort. It has to load the
+								color&nbsp;lookup&nbsp;table and indexed&#8209;color textures
+								into video&nbsp;memory, and its shaders map texel values to
+								colors in the table, like an old VGA
+								<a target="_blank" href="https://en.wikipedia.org/wiki/RAMDAC"
+									>RAMDAC</a
+								>.
+							</p>
+							<p>
+								That table holds sixteen shades of sixteen colors, so most
+								pixels get mapped to the same shade as their neighbors, causing
+								a visual artifact known as
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Colour_banding"
+									>banding</a
+								>. A technique called
+								<a target="_blank" href="https://en.wikipedia.org/wiki/Dither"
+									>dithering</a
+								>
+								can hide banding by adjusting pixel values with random noise or
+								high frequency patterns.
+							</p>
+							<p>
+								The original easter&nbsp;egg draws terrain one triangle at a
+								time, using
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Scanline_rendering"
+									>scanline rendering</a
+								>. A scanline is a row of pixels drawn left to right. Each
+								pixel's final color and texture depends on its distance from the
+								scanline edges. This code is where the authors chose to add very
+								simple dithering. That skews the dither pattern along the
+								triangle edges, but it inexpensively doubles the range of the
+								terrain shading from sixteen to thirty&#8209;two.
+							</p>
+							<p>
+								Graphics hardware doesn't render using scanlines, but this
+								project simulates them. Its vertex&nbsp;shader maps each
+								triangle's left edges to a skewed space, and the
+								fragment&nbsp;shader offsets the dither of each pixel by the
+								<a
+									target="_blank"
+									href="http://localhost:8000/?o=c&interactive=false&l=poolside&demo=scanlines"
+									>distance along its scanline</a
+								>. The result is subtle, but accurate.
+							</p>
+						</section>
+						<section id="acknowledgements">
+							<h2>Acknowledgements</h2>
+							<p>
+								Thank you
+								<a target="_blank" href="https://edfries.wordpress.com/"
+									>Ed Fries</a
+								>
+								for
+								<a target="_blank" href="research/ed_fries_1_27_22.html"
+									>providing insight</a
+								>
+								into the culture at early Microsoft, and
+								<a
+									target="_blank"
+									href="https://en.wikipedia.org/wiki/Hank_Chien"
+									>Hank Chien</a
+								>
+								for describing the charting team and pointing me in the right
+								direction.
+							</p>
+							<p>
+								<a target="_blank" href="https://hexfiend.com/">Peter Ammon</a
+								>'s tool was (and is) indispensible, as was (and is)
+								<a target="_blank" href="https://www.retrodev.com/"
+									>Mike Pavone's</a
+								>
+								reverse&nbsp;engineering expertise, computer history familiarity
+								and general camaraderie.
+							</p>
+							<p>
+								<a target="_blank" href="https://thatjdanisso.cool/98-dot-css"
+									>Jordan Scales</a
+								>
+								provided the excellent CSS and web font basis for this about
+								page.
+								<a
+									target="_blank"
+									href="https://twitter.com/kurtruslfanclub/status/1080620576547303424"
+									>Mike Blackney</a
+								>
+								demonstrated a technique for generating SDFs in Photoshop, which
+								saved me the hassle of buying a specialized tool.
+							</p>
+							<p>
+								Thank you
+								<a target="_blank" href="https://bohemianalibi.com/"
+									>Tyler Lyn</a
+								>
+								for your continued love and support. 🥰
+							</p>
+						</section>
+						<p id="jump-to-top" class="standalone">
+							<a href="#top">Jump to top of page</a>
+						</p>
+						<footer class="field-row">
+							<button
+								class="ok standalone"
+								onclick="parent.document.querySelector('iframe#about-box').classList.add('hidden')"
+							>
+								OK
+							</button>
+						</footer>
+					</article>
+				</main>
 			</div>
 		</div>
 	</body>

@@ -14,10 +14,15 @@ body {
 	text-align: center;
 }
 
+button,
+.window,
+.title-bar {
+	font-size: 12rem;
+}
+
 div.window {
 	display: inline-block;
 	text-align: left;
-	font-size: 12rem;
 	margin: 3em;
 }
 
@@ -26,22 +31,43 @@ div.window-body {
 	gap: 12rem;
 }
 
+header {
+	display: flex;
+	flex-direction: column;
+	gap: 12rem;
+	padding-bottom: 1em;
+}
+
+#license-box {
+	min-height: 5em;
+}
+
 div#author-info {
 	text-align: left;
 	display: flex;
 	gap: 12rem;
 }
 
-#title {
+h1#title {
 	margin-top: 0;
 	font-size: 2em;
+	font-weight: normal;
 }
 
-div#content {
+article#content {
 	margin-top: 1em;
 	max-width: 50em;
 	line-height: 1.25em;
 	text-align: justify;
+	word-spacing: 0.1em;
+}
+
+section {
+	padding-top: 1em;
+}
+
+footer {
+	justify-content: flex-end;
 }
 
 div#get-egg {
@@ -74,13 +100,13 @@ div#self-portrait img {
 img#palette {
 	width: 8em;
 	float: right;
-	padding: 0 0 10rem 10rem;
+	margin: 0 0 10rem 10rem;
 }
 
 img#heightmap {
 	width: 8em;
 	float: left;
-	padding: 0 10rem 10rem 0;
+	margin: 0 10rem 10rem 0;
 }
 
 table#command-bar-legend {
@@ -94,7 +120,7 @@ table#command-bar-legend span.key {
 	padding: 12rem;
 }
 
-div.legend-icon {
+legend-icon {
 	display: block;
 	width: 46rem;
 	height: 44rem;
@@ -134,7 +160,7 @@ button.ok.standalone {
 		margin: unset;
 	}
 
-	div#content {
+	article#content {
 		max-width: 50em;
 		text-align: left;
 		line-height: 1.5em;
@@ -148,7 +174,7 @@ button.ok.standalone {
 		width: calc(100% - 20rem);
 		max-width: 50em;
 		float: unset;
-		padding: 10rem;
+		margin: 10rem;
 	}
 
 	table#command-bar-legend td {
