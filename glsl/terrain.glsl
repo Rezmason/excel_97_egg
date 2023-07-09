@@ -341,10 +341,10 @@ void frag() {
 		color = mix(borderColor, color, border);
 	}
 
-	// The original program didn't rasterize faces
-	// in the two rightmost columns of the framebuffer,
-	// and only drew pixels on the edges of terrain
-	// in the second rightmost column.
+	// The original program's rasterizer had an off-by-one error for the width of the framebuffer.
+	// This causes the edges of triangles to not be drawn in the last column of pixels,
+	// and causes the interior fragments of triangles to not be drawn in the last two columns
+	// (because the interiors were drawn two at a time with STOSW).
 	if (limitDrawResolution == 1.0) {
 		float distanceFromRight = screenSize.x - gl_FragCoord.x;
 		if (distanceFromRight < 2.0) {
