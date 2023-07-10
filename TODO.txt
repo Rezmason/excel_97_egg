@@ -1,8 +1,5 @@
 Essay changes
 	Pictures
-		Behind the Sheens img should be the three terrain bitmaps
-		Torus trap img should be div, animate position with CSS animation
-			Noscript the img tag
 		Stripes GIF: banded close-up
 			light up each band one by one (16 shades)
 			draw lines over left edges
@@ -16,17 +13,14 @@ Essay changes
 				Animate highlights on each used indexed shade with marching ants, and highlight that shade in the column
 			Combined screenshot paired with palette?
 				Highlight a region in one that matches the other
-		Baked vertex lighting image?
-		Alt text every image
-		Semantic tags
-			figure
-				img
-				figcaption
 	Flowchart of data recovery
 		Create outline
 		Draw it out and find an old program to create it in
 			Micrografx Flowcharter
 			Old Visio
+	Alt text every image
+
+Replace repo screenshot
 
 Rename lighting cutoff to draw distance
 Reorder the toolbar
@@ -34,10 +28,6 @@ Reorder the toolbar
 Give toolbars a minimum size
 	horizontal: width of window
 	vertical: height of window
-
-Replace repo screenshot
-
-Interview a charting team member already!
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
@@ -58,7 +48,10 @@ Custom palette support
 	ACT file
 
 Magic Carpet terrain?
+Drop-in heightmap, empty region data, compute lighting the old way
 Procedural terrain?
+
+Interview a charting team member already!
 
 Improve brightness computation
 	It seems like geometry has lower brightness but greater contrast in relation to distance

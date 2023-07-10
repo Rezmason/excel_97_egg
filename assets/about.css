@@ -97,16 +97,28 @@ div#self-portrait img {
 	height: calc(25rem * 2);
 }
 
-img#palette {
-	width: 8em;
+.square-diagram {
+	--square-size: 8em;
+	width: var(--square-size);
+	aspect-ratio: 1 / 1;
+}
+
+#palette {
 	float: right;
 	margin: 0 0 10rem 10rem;
 }
 
-img#heightmap {
-	width: 8em;
+#heightmap {
+	display: inline-block;
+	background-image: radial-gradient(transparent 50%, #120028), url("ui/heightmap_colorized.png");
+	background-size: var(--square-size);
 	float: left;
 	margin: 0 10rem 10rem 0;
+}
+
+picture {
+	display: block;
+	text-align: center;
 }
 
 table#command-bar-legend {
@@ -119,6 +131,15 @@ table#command-bar-legend span.key {
 	font-weight: bold;
 	padding: 12rem;
 }
+
+.elevation-hint { --hint-color: #640032; }
+.brightness-hint { --hint-color: #903c24; }
+.region-hint { --hint-color: #a95b1a; }
+.clut-hint { --hint-color: #831fc4; }
+.torus-hint { --hint-color: #c47e0e; }
+
+.hinted-text { color: var(--hint-color); font-weight:bold; }
+.hinted-image { box-sizing: border-box; border: solid 0.25em var(--hint-color); }
 
 legend-icon {
 	display: block;
@@ -170,9 +191,11 @@ button.ok.standalone {
 		display: none;
 	}
 
-	img#palette, img#heightmap {
-		width: calc(100% - 20rem);
-		max-width: 50em;
+	.square-diagram {
+		--square-size: 20em;
+	}
+
+	#palette, #heightmap {
 		float: unset;
 		margin: 10rem;
 	}
@@ -180,9 +203,11 @@ button.ok.standalone {
 	table#command-bar-legend td {
 		padding: 1em 0;
 	}
+
+	.hinted-image { border-width: 0.5em; }
 }
 
-@keyframes animatedPortrait {
+@keyframes animated-portrait {
 	0%,
 	10%,
 	20%,
@@ -215,5 +240,36 @@ div#self-portrait {
 }
 
 div#self-portrait:hover {
-	animation: animatedPortrait 1.75s linear infinite alternate;
+	animation: animated-portrait 1.75s linear infinite alternate;
+}
+
+@keyframes animated-heightmap {
+	0%, 100% {
+		background-position: center, calc(0.5 * var(--square-size)) calc(0.0 * var(--square-size));
+	}
+	12.5% {
+		background-position: center, calc(1.0 * var(--square-size)) calc(0.0 * var(--square-size));
+	}
+	25% {
+		background-position: center, calc(1.5 * var(--square-size)) calc(0.5 * var(--square-size));
+	}
+	37.5% {
+		background-position: center, calc(1.5 * var(--square-size)) calc(1.0 * var(--square-size));
+	}
+	50% {
+		background-position: center, calc(1.0 * var(--square-size)) calc(1.5 * var(--square-size));
+	}
+	62.5% {
+		background-position: center, calc(0.5 * var(--square-size)) calc(1.5 * var(--square-size));
+	}
+	75% {
+		background-position: center, calc(0.0 * var(--square-size)) calc(1.0 * var(--square-size));
+	}
+	87.5% {
+		background-position: center, calc(0.0 * var(--square-size)) calc(0.5 * var(--square-size));
+	}
+}
+
+#heightmap {
+	animation: animated-heightmap 10s ease-in-out infinite;
 }

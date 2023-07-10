@@ -454,11 +454,19 @@
 						</section>
 						<section id="torus">
 							<h2>Torus Trap</h2>
-							<img id="heightmap" src="assets/ui/heightmap_colorized.png" />
+							<picture>
+								<div
+									id="heightmap"
+									class="square-diagram torus-hint hinted-image"
+									title="Repeating terrain"
+								></div>
+							</picture>
 							<p>
-								Notice the landscape repeats in every direction, so you can fly
-								forever. In fact this whole world is "charted" from a square
-								"spreadsheet"
+								Notice the landscape
+								<span class="torus-hint hinted-text"
+									>repeats in every direction</span
+								>, so you can fly forever. In fact this whole world is "charted"
+								from a square "spreadsheet"
 								<em>only 64 cells wide.</em>
 							</p>
 							<p>So, how is it so easy to get lost?</p>
@@ -501,9 +509,28 @@
 							</p>
 							<p>
 								The easter&nbsp;egg's terrain data is like a baked lasagna— the
-								elevation, lighting, and material of each point is baked into a
-								corresponding 64x64 grid.
+								<span class="elevation-hint hinted-text">elevation</span>,
+								<span class="brightness-hint hinted-text">lighting</span>, and
+								<span class="region-hint hinted-text">material</span>
+								of each point is baked into a corresponding 64x64 grid:
 							</p>
+							<picture>
+								<img
+									class="square-diagram elevation-hint hinted-image"
+									src="assets/terrain/elevation.bmp"
+									title="Terrain Elevation"
+								/>
+								<img
+									class="square-diagram brightness-hint hinted-image"
+									src="assets/terrain/brightness.bmp"
+									title="Terrain Lighting"
+								/>
+								<img
+									class="square-diagram region-hint hinted-image"
+									src="assets/terrain/region.bmp"
+									title="Terrain Material"
+								/>
+							</picture>
 							<p>
 								It's clear just by looking at them that the lighting data was
 								created from the elevation data, but it's not a realistic
@@ -518,13 +545,21 @@
 						</section>
 						<section id="stripes">
 							<h2>Earning Their Stripes</h2>
-							<img id="palette" src="assets/ui/palette.png" />
+							<picture>
+								<img
+									id="palette"
+									class="square-diagram clut-hint hinted-image"
+									src="assets/ui/palette.png"
+								/>
+							</picture>
 							<p>
 								By default, this simulator draws with only the original 256
 								colors, which took some effort. It has to load the
-								color&nbsp;lookup&nbsp;table and indexed&#8209;color textures
-								into video&nbsp;memory, and its shaders map texel values to
-								colors in the table, like an old VGA
+								<span class="clut-hint hinted-text"
+									>color&nbsp;lookup&nbsp;table</span
+								>
+								and indexed&#8209;color textures into video&nbsp;memory, and its
+								shaders map texel values to colors in the table, like an old VGA
 								<a target="_blank" href="https://en.wikipedia.org/wiki/RAMDAC"
 									>RAMDAC</a
 								>.
@@ -553,10 +588,14 @@
 									>scanline rendering</a
 								>. A scanline is a row of pixels drawn left to right. Each
 								pixel's final color and texture depends on its distance from the
-								scanline edges. This code is where the authors chose to add very
-								simple dithering. That skews the dither pattern along the
-								triangle edges, but it inexpensively doubles the range of the
-								terrain shading from sixteen to thirty&#8209;two.
+								scanline edges. This code is where the authors chose to add
+								<a
+									target="_blank"
+									href="/?o=crs&interactive=false&l=poolside&demo=shading"
+									>very simple dithering</a
+								>. That skews the dither pattern along the triangle edges which
+								causes long vertical streaks, but it inexpensively doubles the
+								range of the terrain shading from sixteen to thirty&#8209;two.
 							</p>
 							<p>
 								Graphics hardware doesn't render using scanlines, but this
@@ -565,7 +604,7 @@
 								fragment&nbsp;shader offsets the dither of each pixel by the
 								<a
 									target="_blank"
-									href="http://localhost:8000/?o=c&interactive=false&l=poolside&demo=scanlines"
+									href="/?o=c&interactive=false&l=poolside&demo=scanlines"
 									>distance along its scanline</a
 								>. The result is subtle, but accurate.
 							</p>
