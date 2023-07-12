@@ -8,17 +8,16 @@ const makeEventTarget = () => {
 	}
 };
 
+const checkBooleanFlag = (params, id) =>
+	!params.has(id) || params.get(id).toLowerCase() !== "false";
+
 export default (async () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const settings = {
 		location: urlParams.get("l"),
 		demo: urlParams.get("demo"),
-		sanitizePosition:
-			!urlParams.has("sanitizePosition") ||
-			urlParams.get("sanitizePosition").toLowerCase() !== "false",
-		interactive:
-			!urlParams.has("interactive") ||
-			urlParams.get("interactive").toLowerCase() !== "false",
+		sanitizePosition: checkBooleanFlag(urlParams, "sanitizePosition"),
+		interactive: checkBooleanFlag(urlParams, "interactive"),
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");

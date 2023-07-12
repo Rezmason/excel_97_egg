@@ -1,24 +1,22 @@
-Essay changes
-	Pictures
-		Stripes GIF: banded close-up
-			light up each band one by one (16 shades)
-			draw lines over left edges
-			move lines one pixel at a time, alternating between black and white
-				leaving behind dithered pixels
-			light up each band one by one (32 shades)
-		Indexed colors GIFs
-			GIF 1: show textured, unshaded terrain next to bright column of palette
-				Animate highlights on each used indexed color with marching ants, and highlight that color in the column
-			GIF 2: show untextured, shaded terrain next to white row of palette, rotated into a column
-				Animate highlights on each used indexed shade with marching ants, and highlight that shade in the column
-			Combined screenshot paired with palette?
-				Highlight a region in one that matches the other
+Essay pictures
+	Stripes GIF: banded close-up
+		light up each band one by one (16 shades)
+		draw lines over left edges
+		move lines one pixel at a time, alternating between black and white
+			leaving behind dithered pixels
+		light up each band one by one (32 shades)
+	Indexed colors GIFs
+		GIF 1: show textured, unshaded terrain next to bright column of palette
+			Animate highlights on each used indexed color with marching ants, and highlight that color in the column
+		GIF 2: show untextured, shaded terrain next to white row of palette, rotated into a column
+			Animate highlights on each used indexed shade with marching ants, and highlight that shade in the column
+		Combined screenshot paired with palette?
+			Highlight a region in one that matches the other
 	Flowchart of data recovery
 		Create outline
 		Draw it out and find an old program to create it in
 			Micrografx Flowcharter
 			Old Visio
-	Alt text every image
 
 Replace repo screenshot
 
@@ -28,6 +26,33 @@ Reorder the toolbar
 Give toolbars a minimum size
 	horizontal: width of window
 	vertical: height of window
+
+Cursed mode
+	All display options rejected: only supports 640x480, frame capped, indexed colors
+	Current
+		GPU(... >> indices >> colors) -> Canvas
+	Phase 1: OffscreenCanvas and img
+		GPU(... >> indices >> colors) -> OffscreenCanvas
+		MAIN(OffscreenCanvas >> png_data_url) -> img
+	Phase 2: readPixels and maybe framebuffer
+		GPU(... >> indices >> colors) -> colors_abv
+		MAIN(colors_abv >> OffscreenCanvas >> png_data_url) -> img
+	Phase 3: GPU renders indices
+		GPU(... >> indices) -> indices_abv
+		MAIN(indices_abv >> OffscreenCanvas >> png_data_url) -> img
+	Phase 4: BMP data URL
+		GPU(... >> indices) -> indices_abv
+		MAIN(indices_abv >> bmp_pixel_array >> bmp_data_url) -> img
+	Phase 5: Base64 the indices
+		GPU(... >> indices) -> indices_abv
+		MAIN(indices_abv >> base64_bmp_pixel_array >> bmp_data_url) -> img
+	Phase 6: GPU Base64
+		GPU(... >> indices >> base64_indices) -> base64_indices_abv
+		MAIN(base64_indices_abv >> bmp_data_url) -> img
+	Phase 7: Web Worker
+		GPU(... >> indices >> base64_indices) -> base64_indices_abv
+		WORKER(base64_indices_abv) -> bmp_data_url
+		MAIN(bmp_data_url) -> img
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
