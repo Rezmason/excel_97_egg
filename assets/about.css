@@ -108,6 +108,12 @@ div#self-portrait img {
 	margin: 0 0 10rem 10rem;
 }
 
+#scanlines-animated {
+	float: left;
+	margin: 0 10rem 10rem 0rem;
+	width: calc(var(--square-size) * 2);
+}
+
 #heightmap {
 	display: inline-block;
 	background-image: radial-gradient(transparent 50%, #120028), url("ui/heightmap_colorized.png");
@@ -132,11 +138,12 @@ table#command-bar-legend span.key {
 	padding: 12rem;
 }
 
+.torus-hint { --hint-color: #c47e0e; }
 .elevation-hint { --hint-color: #640032; }
 .brightness-hint { --hint-color: #903c24; }
 .region-hint { --hint-color: #a95b1a; }
 .clut-hint { --hint-color: #831fc4; }
-.torus-hint { --hint-color: #c47e0e; }
+.scanlines-animated-hint { --hint-color: #c47e0e; }
 
 .hinted-text { color: var(--hint-color); font-weight:bold; }
 .hinted-image { box-sizing: border-box; border: solid 0.25em var(--hint-color); }
@@ -181,6 +188,10 @@ button.ok.standalone {
 		margin: unset;
 	}
 
+	div.window.standalone {
+		margin-top: 3em;
+	}
+
 	article#content {
 		max-width: 50em;
 		text-align: left;
@@ -195,9 +206,13 @@ button.ok.standalone {
 		--square-size: 20em;
 	}
 
-	#palette, #heightmap {
+	#palette, #heightmap, #scanlines-animated {
 		float: unset;
 		margin: 10rem;
+	}
+
+	#scanlines-animated {
+		width: var(--square-size);
 	}
 
 	table#command-bar-legend td {

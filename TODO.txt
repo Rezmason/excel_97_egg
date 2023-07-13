@@ -1,31 +1,28 @@
-Essay pictures
-	Stripes GIF: banded close-up
-		light up each band one by one (16 shades)
-		draw lines over left edges
-		move lines one pixel at a time, alternating between black and white
-			leaving behind dithered pixels
-		light up each band one by one (32 shades)
-	Indexed colors GIFs
-		GIF 1: show textured, unshaded terrain next to bright column of palette
-			Animate highlights on each used indexed color with marching ants, and highlight that color in the column
-		GIF 2: show untextured, shaded terrain next to white row of palette, rotated into a column
-			Animate highlights on each used indexed shade with marching ants, and highlight that shade in the column
-		Combined screenshot paired with palette?
-			Highlight a region in one that matches the other
-	Flowchart of data recovery
-		Create outline
-		Draw it out and find an old program to create it in
-			Micrografx Flowcharter
-			Old Visio
-
 Replace repo screenshot
 
-Rename lighting cutoff to draw distance
-Reorder the toolbar
+UI fixes
+	Essay text is still a little small on mobile
+	Give toolbars a minimum size
+		horizontal: width of window
+		vertical: height of window
+	Maybe rename lighting cutoff to draw distance
+	Reorder the toolbar
 
-Give toolbars a minimum size
-	horizontal: width of window
-	vertical: height of window
+Flowchart of data recovery
+	Create outline
+	Draw it out and find an old program to create it in
+		Micrografx Flowcharter
+		Old Visio
+
+Spherical distortion in vertex shader ("trick to fake a sphere")
+	Alan Wright added it to Populous: The Beginning
+	How do PtB / Topia do it?
+		A similar effect appears in Tetrisphere
+		"Warped through like a fisheye lens"
+
+ATI TruForm type tesselation option, aka NPatches
+	N for Normals
+	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
 
 Cursed mode
 	All display options rejected: only supports 640x480, frame capped, indexed colors
@@ -54,17 +51,11 @@ Cursed mode
 		WORKER(base64_indices_abv) -> bmp_data_url
 		MAIN(bmp_data_url) -> img
 
-Spherical distortion in vertex shader ("trick to fake a sphere")
-	Alan Wright added it to Populous: The Beginning
-	How do PtB / Topia do it?
-		A similar effect appears in Tetrisphere
-		"Warped through like a fisheye lens"
-
-ATI TruForm type tesselation option, aka NPatches
-	N for Normals
-	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
-
 Try adding a carpet, obviously
+
+Indexed colors demo (extends color palette image)
+	Mousing over or tapping the pixels in a test image highlight the pixel in the color palette
+		(with Excel 97's version of the marching ants marquee)
 
 Custom palette support
 	indexed color BMP file (color table)

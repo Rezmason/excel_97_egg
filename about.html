@@ -580,6 +580,14 @@
 								can hide banding by adjusting pixel values with random noise or
 								high frequency patterns.
 							</p>
+							<picture>
+								<img
+									id="scanlines-animated"
+									class="square-diagram scanlines-animated-hint hinted-image"
+									src="assets/ui/scanlines-animated.gif"
+									title="Animation of the impact of skewed dithering on the terrain shading"
+								/>
+							</picture>
 							<p>
 								The original easter&nbsp;egg draws terrain one triangle at a
 								time, using
@@ -594,9 +602,13 @@
 									target="_blank"
 									href="/?o=crs&interactive=false&l=poolside&demo=shading"
 									>very simple dithering</a
-								>. That skews the dither pattern along the triangle edges which
-								causes long vertical streaks, but it inexpensively doubles the
-								range of the terrain shading from sixteen to thirty&#8209;two.
+								>. That
+								<span class="scanlines-animated-hint hinted-text"
+									>skews the dither pattern</span
+								>
+								along the triangle edges which causes long vertical streaks, but
+								it inexpensively doubles the range of the terrain shading from
+								sixteen to thirty&#8209;two.
 							</p>
 							<p>
 								Graphics hardware doesn't render using scanlines, but this
