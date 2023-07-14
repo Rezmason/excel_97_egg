@@ -1,6 +1,4 @@
 UI fixes
-	index.html: remove underscores from id and name attrs in command bar
-	reset.css
 	Give toolbars a minimum size
 		horizontal: width of window
 		vertical: height of window
