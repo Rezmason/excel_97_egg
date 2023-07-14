@@ -68,7 +68,7 @@ deadzone {
 
 	.mso-command-bar {
 		flex-direction: row;
-		font-size: 0.25vw;
+		font-size: max(0.25vw, 0.013in);
 		--margins: calc(var(--margin) * 1em) calc(var(--butt-margin) * 1em)
 			calc(var(--margin) * 1em) calc(var(--grip-margin) * 1em);
 		border-image-source: url("ui/command_bar_horizontal_background.svg");
@@ -92,7 +92,7 @@ deadzone {
 
 	.mso-command-bar {
 		flex-direction: column;
-		font-size: 0.25vh;
+		font-size: max(0.25vh, 0.013in);
 		--margins: calc(var(--grip-margin) * 1em) calc(var(--margin) * 1em)
 			calc(var(--butt-margin) * 1em) calc(var(--margin) * 1em);
 		border-image-source: url("ui/command_bar_vertical_background.svg");

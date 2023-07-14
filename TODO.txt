@@ -1,9 +1,6 @@
 UI fixes
-	Give toolbars a minimum size
-		horizontal: width of window
-		vertical: height of window
-	Maybe rename lighting cutoff to draw distance
 	Reorder the toolbar
+	Maybe rename lighting cutoff to draw distance
 
 Replace repo screenshot
 
