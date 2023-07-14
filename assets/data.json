@@ -48,7 +48,7 @@
 		"quadBorder": 0.005,
 		"resolution": [640, 480],
 		"targetFPS": 15,
-		"moonscapeTextureDistort": [0.98828125, 1],
+		"dunesTextureDistort": [0.98828125, 1],
 		"titleCreditColor": 13,
 		"bodyCreditColor": 15,
 		"supported_demos": ["shading", "scanlines"],
@@ -60,12 +60,12 @@
 						"url": "assets/textures/horizon.bmp",
 						"type": "indexed_color"
 					},
-					"moonscapeTexture": {
-						"url": "assets/textures/moonscape.bmp",
+					"dunesTexture": {
+						"url": "assets/textures/dunes.bmp",
 						"type": "indexed_color"
 					},
-					"platformTexture": {
-						"url": "assets/textures/platform.bmp",
+					"cairnTexture": {
+						"url": "assets/textures/cairn.bmp",
 						"type": "indexed_color"
 					},
 					"creditsTexture": {
@@ -81,12 +81,12 @@
 						"url": "assets/textures/hi_res/horizon_hi_res.png",
 						"type": "mipmapped_true_color"
 					},
-					"moonscapeTexture": {
-						"url": "assets/textures/hi_res/moonscape_hi_res.png",
+					"dunesTexture": {
+						"url": "assets/textures/hi_res/dunes_hi_res.png",
 						"type": "mipmapped_true_color"
 					},
-					"platformTexture": {
-						"url": "assets/textures/hi_res/platform_hi_res.png",
+					"cairnTexture": {
+						"url": "assets/textures/hi_res/cairn_hi_res.png",
 						"type": "mipmapped_true_color"
 					},
 					"creditsTexture": {
@@ -108,9 +108,9 @@
 			"region": { "url": "assets/terrain/region.bmp", "offset": 0 }
 		},
 		"regions": [
-			{ "id": "moon", "texture": 0 },
+			{ "id": "dunes", "texture": 0 },
 			{ "id": "pool", "texture": 0, "waveAmplitude": 0.125 },
-			{ "id": "platform", "texture": 1 },
+			{ "id": "cairn", "texture": 1 },
 			{
 				"id": "creditsTL",
 				"texture": 2,

@@ -46,12 +46,12 @@ uniform float birdsEyeView, lightingCutoff, limitDrawResolution;
 uniform float fogNear, fogFar;
 uniform vec2 repeatOffset;
 
-uniform sampler2D moonscapeTexture;
-uniform sampler2D platformTexture;
+uniform sampler2D dunesTexture;
+uniform sampler2D cairnTexture;
 uniform sampler2D creditsTexture;
 uniform float quadBorder;
 uniform vec2 screenSize;
-uniform vec2 moonscapeTextureDistort;
+uniform vec2 dunesTextureDistort;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTable, linearColorTable;
@@ -183,9 +183,9 @@ void frag() {
 
 	// The first two textures are sampled normally
 	if (whichTexture == 0) {
-		src = texture2D(moonscapeTexture, vTexCoord * moonscapeTextureDistort).r;
+		src = texture2D(dunesTexture, vTexCoord * dunesTextureDistort).r;
 	} else if (whichTexture == 1) {
-		src = texture2D(platformTexture, vTexCoord).r;
+		src = texture2D(cairnTexture, vTexCoord).r;
 	} else if (whichTexture == 2) {
 		// The credits texture is mapped in a special way,
 		src = texture2D(creditsTexture, getCreditTexCoord()).r;
@@ -260,9 +260,9 @@ void frag() {
 
 	// The first two textures are sampled normally
 	if (whichTexture == 0) {
-		color = texture2D(moonscapeTexture, vTexCoord).rgb;
+		color = texture2D(dunesTexture, vTexCoord).rgb;
 	} else if (whichTexture == 1) {
-		color = texture2D(platformTexture, vTexCoord).rgb;
+		color = texture2D(cairnTexture, vTexCoord).rgb;
 	} else if (whichTexture == 2) {
 		// The credits texture is mapped in a special way,
 		vec4 credits = texture2D(creditsTexture, fract(getCreditTexCoord()));
