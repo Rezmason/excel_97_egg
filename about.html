@@ -153,58 +153,65 @@
 							<p>
 								Computers were clunky in 1997. You can change it in the options:
 							</p>
-							<table id="command-bar-legend">
-								<tbody>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 1"
-												id="birds-eye-view"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;B&nbsp;)</span></td>
-										<td><u>B</u>ird's Eye View</td>
-										<td>
-											A third person perspective to help navigate<wbr />
-											and understand the terrain.
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 2"
-												id="lighting-cutoff"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;C&nbsp;)</span></td>
-										<td>Lighting <u>C</u>utoff</td>
-										<td>
+
+							<legend id="command-bar-legend">
+								<legend-entry>
+									<legend-icon
+										style="--icon: 1"
+										id="birds-eye-view"
+									></legend-icon>
+									<legend-key><div>( B )</div></legend-key>
+									<legend-title
+										><div><u>B</u>ird's Eye View</div></legend-title
+									>
+									<legend-description
+										><div>
+											A third person perspective to help navigate<wbr />and
+											understand the terrain.
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon
+										style="--icon: 2"
+										id="lighting-cutoff"
+									></legend-icon>
+									<legend-key><div>( C )</div></legend-key>
+									<legend-title
+										><div>Lighting <u>C</u>utoff</div></legend-title
+									>
+									<legend-description
+										><div>
 											Changes the maximum distance of the fog and drawn terrain.
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 3"
-												id="show-quad-edges"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;Q&nbsp;)</span></td>
-										<td>Show <u>Q</u>uad Edges</td>
-										<td>
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon
+										style="--icon: 3"
+										id="show-quad-edges"
+									></legend-icon>
+									<legend-key><div>( Q )</div></legend-key>
+									<legend-title
+										><div>Show <u>Q</u>uad Edges</div></legend-title
+									>
+									<legend-description
+										><div>
 											Highlights the boundaries of the tiled terrain geometry.
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 4"
-												id="true-color-textures"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;T&nbsp;)</span></td>
-										<td>True&#8209;Color <u>T</u>extures</td>
-										<td>
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon
+										style="--icon: 4"
+										id="true-color-textures"
+									></legend-icon>
+									<legend-key><div>( T )</div></legend-key>
+									<legend-title
+										><div>True&#8209;Color <u>T</u>extures</div></legend-title
+									>
+									<legend-description
+										><div>
 											Renders smoother textures in
 											<a
 												target="_blank"
@@ -218,72 +225,77 @@
 												>indexed&#8209;color</a
 											>
 											textures.
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 5"
-												id="limit-draw-resolution"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;R&nbsp;)</span></td>
-										<td>Limit Draw <u>R</u>esolution</td>
-										<td>
-											Forces the dimensions of the rendered scene to
-											640&nbsp;x&nbsp;480, also known as
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon
+										style="--icon: 5"
+										id="limit-draw-resolution"
+									></legend-icon>
+									<legend-key><div>( R )</div></legend-key>
+									<legend-title
+										><div>Limit Draw <u>R</u>esolution</div></legend-title
+									>
+									<legend-description
+										><div>
+											Forces the dimensions of the rendered scene
+											to640&nbsp;x&nbsp;480, also known as
 											<a
 												target="_blank"
 												href="https://en.wikipedia.org/wiki/Video_Graphics_Array#640_%C3%97_480_graphics_mode"
 												>VGA graphics mode</a
 											>.
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 6"
-												id="limit-draw-speed"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;S&nbsp;)</span></td>
-										<td>Limit Draw <u>S</u>peed</td>
-										<td>Caps the frame rate at approximately 15&nbsp;FPS.</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 7"
-												id="show-sindogs"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;G&nbsp;)</span></td>
-										<td>Show Sindo<u>g</u>s</td>
-										<td>
-											Gives the horizon texture a sinusoidal glow.<br />
-											(Named after a sneaky
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon
+										style="--icon: 6"
+										id="limit-draw-speed"
+									></legend-icon>
+									<legend-key><div>( S )</div></legend-key>
+									<legend-title
+										><div>Limit Draw <u>S</u>peed</div></legend-title
+									>
+									<legend-description
+										><div>
+											Caps the frame rate at approximately 15&nbsp;FPS.
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon
+										style="--icon: 7"
+										id="show-sindogs"
+									></legend-icon>
+									<legend-key><div>( G )</div></legend-key>
+									<legend-title><div>Show Sindo<u>g</u>s</div></legend-title>
+									<legend-description
+										><div>
+											Gives the horizon texture a sinusoidal glow. <wbr />(Named
+											after a sneaky
 											<a
 												target="_blank"
 												href="https://www.youtube.com/watch?v=0XllTdSi5hY&t=2720s"
-											>
-												Windows bug
-											</a>
-											)
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<legend-icon
-												style="--icon: 8"
-												id="fullscreen"
-											></legend-icon>
-										</td>
-										<td><span class="key">(&nbsp;F&nbsp;)</span></td>
-										<td><u>F</u>ullscreen</td>
-										<td>Expands the page to fill the entire screen.</td>
-									</tr>
-								</tbody>
-							</table>
+												>Windows bug</a
+											>)
+										</div></legend-description
+									>
+								</legend-entry>
+								<legend-entry>
+									<legend-icon style="--icon: 8" id="fullscreen"></legend-icon>
+									<legend-key><div>( F )</div></legend-key>
+									<legend-title
+										><div><u>F</u>ullscreen</div></legend-title
+									>
+									<legend-description
+										><div>
+											Expands the page to fill the entire screen.
+										</div></legend-description
+									>
+								</legend-entry>
+							</legend>
 						</section>
 						<section id="controls">
 							<h2>Flight Manual</h2>
@@ -317,7 +329,6 @@
 							<p>
 								Shrewdly in their downtime, because some people are just fun.
 							</p>
-
 							<p>
 								Big programs took a very long time to compile, test and
 								stabilize back in the nineties. While they waited, Microsoft's

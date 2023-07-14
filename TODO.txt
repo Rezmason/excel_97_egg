@@ -1,12 +1,13 @@
-Replace repo screenshot
-
 UI fixes
-	Essay text is still a little small on mobile
+	index.html: remove underscores from id and name attrs in command bar
+	reset.css
 	Give toolbars a minimum size
 		horizontal: width of window
 		vertical: height of window
 	Maybe rename lighting cutoff to draw distance
 	Reorder the toolbar
+
+Replace repo screenshot
 
 Flowchart of data recovery
 	Create outline

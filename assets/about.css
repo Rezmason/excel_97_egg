@@ -14,6 +14,10 @@ body {
 	text-align: center;
 }
 
+p a, td a {
+	white-space: nowrap;
+}
+
 button,
 .window,
 .title-bar {
@@ -76,7 +80,8 @@ div#get-egg {
 
 a#link-to-egg img {
 	box-shadow: blueviolet 0 0 20rem 3rem;
-	width: calc(176rem);
+	width: 100rem;
+	min-width: 25vw;
 	margin-top: 3em;
 }
 
@@ -127,15 +132,45 @@ picture {
 	text-align: center;
 }
 
-table#command-bar-legend {
-	border-collapse: collapse;
-	width: 100%;
-	text-align: left;
+legend-entry {
+	display:grid;
+	grid-template-areas: "icon key title description";
+	grid-template-columns: auto 56rem 1fr 3fr;
 }
 
-table#command-bar-legend span.key {
+legend-key,
+legend-title,
+legend-description {
+	display:flex;
+	align-items:center;
+	text-align: left;
+	padding: 0.5em;
+}
+
+legend-icon {
+	grid-area: icon;
+	width: 46rem;
+	height: 44rem;
+
+	--button-state: 1;
+
+	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
+	background-image: url("ui/icon_spritesheet_with_margin.png");
+	background-position: calc(2rem * (-25 * var(--icon) - 1))
+	calc(2rem * (-24 * var(--button-state) - 1));
+}
+
+legend-key {
+	grid-area: key;
+	word-break: keep-all;
 	font-weight: bold;
-	padding: 12rem;
+	justify-content:center;
+}
+legend-title {
+	grid-area: title;
+}
+legend-description {
+	grid-area: description;
 }
 
 .torus-hint { --hint-color: #c47e0e; }
@@ -147,19 +182,6 @@ table#command-bar-legend span.key {
 
 .hinted-text { color: var(--hint-color); font-weight:bold; }
 .hinted-image { box-sizing: border-box; border: solid 0.25em var(--hint-color); }
-
-legend-icon {
-	display: block;
-	width: 46rem;
-	height: 44rem;
-
-	--button-state: 1;
-
-	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
-	background-image: url("ui/icon_spritesheet_with_margin.png");
-	background-position: calc(2rem * (-25 * var(--icon) - 1))
-	calc(2rem * (-24 * var(--button-state) - 1));
-}
 
 p#jump-to-top {
 	text-align: center;
@@ -181,7 +203,11 @@ button.ok.standalone {
 
 @media (max-width: 400px) {
 	:root {
-		font-size: 0.3vw;
+		font-size: 0.6vw;
+	}
+
+	p a, legend-description a {
+		white-space: unset;
 	}
 
 	div.window {
@@ -190,6 +216,10 @@ button.ok.standalone {
 
 	div.window.standalone {
 		margin-top: 3em;
+	}
+
+	div#author-info {
+		flex-direction: column;
 	}
 
 	article#content {
@@ -203,7 +233,7 @@ button.ok.standalone {
 	}
 
 	.square-diagram {
-		--square-size: 20em;
+		--square-size: 10em;
 	}
 
 	#palette, #heightmap, #scanlines-animated {
@@ -215,8 +245,20 @@ button.ok.standalone {
 		width: var(--square-size);
 	}
 
-	table#command-bar-legend td {
-		padding: 1em 0;
+	legend-entry {
+		grid-template-areas:
+			"icon title"
+			"description description";
+		grid-template-columns: auto 1fr;
+		grid-template-rows: 46rem 1fr;
+	}
+
+	legend-key {
+		display: none;
+	}
+
+	legend-description {
+		padding-bottom: 1em;
 	}
 
 	.hinted-image { border-width: 0.5em; }

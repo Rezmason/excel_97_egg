@@ -7,10 +7,6 @@ u {
 	border-bottom: 1.5rem solid #222222;
 }
 
-p a, td a {
-	white-space: nowrap;
-}
-
 button {
 	cursor: pointer;
 }
@@ -20,19 +16,19 @@ button {
 }
 
 h1 {
-	font-size: calc(5rem * 6);
+	font-size: 28rem;
 }
 
 h2 {
-	font-size: calc(2.5rem * 6);
+	font-size: 14rem;
 }
 
 h3 {
-	font-size: calc(2rem * 6);
+	font-size: 11rem;
 }
 
 h4 {
-	font-size: calc(1.5rem * 6);
+	font-size: 8rem;
 }
 
 fieldset {
