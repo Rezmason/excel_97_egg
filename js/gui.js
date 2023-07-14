@@ -57,7 +57,7 @@ export default (async () => {
 		let options = "";
 
 		checkboxes.forEach((checkbox) => {
-			const id = checkbox.id.replace(/(_[a-z])/g, (s) =>
+			const id = checkbox.id.replace(/(-[a-z])/g, (s) =>
 				s.substr(1).toUpperCase()
 			);
 			settings[id] = checkbox.checked;
