@@ -1,5 +1,3 @@
-Replace repo screenshot
-
 Flowchart of data recovery
 	Create outline
 	Draw it out and find an old program to create it in
