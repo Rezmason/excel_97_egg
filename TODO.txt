@@ -1,8 +1,27 @@
-Flowchart of data recovery
-	Create outline
-	Draw it out and find an old program to create it in
-		Micrografx Flowcharter
-		Old Visio
+Cursed mode
+	All display options rejected: only supports 640x480, frame capped, indexed colors
+	Current
+		GPU(... >> indices >> colors) -> Canvas
+	Phase 1: Canvas to OffscreenCanvas and img
+		GPU(... >> indices >> colors) -> OffscreenCanvas
+		MAIN(OffscreenCanvas >> png_data_url) -> img
+	Phase 2: readPixels/framebuffer
+		GPU(... >> indices >> colors) -> colors_abv
+		MAIN(colors_abv >> OffscreenCanvas >> png_data_url) -> img
+	Phase 3: full color BMP
+		GPU(... >> indices >> colors) -> colors_abv
+		MAIN(colors_abv >> colors_base64 >> bmp_data_url) -> img
+	Phase 4: indexed color BMP
+		GPU(... >> indices) -> indices_abv
+		MAIN(indices_abv >> indices_base64 >> bmp_data_url) -> img
+	Phase 5: worker
+		GPU(... >> indices) -> indices_abv
+		WORKER(indices_abv >> indices_base64) -> bmp_data_url
+		MAIN(bmp_data_url) -> img
+	Phase 6: GPU base64
+		GPU(... >> indices >> base64_indices) -> base64_indices_abv
+		WORKER(base64_indices_abv) -> bmp_data_url
+		MAIN(bmp_data_url) -> img
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
@@ -10,36 +29,11 @@ Spherical distortion in vertex shader ("trick to fake a sphere")
 		A similar effect appears in Tetrisphere
 		"Warped through like a fisheye lens"
 
+Revisit flowchart
+
 ATI TruForm type tesselation option, aka NPatches
 	N for Normals
 	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
-
-Cursed mode
-	All display options rejected: only supports 640x480, frame capped, indexed colors
-	Current
-		GPU(... >> indices >> colors) -> Canvas
-	Phase 1: OffscreenCanvas and img
-		GPU(... >> indices >> colors) -> OffscreenCanvas
-		MAIN(OffscreenCanvas >> png_data_url) -> img
-	Phase 2: readPixels and maybe framebuffer
-		GPU(... >> indices >> colors) -> colors_abv
-		MAIN(colors_abv >> OffscreenCanvas >> png_data_url) -> img
-	Phase 3: GPU renders indices
-		GPU(... >> indices) -> indices_abv
-		MAIN(indices_abv >> OffscreenCanvas >> png_data_url) -> img
-	Phase 4: BMP data URL
-		GPU(... >> indices) -> indices_abv
-		MAIN(indices_abv >> bmp_pixel_array >> bmp_data_url) -> img
-	Phase 5: Base64 the indices
-		GPU(... >> indices) -> indices_abv
-		MAIN(indices_abv >> base64_bmp_pixel_array >> bmp_data_url) -> img
-	Phase 6: GPU Base64
-		GPU(... >> indices >> base64_indices) -> base64_indices_abv
-		MAIN(base64_indices_abv >> bmp_data_url) -> img
-	Phase 7: Web Worker
-		GPU(... >> indices >> base64_indices) -> base64_indices_abv
-		WORKER(base64_indices_abv) -> bmp_data_url
-		MAIN(bmp_data_url) -> img
 
 Try adding a carpet, obviously
 
