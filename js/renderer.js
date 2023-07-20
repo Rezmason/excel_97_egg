@@ -9,7 +9,18 @@ export default (async () => {
 	const { data, terrain } = await Model;
 	const { update, controlData } = await Controls;
 
-	const canvas = document.querySelector("canvas");
+	const viewscreenCanvas = document.querySelector("viewscreen canvas");
+	const viewscreenImage = document.querySelector("viewscreen img");
+
+	if (settings.cursed) {
+		viewscreenCanvas.remove();
+	} else {
+		viewscreenImage.remove();
+	}
+
+	const canvas = settings.cursed
+		? new OffscreenCanvas(...data.rendering.resolution)
+		: viewscreenCanvas;
 
 	const regl = createREGL({
 		canvas,
@@ -153,6 +164,13 @@ export default (async () => {
 	});
 
 	const resize = () => {
+		if (settings.cursed) {
+			const resolution = data.rendering.resolution;
+			vec2.set(screenSize, ...resolution);
+			[canvas.width, canvas.height] = resolution;
+			return;
+		}
+
 		let scaleFactor = window.devicePixelRatio;
 		if (settings.limitDrawResolution) {
 			scaleFactor =

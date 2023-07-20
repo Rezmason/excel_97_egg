@@ -13,7 +13,8 @@ body {
 }
 
 gui,
-canvas {
+viewscreen img,
+viewscreen canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -21,9 +22,14 @@ canvas {
 	height: 100vh;
 }
 
-canvas {
+viewscreen img,
+viewscreen canvas {
 	image-rendering: crisp-edges;
 	image-rendering: pixelated;
+}
+
+viewscreen img {
+	object-fit: cover;
 }
 
 gui {

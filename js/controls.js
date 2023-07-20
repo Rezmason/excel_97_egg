@@ -22,7 +22,7 @@ const wheelDeltaMagnifiers = {
 };
 
 export default (async () => {
-	const canvas = document.querySelector("canvas");
+	const viewscreen = document.querySelector("viewscreen");
 
 	const mouseJoystick = vec2.create();
 	const goalMouseJoystick = vec2.create();
@@ -77,9 +77,9 @@ export default (async () => {
 		}
 	});
 
-	canvas.addEventListener("contextmenu", (event) => event.preventDefault());
-	canvas.addEventListener("dblclick", (event) => event.preventDefault());
-	canvas.addEventListener("mousemove", (event) => {
+	viewscreen.addEventListener("contextmenu", (event) => event.preventDefault());
+	viewscreen.addEventListener("dblclick", (event) => event.preventDefault());
+	viewscreen.addEventListener("mousemove", (event) => {
 		event.preventDefault();
 		if (braking) {
 			return;
@@ -92,17 +92,17 @@ export default (async () => {
 		);
 	});
 
-	canvas.addEventListener("mousedown", (event) => {
+	viewscreen.addEventListener("mousedown", (event) => {
 		event.preventDefault();
 		forwardAcceleration = event.button === 0 ? -1 : 1;
 	});
 
-	canvas.addEventListener("mouseup", (event) => {
+	viewscreen.addEventListener("mouseup", (event) => {
 		event.preventDefault();
 		forwardAcceleration = 0;
 	});
 
-	canvas.addEventListener("wheel", (event) => {
+	viewscreen.addEventListener("wheel", (event) => {
 		event.preventDefault();
 		mouseWheelAccum +=
 			event.deltaY *
@@ -110,7 +110,7 @@ export default (async () => {
 			data.controls.mouse.scrollSpeed;
 	});
 
-	canvas.addEventListener("mouseleave", (event) => {
+	viewscreen.addEventListener("mouseleave", (event) => {
 		if (!braking) {
 			vec2.set(goalMouseJoystick, 0, 0);
 		}
@@ -195,10 +195,10 @@ export default (async () => {
 		vec3.set(rotation, pitch, yaw, rotation[2]);
 	};
 
-	canvas.addEventListener("touchstart", handleTouchStart);
-	canvas.addEventListener("touchmove", handleTouchMove);
-	canvas.addEventListener("touchend", handleTouchEnd);
-	canvas.addEventListener("touchcancel", handleTouchEnd);
+	viewscreen.addEventListener("touchstart", handleTouchStart);
+	viewscreen.addEventListener("touchmove", handleTouchMove);
+	viewscreen.addEventListener("touchend", handleTouchEnd);
+	viewscreen.addEventListener("touchcancel", handleTouchEnd);
 
 	const resize = () =>
 		vec2.set(viewportSize, window.innerWidth, window.innerHeight);
