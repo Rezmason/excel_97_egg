@@ -19,7 +19,7 @@ export default (async () => {
 	}
 
 	const canvas = settings.cursed
-		? new OffscreenCanvas(...data.rendering.resolution)
+		? document.createElement("canvas")
 		: viewscreenCanvas;
 
 	const regl = createREGL({
@@ -212,6 +212,8 @@ export default (async () => {
 			return;
 		}
 
+		regl.clear({ depth: 1 });
+
 		if (mustResize) {
 			vec2.copy(lastScreenSize, screenSize);
 			const aspectRatio = screenSize[0] / screenSize[1];
@@ -239,6 +241,10 @@ export default (async () => {
 		for (const offset of offsets) {
 			vec2.set(repeatOffset, ...offset);
 			drawTerrain(state);
+		}
+
+		if (settings.cursed) {
+			viewscreenImage.src = canvas.toDataURL();
 		}
 	};
 	render({ time: 0 }); // If there's an error, the RAF is never constructed
