@@ -8,8 +8,13 @@ const makeEventTarget = () => {
 	}
 };
 
-const checkBooleanFlag = (params, id) =>
-	!params.has(id) || params.get(id).toLowerCase() !== "false";
+const checkBooleanFlag = (params, id, defaultValue = true) => {
+	const value = params.get(id);
+	if (value == null) {
+		return defaultValue;
+	}
+	return value !== "" && value !== "false" && parseFloat(value) != 0;
+};
 
 export default (async () => {
 	const urlParams = new URLSearchParams(window.location.search);
@@ -18,6 +23,7 @@ export default (async () => {
 		demo: urlParams.get("demo"),
 		sanitizePosition: checkBooleanFlag(urlParams, "sanitizePosition"),
 		interactive: checkBooleanFlag(urlParams, "interactive"),
+		cursed: checkBooleanFlag(urlParams, "cursed", false),
 	};
 	const events = makeEventTarget();
 	const settingsChangedEvent = new Event("settingsChanged");
@@ -26,7 +32,6 @@ export default (async () => {
 	const aboutButton = toolbar.querySelector(".mso-button#about");
 	const aboutBox = document.querySelector("#about-box");
 	const screenshot = document.querySelector("screenshot");
-	const canvas = document.querySelector("canvas");
 	const fullscreenCheckbox = toolbar.querySelector(".mso-button#fullscreen");
 	fullscreenCheckbox.disabled = !(
 		document.fullscreenEnabled || document.webkitFullscreenEnabled
@@ -182,6 +187,10 @@ export default (async () => {
 		case "vaporwave":
 			options = "qtg";
 			break;
+	}
+
+	if (settings.cursed) {
+		options = "crs";
 	}
 
 	checkboxes.forEach(
