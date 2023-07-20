@@ -24,7 +24,7 @@ export default (async () => {
 
 	const regl = createREGL({
 		canvas,
-		attributes: { antialias: false },
+		attributes: { antialias: false, preserveDrawingBuffer: settings.cursed },
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
@@ -202,6 +202,9 @@ export default (async () => {
 	const lastScreenSize = vec2.fromValues(1, 1);
 	let lastFrameTime = -1;
 	const start = Date.now();
+	const helper = document.createElement("canvas");
+	const helperContext = helper.getContext("2d");
+	const helperData = new ImageData(...data.rendering.resolution);
 	const render = ({ time }) => {
 		const deltaTime = time - lastFrameTime;
 		const mustDraw =
@@ -244,9 +247,14 @@ export default (async () => {
 		}
 
 		if (settings.cursed) {
-			viewscreenImage.src = canvas.toDataURL();
+			helper.width = canvas.width;
+			helper.height = canvas.height;
+			regl.read(helperData.data);
+			helperContext.putImageData(helperData, 0, 0);
+			viewscreenImage.src = helper.toDataURL();
 		}
 	};
+	regl.poll();
 	render({ time: 0 }); // If there's an error, the RAF is never constructed
 	const raf = regl.frame(render);
 })();

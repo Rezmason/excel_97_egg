@@ -2,9 +2,6 @@ Cursed mode
 	All display options rejected: only supports 640x480, frame capped, indexed colors
 		Make this actually work
 	Current
-		GPU(... >> indices >> colors) -> Canvas
-		MAIN(Canvas >> png_data_url) -> img
-	Phase 2: readPixels/framebuffer
 		GPU(... >> indices >> colors) -> colors_abv
 		MAIN(colors_abv >> Canvas >> png_data_url) -> img
 	Phase 3: full color BMP
