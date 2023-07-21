@@ -1,12 +1,7 @@
 Cursed mode
-	All display options rejected: only supports 640x480, frame capped, indexed colors
-		Make this actually work
 	Current
-		GPU(... >> indices >> colors) -> colors_abv
-		MAIN(colors_abv >> Canvas >> png_data_url) -> img
-	Phase 3: full color BMP
-		GPU(... >> indices >> colors) -> colors_abv
-		MAIN(colors_abv >> colors_base64 >> bmp_data_url) -> img
+		GPU(... >> indices) -> indices_abv
+		MAIN(indices_abv >> Canvas >> png_data_url) -> img
 	Phase 4: indexed color BMP
 		GPU(... >> indices) -> indices_abv
 		MAIN(indices_abv >> indices_base64 >> bmp_data_url) -> img
@@ -18,6 +13,9 @@ Cursed mode
 		GPU(... >> indices >> base64_indices) -> base64_indices_abv
 		WORKER(base64_indices_abv) -> bmp_data_url
 		MAIN(bmp_data_url) -> img
+
+	Unflip the image tag
+
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning

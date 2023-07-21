@@ -252,8 +252,16 @@ void frag() {
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 
+#ifdef CURSED
+	int colorIndex = column + row * int(colorTableWidth);
+	vec3 color = vec3(float(colorIndex) / 255.0);
+	gl_FragColor = vec4(color, 1.0);
+	return;
+#else
 	vec2 colorTableTexCoord = vec2(float(column), float(row)) / colorTableWidth;
 	vec3 color = texture2D(colorTable, colorTableTexCoord).rgb;
+#endif
+
 #elif defined(TRUE_COLOR)
 	vec3 color = vec3(0.0);
 	float brightness = vBrightness;

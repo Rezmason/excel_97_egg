@@ -12,21 +12,34 @@ export default (async () => {
 	const viewscreenCanvas = document.querySelector("viewscreen canvas");
 	const viewscreenImage = document.querySelector("viewscreen img");
 
+	const bmpDataURL = await fetch("assets/initial_framebuffer.bmp") // empty_framebuffer
+		.then((response) => response.blob())
+		.then(
+			(blob) =>
+				new Promise((resolve) => {
+					const fileReader = new FileReader();
+					fileReader.onload = (evt) => {
+						resolve(fileReader.result);
+					};
+					fileReader.readAsDataURL(blob);
+				})
+		);
+
 	if (settings.cursed) {
 		viewscreenCanvas.remove();
 	} else {
 		viewscreenImage.remove();
 	}
 
-	const canvas = settings.cursed
-		? document.createElement("canvas")
-		: viewscreenCanvas;
+	const canvas = settings.cursed ? new OffscreenCanvas(1, 1) : viewscreenCanvas;
 
 	const regl = createREGL({
 		canvas,
-		attributes: { antialias: false, preserveDrawingBuffer: settings.cursed },
+		attributes: { antialias: false },
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
+
+	const framebuffer = settings.cursed ? regl.framebuffer() : null;
 
 	const deferredTrueColorLoad = async () => {
 		const shouldLoad = settings.trueColorTextures && trueColorTextures == null;
@@ -77,14 +90,19 @@ export default (async () => {
 	const viewport = mat3.create();
 	const repeatOffset = vec2.create();
 
-	const demoId = data.rendering.supported_demos.indexOf(settings.demo);
+	const demoProps = {
+		DEMO_ID: data.rendering.supported_demos.indexOf(settings.demo),
+	};
+	const cursedFlag = settings.cursed ? ["CURSED"] : [];
 
-	const indexedShaderSet = await loadShaderSet(["INDEXED_COLOR"], {
-		DEMO_ID: demoId,
-	});
-	const trueColorShaderSet = await loadShaderSet(["TRUE_COLOR"], {
-		DEMO_ID: demoId,
-	});
+	const indexedShaderSet = await loadShaderSet(
+		["INDEXED_COLOR", ...cursedFlag],
+		demoProps
+	);
+	const trueColorShaderSet = await loadShaderSet(
+		["TRUE_COLOR", ...cursedFlag],
+		demoProps
+	);
 
 	const state = {
 		time: 0,
@@ -149,6 +167,7 @@ export default (async () => {
 		},
 		count: 6,
 		uniforms,
+		framebuffer,
 	});
 
 	const drawTerrain = regl({
@@ -161,6 +180,7 @@ export default (async () => {
 		attributes: terrain.attributes,
 		count: terrain.numVertices,
 		uniforms,
+		framebuffer,
 	});
 
 	const resize = () => {
@@ -168,6 +188,7 @@ export default (async () => {
 			const resolution = data.rendering.resolution;
 			vec2.set(screenSize, ...resolution);
 			[canvas.width, canvas.height] = resolution;
+			framebuffer.resize(...resolution);
 			return;
 		}
 
@@ -205,6 +226,7 @@ export default (async () => {
 	const helper = document.createElement("canvas");
 	const helperContext = helper.getContext("2d");
 	const helperData = new ImageData(...data.rendering.resolution);
+	const helperDataUint8Array = new Uint8Array(helperData.data.buffer);
 	const render = ({ time }) => {
 		const deltaTime = time - lastFrameTime;
 		const mustDraw =
@@ -215,7 +237,7 @@ export default (async () => {
 			return;
 		}
 
-		regl.clear({ depth: 1 });
+		regl.clear({ depth: 1, framebuffer });
 
 		if (mustResize) {
 			vec2.copy(lastScreenSize, screenSize);
@@ -249,9 +271,10 @@ export default (async () => {
 		if (settings.cursed) {
 			helper.width = canvas.width;
 			helper.height = canvas.height;
-			regl.read(helperData.data);
+			regl.read({ data: helperDataUint8Array, framebuffer });
 			helperContext.putImageData(helperData, 0, 0);
 			viewscreenImage.src = helper.toDataURL();
+			// viewscreenImage.src = bmpDataURL;
 		}
 	};
 	regl.poll();

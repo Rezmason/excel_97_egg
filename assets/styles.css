@@ -30,6 +30,11 @@ viewscreen canvas {
 
 viewscreen img {
 	object-fit: cover;
+	transform: scale3d(1, -1, 1); /* TODO: remove when possible */
+}
+
+viewscreen img[src=""] {
+	display: none;
 }
 
 gui {

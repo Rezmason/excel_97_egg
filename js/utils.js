@@ -1,8 +1,8 @@
 const loadShaderSet = async (flags, props) => {
-	const flagsPrefix = flags.map((flag) => `#define ${flag}\n`).join();
+	const flagsPrefix = flags.map((flag) => `#define ${flag}\n`).join("");
 	const propsPrefix = Object.entries(props)
 		.map(([key, value]) => `#define ${key} ${value}\n`)
-		.join();
+		.join("");
 	const defineVert = `#define VERTEX_SHADER\n`;
 	const defineFrag = `#define FRAGMENT_SHADER\n`;
 	const [horizonShader, terrainShader] = (

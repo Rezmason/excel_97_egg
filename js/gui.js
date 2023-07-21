@@ -47,6 +47,10 @@ export default (async () => {
 		])
 	);
 
+	if (settings.cursed) {
+		toolbar.remove();
+	}
+
 	const toggleAboutBox = () => {
 		aboutBox.classList.toggle("hidden");
 		aboutBox.contentWindow.scrollTo(0, 0);
@@ -157,15 +161,18 @@ export default (async () => {
 			return;
 		}
 
-		if (event.code === "KeyA") {
-			toggleAboutBox();
-			return;
-		}
-		const checkbox = checkboxesByKeyCode[event.code];
+		if (!settings.cursed) {
+			if (event.code === "KeyA") {
+				toggleAboutBox();
+				return;
+			}
 
-		if (checkbox != null && !checkbox.disabled) {
-			checkbox.checked = !checkbox.checked;
-			updateSettings();
+			const checkbox = checkboxesByKeyCode[event.code];
+
+			if (checkbox != null && !checkbox.disabled) {
+				checkbox.checked = !checkbox.checked;
+				updateSettings();
+			}
 		}
 	});
 
