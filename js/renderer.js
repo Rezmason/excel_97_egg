@@ -12,7 +12,7 @@ export default (async () => {
 	const viewscreenCanvas = document.querySelector("viewscreen canvas");
 	const viewscreenImage = document.querySelector("viewscreen img");
 
-	const bmpDataURL = await fetch("assets/initial_framebuffer.bmp") // empty_framebuffer
+	const bmpDataURL = await fetch("assets/empty_framebuffer_640x480@1080.bmp")
 		.then((response) => response.blob())
 		.then(
 			(blob) =>
@@ -24,6 +24,22 @@ export default (async () => {
 					fileReader.readAsDataURL(blob);
 				})
 		);
+
+	const dataURLPreambleLength = "data:image/bmp;base64,".length;
+	const bmpHeaderLength = (1080 * 4) / 3; // TODO: put 640, 480 and 1080 someplace better
+	const pixelArrayLength = (640 * 480 * 4) / 3;
+
+	const bmpPrefix = bmpDataURL.substr(
+		0,
+		dataURLPreambleLength + bmpHeaderLength
+	);
+	const bmpSuffix = bmpDataURL.substr(
+		dataURLPreambleLength + bmpHeaderLength + pixelArrayLength
+	);
+	let bmpBody = bmpDataURL.substr(
+		dataURLPreambleLength + bmpHeaderLength,
+		pixelArrayLength
+	);
 
 	if (settings.cursed) {
 		viewscreenCanvas.remove();
@@ -223,10 +239,18 @@ export default (async () => {
 	const lastScreenSize = vec2.fromValues(1, 1);
 	let lastFrameTime = -1;
 	const start = Date.now();
-	const helper = document.createElement("canvas");
-	const helperContext = helper.getContext("2d");
-	const helperData = new ImageData(...data.rendering.resolution);
-	const helperDataUint8Array = new Uint8Array(helperData.data.buffer);
+	/*
+		const helper = document.createElement("canvas");
+		const helperContext = helper.getContext("2d");
+		const helperData = new ImageData(...data.rendering.resolution);
+		const helperDataUint8Array = new Uint8Array(helperData.data.buffer);
+	*/
+	const cursedData = new Uint8Array(1228800);
+	const base64Chars =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	/*
+		const decoder = new TextDecoder("utf8"); // "ascii"?
+	*/
 	const render = ({ time }) => {
 		const deltaTime = time - lastFrameTime;
 		const mustDraw =
@@ -269,12 +293,33 @@ export default (async () => {
 		}
 
 		if (settings.cursed) {
-			helper.width = canvas.width;
-			helper.height = canvas.height;
-			regl.read({ data: helperDataUint8Array, framebuffer });
-			helperContext.putImageData(helperData, 0, 0);
-			viewscreenImage.src = helper.toDataURL();
-			// viewscreenImage.src = bmpDataURL;
+			regl.read({ data: cursedData, framebuffer });
+
+			/*
+				helper.width = canvas.width;
+				helper.height = canvas.height;
+				regl.read({ data: helperDataUint8Array, framebuffer });
+				helperContext.putImageData(helperData, 0, 0);
+				viewscreenImage.src = helper.toDataURL();
+				viewscreenImage.src = bmpDataURL;
+			*/
+
+			/*
+				const randomChar = base64Chars[Math.floor(Math.random() * base64Chars.length)];
+				const randomIndex = Math.floor(Math.random() * bmpBody.length);
+				bmpBody = bmpBody.substr(0, randomIndex - 1) + randomChar + bmpBody.substr(randomIndex);
+			*/
+
+			/*
+			// Not sure if this is even right
+			const str = btoa(
+				unescape(encodeURIComponent(decoder.decode(cursedData)))
+			);
+			console.log(str.length / pixelArrayLength);
+			bmpBody = str.substr(0, pixelArrayLength);
+			*/
+
+			viewscreenImage.src = bmpPrefix + bmpBody + bmpSuffix;
 		}
 	};
 	regl.poll();
