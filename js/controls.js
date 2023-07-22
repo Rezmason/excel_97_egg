@@ -98,11 +98,15 @@ export default (async () => {
 	});
 
 	viewscreen.addEventListener("mousedown", (event) => {
-		if (event.button !== 0 && settings.cursed) {
+		const shiftKey = event.shiftKey;
+		const leftButton = event.button === 0;
+
+		if (!leftButton && (shiftKey || settings.cursed)) {
 			return;
 		}
+
 		event.preventDefault();
-		forwardAcceleration = event.button === 0 ? -1 : 1;
+		forwardAcceleration = shiftKey || !leftButton ? 1 : -1;
 	});
 
 	viewscreen.addEventListener("mouseup", (event) => {

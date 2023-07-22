@@ -1,5 +1,7 @@
 Cursed mode
 
+	Fix true-color mode
+
 	Current
 		GPU(... >> indices) -> indices_abv
 		MAIN(indices_abv >> indices_base64 >> bmp_data_url) -> img
