@@ -198,6 +198,10 @@ void frag() {
 #endif
 	}
 
+	// TODO: there must be a better way.
+	brightness = min(0.9999, brightness);
+	src = min(0.9999, src);
+
 	// Look up the indexed color in the palette.
 	int row = int(src * colorTableWidth);
 	int column = int(brightness * colorTableWidth);
@@ -220,7 +224,7 @@ void frag() {
 
 	bool nearBorder = min(min(vBarycentrics.r, vBarycentrics.g), vBarycentrics.b) < 0.01;
 
-	if (fract(brightness * colorTableWidth) >= 0.5) {
+	if (column < int(colorTableWidth) - 1 && fract(brightness * colorTableWidth) >= 0.5) {
 
 		// Alternate along that scanline
 		int everyOtherPixel = int(fract(scanlineColumn / 2.0) * 2.0);
@@ -252,18 +256,19 @@ void frag() {
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 
+	vec3 color;
+
 #ifdef CURSED
 	int colorIndex = column + row * int(colorTableWidth);
-	vec3 color = vec3(float(colorIndex) / 255.0);
-	gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(float(colorIndex) / 255.0, vec3(0.0));
 	return;
 #else
 	vec2 colorTableTexCoord = vec2(float(column), float(row)) / colorTableWidth;
-	vec3 color = texture2D(colorTable, colorTableTexCoord).rgb;
+	color = texture2D(colorTable, colorTableTexCoord).rgb;
 #endif
 
 #elif defined(TRUE_COLOR)
-	vec3 color = vec3(0.0);
+	color = vec3(0.0);
 	float brightness = vBrightness;
 
 	// The first two textures are sampled normally

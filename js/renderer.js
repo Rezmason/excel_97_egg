@@ -239,18 +239,18 @@ export default (async () => {
 	const lastScreenSize = vec2.fromValues(1, 1);
 	let lastFrameTime = -1;
 	const start = Date.now();
-	/*
-		const helper = document.createElement("canvas");
-		const helperContext = helper.getContext("2d");
-		const helperData = new ImageData(...data.rendering.resolution);
-		const helperDataUint8Array = new Uint8Array(helperData.data.buffer);
-	*/
-	const cursedData = new Uint8Array(1228800);
-	const base64Chars =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	/*
-		const decoder = new TextDecoder("utf8"); // "ascii"?
-	*/
+
+	const cursedDataUint8 = new Uint8Array(1228800);
+	const cursedDataUint32 = new Uint32Array(cursedDataUint8.buffer);
+	const cursedData = new Uint8Array(1228800 / 4);
+
+	const charactersByCharCode = Object.fromEntries(
+		Array(256)
+			.fill()
+			.map((_, i) => i)
+			.map((i) => [i, String.fromCharCode(i)])
+	);
+
 	const render = ({ time }) => {
 		const deltaTime = time - lastFrameTime;
 		const mustDraw =
@@ -293,32 +293,14 @@ export default (async () => {
 		}
 
 		if (settings.cursed) {
-			regl.read({ data: cursedData, framebuffer });
-
-			/*
-				helper.width = canvas.width;
-				helper.height = canvas.height;
-				regl.read({ data: helperDataUint8Array, framebuffer });
-				helperContext.putImageData(helperData, 0, 0);
-				viewscreenImage.src = helper.toDataURL();
-				viewscreenImage.src = bmpDataURL;
-			*/
-
-			/*
-				const randomChar = base64Chars[Math.floor(Math.random() * base64Chars.length)];
-				const randomIndex = Math.floor(Math.random() * bmpBody.length);
-				bmpBody = bmpBody.substr(0, randomIndex - 1) + randomChar + bmpBody.substr(randomIndex);
-			*/
-
-			/*
-			// Not sure if this is even right
-			const str = btoa(
-				unescape(encodeURIComponent(decoder.decode(cursedData)))
-			);
-			console.log(str.length / pixelArrayLength);
-			bmpBody = str.substr(0, pixelArrayLength);
-			*/
-
+			regl.read({ data: cursedDataUint8, framebuffer });
+			cursedData.set(cursedDataUint32);
+			let s = "";
+			const n = 1228800 / 4;
+			for (let i = 0; i < n; i++) {
+				s += charactersByCharCode[cursedData[i]];
+			}
+			bmpBody = btoa(s);
 			viewscreenImage.src = bmpPrefix + bmpBody + bmpSuffix;
 		}
 	};

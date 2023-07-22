@@ -64,22 +64,23 @@ void frag() {
 #if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		row = int(colorTableWidth) - 1;
 #endif
+
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 
+	vec3 color;
+
 #ifdef CURSED
 	int colorIndex = column + row * int(colorTableWidth);
-	vec3 color = vec3(float(colorIndex) / 255.0);
-	gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(float(colorIndex) / 255.0, vec3(0.0));
 	return;
 #else
 	vec2 colorTableTexCoord = vec2(float(column), float(row)) / colorTableWidth;
-	vec3 color = texture2D(colorTable, colorTableTexCoord).rgb;
+	color = texture2D(colorTable, colorTableTexCoord).rgb;
 #endif
 
 #elif defined(TRUE_COLOR)
-
-	vec3 color = texture2D(horizonTexture, vec2(texCoord.x, y)).rgb;
+	color = texture2D(horizonTexture, vec2(texCoord.x, y)).rgb;
 
 #if defined(DEMO_ID) && DEMO_ID == DEMO_SHADING
 		color = vec3(max(color.r, max(color.g, color.b)));

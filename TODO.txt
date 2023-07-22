@@ -1,8 +1,6 @@
 Cursed mode
+
 	Current
-		GPU(... >> indices) -> indices_abv
-		MAIN(indices_abv >> Canvas >> png_data_url) -> img
-	Phase 4: indexed color BMP
 		GPU(... >> indices) -> indices_abv
 		MAIN(indices_abv >> indices_base64 >> bmp_data_url) -> img
 	Phase 5: worker
@@ -14,8 +12,7 @@ Cursed mode
 		WORKER(base64_indices_abv) -> bmp_data_url
 		MAIN(bmp_data_url) -> img
 
-	Unflip the image tag
-
+	Fun changes to textures?
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
