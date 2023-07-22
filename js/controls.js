@@ -77,7 +77,12 @@ export default (async () => {
 		}
 	});
 
-	viewscreen.addEventListener("contextmenu", (event) => event.preventDefault());
+	if (!settings.cursed) {
+		viewscreen.addEventListener("contextmenu", (event) =>
+			event.preventDefault()
+		);
+	}
+
 	viewscreen.addEventListener("dblclick", (event) => event.preventDefault());
 	viewscreen.addEventListener("mousemove", (event) => {
 		event.preventDefault();
@@ -93,6 +98,9 @@ export default (async () => {
 	});
 
 	viewscreen.addEventListener("mousedown", (event) => {
+		if (event.button !== 0 && settings.cursed) {
+			return;
+		}
 		event.preventDefault();
 		forwardAcceleration = event.button === 0 ? -1 : 1;
 	});

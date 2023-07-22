@@ -12,7 +12,11 @@ Cursed mode
 		WORKER(base64_indices_abv) -> bmp_data_url
 		MAIN(bmp_data_url) -> img
 
-	Fun changes to textures?
+	Move the BMP stuff to utils
+	Fun changes to textures, terrain data, palette?
+		"#DIV/0!" for credits
+		Horizon row as lava maybe?
+		Weird regions and heights?
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
