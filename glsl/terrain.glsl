@@ -176,6 +176,7 @@ highp vec2 getCreditTexCoord() {
 void frag() {
 
 	int whichTexture = int(vWhichTexture);
+	vec3 color;
 
 #if defined(INDEXED_COLOR)
 	float src = 0.0;
@@ -255,8 +256,6 @@ void frag() {
 
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
-
-	vec3 color;
 
 #ifdef CURSED
 	int colorIndex = column + row * int(colorTableWidth);

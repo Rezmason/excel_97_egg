@@ -44,6 +44,7 @@ void vert() {
 #if defined(FRAGMENT_SHADER)
 void frag() {
 	vec2 texCoord = vTexCoord;
+	vec3 color;
 
 	// Stretch the texture so that its size relative to the quad
 	// is proportional to the horizon's size on a 480-pixel-tall screen.
@@ -68,7 +69,6 @@ void frag() {
 	// row = int(colorTableWidth) - 1;
 	// column = int(colorTableWidth) - 1;
 
-	vec3 color;
 
 #ifdef CURSED
 	int colorIndex = column + row * int(colorTableWidth);
