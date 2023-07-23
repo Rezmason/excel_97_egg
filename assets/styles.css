@@ -131,6 +131,7 @@ deadzone {
 	border: none;
 	padding: 0;
 	margin: 0;
+	background-color: transparent;
 
 	display: block;
 	width: 23em;
