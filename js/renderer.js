@@ -12,46 +12,19 @@ export default (async () => {
 	const viewscreenCanvas = document.querySelector("viewscreen canvas");
 	const viewscreenImage = document.querySelector("viewscreen img");
 
-	const bmpDataURL = await fetch("assets/empty_framebuffer_640x480@1080.bmp")
-		.then((response) => response.blob())
-		.then(
-			(blob) =>
-				new Promise((resolve) => {
-					const fileReader = new FileReader();
-					fileReader.onload = (evt) => {
-						resolve(fileReader.result);
-					};
-					fileReader.readAsDataURL(blob);
-				})
-		);
-
-	const dataURLPreambleLength = "data:image/bmp;base64,".length;
-	const bmpHeaderLength = (1080 * 4) / 3; // TODO: put 640, 480 and 1080 someplace better
-	const pixelArrayLength = (640 * 480 * 4) / 3;
-
-	const bmpPrefix = bmpDataURL.substr(
-		0,
-		dataURLPreambleLength + bmpHeaderLength
-	);
-	const bmpSuffix = bmpDataURL.substr(
-		dataURLPreambleLength + bmpHeaderLength + pixelArrayLength
-	);
-	let bmpBody = bmpDataURL.substr(
-		dataURLPreambleLength + bmpHeaderLength,
-		pixelArrayLength
-	);
-
 	if (settings.cursed) {
 		viewscreenCanvas.remove();
 	} else {
 		viewscreenImage.remove();
 	}
 
-	const canvas = settings.cursed ? new OffscreenCanvas(1, 1) : viewscreenCanvas;
+	const canvas = settings.cursed
+		? document.createElement("canvas")
+		: viewscreenCanvas;
 
 	const regl = createREGL({
 		canvas,
-		attributes: { antialias: false },
+		attributes: { antialias: false, preserveDrawingBuffer: settings.cursed },
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
@@ -211,13 +184,13 @@ export default (async () => {
 		let scaleFactor = window.devicePixelRatio;
 		if (settings.limitDrawResolution) {
 			scaleFactor =
-				canvas.clientWidth > canvas.clientHeight
-					? data.rendering.resolution[0] / canvas.clientWidth
-					: data.rendering.resolution[1] / canvas.clientHeight;
+				viewscreenCanvas.clientWidth > viewscreenCanvas.clientHeight
+					? data.rendering.resolution[0] / viewscreenCanvas.clientWidth
+					: data.rendering.resolution[1] / viewscreenCanvas.clientHeight;
 			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
 		}
-		const width = Math.ceil(canvas.clientWidth * scaleFactor);
-		const height = Math.ceil(canvas.clientHeight * scaleFactor);
+		const width = Math.ceil(viewscreenCanvas.clientWidth * scaleFactor);
+		const height = Math.ceil(viewscreenCanvas.clientHeight * scaleFactor);
 		vec2.set(screenSize, width, height);
 		canvas.width = width;
 		canvas.height = height;
@@ -237,8 +210,40 @@ export default (async () => {
 	await interpretSettings();
 
 	const lastScreenSize = vec2.fromValues(1, 1);
-	let lastFrameTime = -1;
-	const start = Date.now();
+	let lastTime = -1;
+
+	const startTime = Date.now();
+	const fovRadians = (Math.PI / 180) * data.rendering.fov;
+	const targetFrameTime = 1 / data.rendering.targetFPS;
+
+	const bmpDataURL = await fetch("assets/empty_framebuffer_640x480@1080.bmp")
+		.then((response) => response.blob())
+		.then(
+			(blob) =>
+				new Promise((resolve) => {
+					const fileReader = new FileReader();
+					fileReader.onload = (evt) => {
+						resolve(fileReader.result);
+					};
+					fileReader.readAsDataURL(blob);
+				})
+		);
+
+	const dataURLPreambleLength = "data:image/bmp;base64,".length;
+	const bmpHeaderLength = (1080 * 4) / 3; // TODO: put 640, 480 and 1080 someplace better
+	const pixelArrayLength = (640 * 480 * 4) / 3;
+
+	const bmpPrefix = bmpDataURL.substr(
+		0,
+		dataURLPreambleLength + bmpHeaderLength
+	);
+	const bmpSuffix = bmpDataURL.substr(
+		dataURLPreambleLength + bmpHeaderLength + pixelArrayLength
+	);
+	let bmpBody = bmpDataURL.substr(
+		dataURLPreambleLength + bmpHeaderLength,
+		pixelArrayLength
+	);
 
 	const cursedDataUint8 = new Uint8Array(1228800);
 	const cursedDataUint32 = new Uint32Array(cursedDataUint8.buffer);
@@ -251,37 +256,9 @@ export default (async () => {
 			.map((i) => [i, String.fromCharCode(i)])
 	);
 
-	const render = ({ time }) => {
-		const deltaTime = time - lastFrameTime;
-		const mustDraw =
-			!settings.limitDrawSpeed || deltaTime >= 1 / data.rendering.targetFPS;
-		const mustResize = !vec2.equals(lastScreenSize, screenSize);
-
-		if (!(mustDraw || mustResize)) {
-			return;
-		}
-
+	const draw = () => {
+		regl.poll();
 		regl.clear({ depth: 1, framebuffer });
-
-		if (mustResize) {
-			vec2.copy(lastScreenSize, screenSize);
-			const aspectRatio = screenSize[0] / screenSize[1];
-			const fovRadians = (Math.PI / 180) * data.rendering.fov;
-			mat4.perspective(camera, fovRadians, aspectRatio, 0.01, terrain.size * 2);
-
-			mat3.identity(viewport);
-			mat3.scale(
-				viewport,
-				viewport,
-				vec2.scale(vec2.create(), screenSize, 0.5)
-			);
-			mat3.translate(viewport, viewport, vec2.fromValues(1, 1));
-		}
-
-		lastFrameTime = time;
-		update(deltaTime);
-		state.currentQuadID = terrain.getQuadAt(...controlData.position).id;
-		state.time = (Date.now() - start) / 1000;
 
 		if (!settings.birdsEyeView) {
 			drawHorizon(state);
@@ -304,7 +281,39 @@ export default (async () => {
 			viewscreenImage.src = bmpPrefix + bmpBody + bmpSuffix;
 		}
 	};
-	regl.poll();
-	render({ time: 0 }); // If there's an error, the RAF is never constructed
-	const raf = regl.frame(render);
+
+	const animate = () => {
+		const time = (Date.now() - startTime) / 1000;
+		const frameTime = time - lastTime;
+
+		const mustResize = !vec2.equals(lastScreenSize, screenSize);
+		const mustDraw =
+			mustResize || !settings.limitDrawSpeed || frameTime >= targetFrameTime;
+
+		if (mustResize) {
+			vec2.copy(lastScreenSize, screenSize);
+			const aspectRatio = screenSize[0] / screenSize[1];
+			mat4.perspective(camera, fovRadians, aspectRatio, 0.01, terrain.size * 2);
+
+			mat3.identity(viewport);
+			mat3.scale(
+				viewport,
+				viewport,
+				vec2.scale(vec2.create(), screenSize, 0.5)
+			);
+			mat3.translate(viewport, viewport, vec2.fromValues(1, 1));
+		}
+
+		if (mustDraw) {
+			lastTime = time;
+			update(frameTime);
+			state.currentQuadID = terrain.getQuadAt(...controlData.position).id;
+			state.time = time;
+			draw();
+		}
+
+		requestAnimationFrame(animate);
+	};
+
+	animate();
 })();

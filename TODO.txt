@@ -1,17 +1,5 @@
 Cursed mode
-
-	Current
-		GPU(... >> indices) -> indices_abv
-		MAIN(indices_abv >> indices_base64 >> bmp_data_url) -> img
-	Phase 5: worker
-		GPU(... >> indices) -> indices_abv
-		WORKER(indices_abv >> indices_base64) -> bmp_data_url
-		MAIN(bmp_data_url) -> img
-	Phase 6: GPU base64
-		GPU(... >> indices >> base64_indices) -> base64_indices_abv
-		WORKER(base64_indices_abv) -> bmp_data_url
-		MAIN(bmp_data_url) -> img
-
+	GPU base 64
 	Move the BMP stuff to utils
 	Fun changes to textures, terrain data, palette?
 		"#DIV/0!" for credits
