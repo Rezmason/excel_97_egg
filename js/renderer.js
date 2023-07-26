@@ -16,12 +16,8 @@ export default (async () => {
 
 	const viewscreenCanvas = document.querySelector("viewscreen canvas");
 	const viewscreenImage = document.querySelector("viewscreen img");
-
-	if (settings.cursed) {
-		viewscreenCanvas.remove();
-	} else {
-		viewscreenImage.remove();
-	}
+	const viewElement = settings.cursed ? viewscreenImage : viewscreenCanvas;
+	(settings.cursed ? viewscreenCanvas : viewscreenImage).remove();
 
 	const canvas = settings.cursed
 		? document.createElement("canvas")
@@ -32,27 +28,6 @@ export default (async () => {
 		attributes: { antialias: false, preserveDrawingBuffer: settings.cursed },
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
-
-	const sceneTex = regl.texture({
-		width: 1,
-		height: 1,
-	});
-
-	const base64TableTex = regl.texture({
-		data: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-			.split("")
-			.map((c) => c.charCodeAt(0)),
-		width: 64,
-		height: 1,
-		format: "luminance",
-	});
-
-	const sceneFBO = settings.cursed
-		? regl.framebuffer({
-				color: sceneTex,
-		  })
-		: null;
-	const base64FBO = regl.framebuffer();
 
 	const deferredTrueColorLoad = async () => {
 		const shouldLoad = settings.trueColorTextures && trueColorTextures == null;
@@ -97,21 +72,11 @@ export default (async () => {
 		.flat();
 	const singleOffset = [[0, 0]];
 
-	let offsets = singleOffset;
+	let terrainOffsets = singleOffset;
 	const screenSize = vec2.create();
 	const camera = mat4.create();
 	const viewport = mat3.create();
 	const repeatOffset = vec2.create();
-
-	const resolution = data.rendering.resolution;
-
-	if (settings.cursed) {
-		vec2.set(screenSize, ...resolution);
-		[canvas.width, canvas.height] = resolution;
-		sceneTex.resize(...resolution);
-		sceneFBO.resize(...resolution);
-		base64FBO.resize(...resolution);
-	}
 
 	const demoProps = {
 		DEMO_ID: data.rendering.supported_demos.indexOf(settings.demo),
@@ -155,6 +120,26 @@ export default (async () => {
 		Object.keys(state).map((key) => [key, regl.prop(key)])
 	);
 
+	const resize = () => {
+		if (settings.cursed) {
+			return;
+		}
+
+		let scaleFactor = window.devicePixelRatio;
+		if (settings.limitDrawResolution) {
+			scaleFactor =
+				viewElement.clientWidth > viewElement.clientHeight
+					? data.rendering.resolution[0] / viewElement.clientWidth
+					: data.rendering.resolution[1] / viewElement.clientHeight;
+			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
+		}
+		const width = Math.ceil(viewElement.clientWidth * scaleFactor);
+		const height = Math.ceil(viewElement.clientHeight * scaleFactor);
+		vec2.set(screenSize, width, height);
+		canvas.width = width;
+		canvas.height = height;
+	};
+
 	const interpretSettings = async () => {
 		await deferredTrueColorLoad();
 
@@ -165,7 +150,7 @@ export default (async () => {
 		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
 		state.quadBorder = settings.showQuadEdges ? data.rendering.quadBorder : 0;
 
-		offsets = settings.lightingCutoff ? offsets : repeatingOffsets;
+		terrainOffsets = settings.lightingCutoff ? singleOffset : repeatingOffsets;
 
 		const trueColor = settings.trueColorTextures && trueColorTextures != null;
 		const textures = trueColor ? trueColorTextures : indexedColorTextures;
@@ -182,6 +167,45 @@ export default (async () => {
 		[1000, -1000],
 		[-1000, -1000],
 	];
+
+	const sceneFBO = settings.cursed ? regl.framebuffer() : null;
+	const base64FBO = settings.cursed ? regl.framebuffer() : null;
+
+	const bmpPrefix = settings.cursed ? data.cursed.prefix.join("") : null;
+	const bmpSuffix = settings.cursed ? data.cursed.suffix.join("") : null;
+	const cursedData = settings.cursed
+		? new Uint8Array(data.cursed.resolution[0] * data.cursed.resolution[1] * 4)
+		: null;
+	const decoder = settings.cursed ? new TextDecoder("ascii") : null;
+
+	if (settings.cursed) {
+		const cursedResolution = data.cursed.resolution;
+		vec2.set(screenSize, ...cursedResolution);
+		[canvas.width, canvas.height] = cursedResolution;
+		sceneFBO.resize(...cursedResolution);
+		base64FBO.resize(...cursedResolution);
+	}
+
+	const encodeBase64 = settings.cursed
+		? regl({
+				depth: { enable: false },
+				...base64Shader,
+				attributes: {
+					aPosition: [tl, bl, tr, br, tr, bl],
+				},
+				count: 6,
+				uniforms: {
+					tex: sceneFBO,
+					base64Table: regl.texture({
+						data: data.cursed.base64Table,
+						width: 64,
+						height: 1,
+						format: "luminance",
+					}),
+				},
+				framebuffer: base64FBO,
+		  })
+		: null;
 
 	const drawHorizon = regl({
 		depth: { enable: false },
@@ -208,40 +232,6 @@ export default (async () => {
 		framebuffer: sceneFBO,
 	});
 
-	const encodeBase64 = regl({
-		depth: { enable: false },
-		...base64Shader,
-		attributes: {
-			aPosition: [tl, bl, tr, br, tr, bl],
-		},
-		count: 6,
-		uniforms: {
-			tex: sceneTex,
-			base64Table: base64TableTex,
-		},
-		framebuffer: base64FBO,
-	});
-
-	const resize = () => {
-		if (settings.cursed) {
-			return;
-		}
-
-		let scaleFactor = window.devicePixelRatio;
-		if (settings.limitDrawResolution) {
-			scaleFactor =
-				viewscreenCanvas.clientWidth > viewscreenCanvas.clientHeight
-					? data.rendering.resolution[0] / viewscreenCanvas.clientWidth
-					: data.rendering.resolution[1] / viewscreenCanvas.clientHeight;
-			scaleFactor = Math.min(scaleFactor, window.devicePixelRatio);
-		}
-		const width = Math.ceil(viewscreenCanvas.clientWidth * scaleFactor);
-		const height = Math.ceil(viewscreenCanvas.clientHeight * scaleFactor);
-		vec2.set(screenSize, width, height);
-		canvas.width = width;
-		canvas.height = height;
-	};
-
 	events.addEventListener("settingsChanged", async (event) => {
 		interpretSettings();
 	});
@@ -258,38 +248,6 @@ export default (async () => {
 	const fovRadians = (Math.PI / 180) * data.rendering.fov;
 	const targetFrameTime = 1 / data.rendering.targetFPS;
 
-	const bmpDataURL = await fetch("assets/empty_framebuffer_640x480@1080.bmp")
-		.then((response) => response.blob())
-		.then(
-			(blob) =>
-				new Promise((resolve) => {
-					const fileReader = new FileReader();
-					fileReader.onload = (evt) => {
-						resolve(fileReader.result);
-					};
-					fileReader.readAsDataURL(blob);
-				})
-		);
-
-	const dataURLPreambleLength = "data:image/bmp;base64,".length;
-	const bmpHeaderLength = (1080 * 4) / 3; // TODO: put 640, 480 and 1080 someplace better
-	const pixelArrayLength = (640 * 480 * 4) / 3;
-
-	const bmpPrefix = bmpDataURL.substr(
-		0,
-		dataURLPreambleLength + bmpHeaderLength
-	);
-	const bmpSuffix = bmpDataURL.substr(
-		dataURLPreambleLength + bmpHeaderLength + pixelArrayLength
-	);
-	let bmpBody = bmpDataURL.substr(
-		dataURLPreambleLength + bmpHeaderLength,
-		pixelArrayLength
-	);
-
-	const cursedData = new Uint8Array(resolution[0] * resolution[1] * 4);
-	const decoder = new TextDecoder("ascii");
-
 	const draw = () => {
 		regl.poll();
 		regl.clear({ depth: 1, framebuffer: sceneFBO });
@@ -298,7 +256,7 @@ export default (async () => {
 			drawHorizon(state);
 		}
 
-		for (const offset of offsets) {
+		for (const offset of terrainOffsets) {
 			vec2.set(repeatOffset, ...offset);
 			drawTerrain(state);
 		}
@@ -306,8 +264,7 @@ export default (async () => {
 		if (settings.cursed) {
 			encodeBase64();
 			regl.read({ data: cursedData, framebuffer: base64FBO });
-			bmpBody = decoder.decode(cursedData);
-			viewscreenImage.src = bmpPrefix + bmpBody + bmpSuffix;
+			viewElement.src = bmpPrefix + decoder.decode(cursedData) + bmpSuffix;
 		}
 	};
 
