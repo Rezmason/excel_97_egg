@@ -60,10 +60,10 @@ void frag() {
 	//    Base64 Octets | 0x54            | 0x57            | 0x46            | 0x75            |
 
 	gl_FragColor = vec4(
-		         recombine( 0.,0.,    o0,2. ),
-		         recombine                  ( o0,6.-2., o1,4. ),
-		         recombine                                    ( o1,6.-4., o2,6. ),
-		         recombine                                                      ( o2,6.-6., 0.,0. )
+	           recombine( 0.,0.,    o0,2. ),
+	           recombine                  ( o0,6.-2., o1,4. ),
+	           recombine                                    ( o1,6.-4., o2,6. ),
+	           recombine                                                      ( o2,6.-6., 0.,0. )
 	);
 }
 #endif
