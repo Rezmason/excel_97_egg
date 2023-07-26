@@ -18,7 +18,8 @@ uniform mat4 camera, horizonTransform;
 uniform sampler2D horizonTexture;
 uniform float horizonHeight;
 uniform vec3 rotation;
-uniform float showSindogs;
+uniform float limitDrawResolution, showSindogs;
+uniform vec2 screenSize;
 
 uniform float colorTableWidth;
 uniform sampler2D colorTable;
@@ -55,6 +56,22 @@ void frag() {
 	if (y > 1.0) {
 		y = 0.0;
 	}
+
+	// The original program's rasterizer had an off-by-one error for the width of the framebuffer.
+	// This causes the edges of triangles to not be drawn in the last column of pixels,
+	// and causes the interior fragments of triangles to not be drawn in the last two columns
+	// (because the interiors were drawn two at a time with STOSW).
+	if (limitDrawResolution == 1.0) {
+		float distanceFromRight = screenSize.x - gl_FragCoord.x;
+		if (distanceFromRight < 2.0) {
+			float horizonDistance = abs(y - 0.95);
+			if (horizonDistance > 0.01 || distanceFromRight <= 1.0) {
+				gl_FragColor = vec4(vec3(0.0), 1.0);
+				return;
+			}
+		}
+	}
+
 	float src = texture2D(horizonTexture, vec2(texCoord.x, y)).r;
 
 	// Look up the indexed color in the palette.
