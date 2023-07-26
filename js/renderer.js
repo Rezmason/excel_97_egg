@@ -177,11 +177,13 @@ export default (async () => {
 				depth: { enable: false },
 				...base64Shader,
 				attributes: {
-					aPosition: [tl, bl, tr, br, tr, bl],
+					aPos: [tl, bl, tr, br, tr, bl],
 				},
 				count: 6,
 				uniforms: {
-					tex: sceneFBO,
+					sourceSize: data.cursed.resolution,
+					sz: data.cursed.resolution,
+					source: sceneFBO,
 					base64Table: regl.texture({
 						data: data.cursed.base64Table,
 						width: 64,

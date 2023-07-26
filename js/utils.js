@@ -23,7 +23,7 @@ const loadShaderSet = async (flags, props) => {
 const loadBase64Shader = async () => {
 	const defineVert = `#define VERTEX_SHADER\n`;
 	const defineFrag = `#define FRAGMENT_SHADER\n`;
-	const shader = await fetch(`glsl/base64.glsl`).then((response) =>
+	const shader = await fetch(`glsl/base64.min.glsl`).then((response) =>
 		response.text()
 	);
 	return {

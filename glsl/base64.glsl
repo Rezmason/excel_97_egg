@@ -4,51 +4,47 @@ precision mediump float;
 #define attribute //
 #endif
 
-attribute vec2 aPosition;
-varying vec2 vTexCoord;
-uniform sampler2D tex;
-uniform sampler2D base64Table;
+attribute vec2 aPos;
+varying vec2 vUV;
+
+uniform vec2 sourceSize;
+uniform sampler2D source, base64Table;
 
 #if defined(VERTEX_SHADER)
-void vert() {
-	vTexCoord = 0.5 * (aPosition + 1.0);
-	gl_Position = vec4(aPosition, 0.0, 1.0);
-}
-#endif
 
-float getByte(int index) {
-	int y = index / 640;
-	int x = index - y * 640;
-	vec2 uv = vec2(float(x) / 640.0, float(y) / 480.0);
-	return texture2D(tex, uv).r * 255.0;
+void main() { vUV = 0.5 * (aPos + 1.0), gl_Position = vec4(aPos, 0.0, 1.0); }
+
+#elif defined(FRAGMENT_SHADER)
+
+float getByte(float index) {
+	float y = floor(index / sourceSize.x);
+	vec2 coord = vec2(index - y * sourceSize.x, y);
+	return texture2D(source, coord / sourceSize).r * 255.0;
 }
 
-float recombine(float leftOct, float leftShift, float rightOct, float rightShift) {
-	// left shift
-	float left = leftOct * pow(2.0, leftShift); // multiply by powers of 2
-	left = fract(left / 64.0) * 64.0; // remove higher bits (mod 2^6)
+float encode(float leftOct, float leftShift, float rightOct, float rightShift) {
+	// left shift the left octet
+	float left = leftOct * pow(2.0, leftShift);     // multiply by powers of 2
+	left = fract(left / 64.0) * 64.0;               // remove higher bits (mod 2^6)
 
-	// right shift
+	// right shift the right octet
 	float right = rightOct * pow(2.0, -rightShift); // multiply by inverse powers of 2
-	right = floor(right); // remove lower bits (round down)
+	right = floor(right);                           // remove lower bits (round down)
 
 	float sextet = left + right;
 
-	// look up sextet in table
+	// look up sextet's base64 encoding
 	return texture2D(base64Table, vec2(sextet / 64.0, 0.0)).r;
 }
 
-#if defined(FRAGMENT_SHADER)
-void frag() {
+void main() {
 
-	vec2 uv = vTexCoord;
-	int x = int(uv.x * 640.0);
-	int y = int(uv.y * 480.0);
-	int index = (y * 640 + x) * 3;
+	vec2 coord = floor(vUV * sourceSize);
+	float byteIndex = (coord.y * sourceSize.x + coord.x) * 3.0;
 
-	float o0 =   getByte( index + 0             );
-	float o1 =   getByte                        ( index + 1             );
-	float o2 =   getByte                                                ( index + 2             );
+	float o0 =   getByte( byteIndex + 0.0       );
+	float o1 =   getByte                        ( byteIndex + 1.0       );
+	float o2 =   getByte                                                ( byteIndex + 2.0       );
 
 	// https://en.wikipedia.org/wiki/Base64#Examples
 
@@ -60,18 +56,11 @@ void frag() {
 	//    Base64 Octets | 0x54            | 0x57            | 0x46            | 0x75            |
 
 	gl_FragColor = vec4(
-	           recombine( 0.,0.,    o0,2. ),
-	           recombine                  ( o0,6.-2., o1,4. ),
-	           recombine                                    ( o1,6.-4., o2,6. ),
-	           recombine                                                      ( o2,6.-6., 0.,0. )
+	              encode( 0.,0.,    o0,2. ),
+	              encode                  ( o0,6.-2., o1,4. ),
+	              encode                                    ( o1,6.-4., o2,6. ),
+	              encode                                                      ( o2,6.-6., 0.,0. )
 	);
 }
-#endif
 
-void main() {
-#if defined(VERTEX_SHADER)
-	vert();
-#elif defined(FRAGMENT_SHADER)
-	frag();
 #endif
-}
