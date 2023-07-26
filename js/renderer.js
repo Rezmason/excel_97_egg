@@ -29,6 +29,13 @@ export default (async () => {
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
+	const [colorTable, linearColorTable, indexedColorTextures] =
+		await Promise.all([
+			loadColorTable(regl, data.rendering.color_table, false),
+			loadColorTable(regl, data.rendering.color_table, true),
+			loadTexturePack(regl, data.rendering.texture_packs.indexed_color),
+		]);
+
 	const deferredTrueColorLoad = async () => {
 		const shouldLoad = settings.trueColorTextures && trueColorTextures == null;
 		if (shouldLoad) {
@@ -42,23 +49,6 @@ export default (async () => {
 			Object.assign(state, trueColorTextures);
 		}
 	};
-
-	const colorTable = await loadColorTable(
-		regl,
-		data.rendering.color_table,
-		false
-	);
-
-	const linearColorTable = await loadColorTable(
-		regl,
-		data.rendering.color_table,
-		true
-	);
-
-	const indexedColorTextures = await loadTexturePack(
-		regl,
-		data.rendering.texture_packs.indexed_color
-	);
 
 	let trueColorTextures = null;
 
@@ -83,16 +73,12 @@ export default (async () => {
 	};
 	const cursedFlag = settings.cursed ? ["CURSED"] : [];
 
-	const indexedShaderSet = await loadShaderSet(
-		["INDEXED_COLOR", ...cursedFlag],
-		demoProps
-	);
-	const trueColorShaderSet = await loadShaderSet(
-		["TRUE_COLOR", ...cursedFlag],
-		demoProps
-	);
-
-	const base64Shader = settings.cursed ? await loadBase64Shader() : {};
+	const [indexedShaderSet, trueColorShaderSet, base64Shader] =
+		await Promise.all([
+			loadShaderSet(["INDEXED_COLOR", ...cursedFlag], demoProps),
+			loadShaderSet(["TRUE_COLOR", ...cursedFlag], demoProps),
+			settings.cursed ? loadBase64Shader() : {},
+		]);
 
 	const state = {
 		time: 0,
