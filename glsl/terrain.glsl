@@ -184,6 +184,23 @@ void frag() {
 	vec3 color;
 
 #if defined(INDEXED_COLOR)
+
+	// The original program's rasterizer had an off-by-one error for the width of the framebuffer.
+	// This causes the edges of triangles to not be drawn in the last column of pixels,
+	// and causes the interior fragments of triangles to not be drawn in the last two columns
+	// (because the interiors were drawn two at a time with STOSW).
+	if (limitDrawResolution == 1.0) {
+		float distanceFromRight = screenSize.x - gl_FragCoord.x;
+		if (distanceFromRight < 2.0) {
+			float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
+			if (borderDistance > 0.02 || distanceFromRight <= 1.0) {
+				gl_FragColor = vec4(vec3(0.0), 1.0);
+				return;
+			}
+		}
+	}
+
+
 	float src = 0.0;
 	float brightness = vBrightness;
 
@@ -367,20 +384,6 @@ void frag() {
 			borderColor = mix(vec3(1.0, 0.0, 0.5), vec3(1.0, 0.5, 0.0), pow(vDepth, 2.0));
 		}
 		color = mix(borderColor, color, border);
-	}
-
-	// The original program's rasterizer had an off-by-one error for the width of the framebuffer.
-	// This causes the edges of triangles to not be drawn in the last column of pixels,
-	// and causes the interior fragments of triangles to not be drawn in the last two columns
-	// (because the interiors were drawn two at a time with STOSW).
-	if (limitDrawResolution == 1.0) {
-		float distanceFromRight = screenSize.x - gl_FragCoord.x;
-		if (distanceFromRight < 2.0) {
-			float borderDistance = min(vBarycentrics.g, vBarycentrics.b);
-			if (borderDistance > 0.02 || distanceFromRight <= 1.0) {
-					color = vec3(0.0);
-			}
-		}
 	}
 
 	gl_FragColor = vec4(color, 1.0);

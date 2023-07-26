@@ -1,4 +1,5 @@
-Add right side artifact to cursed mode
+Horizon edge artifact
+	Horizon line??
 
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
