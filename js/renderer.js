@@ -196,10 +196,6 @@ export default (async () => {
 		canvas.height = height;
 	};
 
-	document.addEventListener("touchmove", (event) => event.preventDefault(), {
-		passive: false,
-	});
-
 	events.addEventListener("settingsChanged", async (event) => {
 		interpretSettings();
 	});

@@ -207,6 +207,10 @@ export default (async () => {
 		vec3.set(rotation, pitch, yaw, rotation[2]);
 	};
 
+	document.addEventListener("touchmove", (event) => event.preventDefault(), {
+		passive: false,
+	});
+
 	viewscreen.addEventListener("touchstart", handleTouchStart);
 	viewscreen.addEventListener("touchmove", handleTouchMove);
 	viewscreen.addEventListener("touchend", handleTouchEnd);
