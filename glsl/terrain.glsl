@@ -8,6 +8,7 @@ precision mediump float;
 
 #define DEMO_SHADING 0
 #define DEMO_SCANLINES 1
+#define DEMO_SPHERE 2
 
 #if defined(FRAGMENT_SHADER)
 #define attribute //attribute
@@ -84,6 +85,19 @@ mat3 createScanline(vec2 p, vec2 q) {
 	);
 }
 
+vec4 warpWorld(vec4 pos) {
+#if defined(DEMO_ID) && DEMO_ID == DEMO_SPHERE
+	float warpAmount;
+	if (birdsEyeView == 1.0) {
+		warpAmount = -0.002;
+	} else {
+		warpAmount = -0.00005;
+	}
+	pos.y += dot(pos.xz, pos.xz) * warpAmount;
+#endif
+	return pos;
+}
+
 #if defined(VERTEX_SHADER)
 void vert() {
 	// Pass these right along to the fragment shader.
@@ -121,7 +135,7 @@ void vert() {
 
 	// Project position from local to world to screen
 	vec4 localPosition = vec4(aPosition + offset, 1.0);
-	vec4 worldPosition = transform * localPosition;
+	vec4 worldPosition = warpWorld(transform * localPosition);
 	vec4 screenPosition = camera * worldPosition;
 
 	gl_Position = screenPosition;
@@ -138,9 +152,9 @@ void vert() {
 #if defined(INDEXED_COLOR)
 
 	// Project the whole triangle from local to world to screen to NDC
-	vec2 pos0 = (viewport * toNDC(camera * transform * vec4(aPosition0 + offset, 1.0))).xy;
-	vec2 pos1 = (viewport * toNDC(camera * transform * vec4(aPosition1 + offset, 1.0))).xy;
-	vec2 pos2 = (viewport * toNDC(camera * transform * vec4(aPosition2 + offset, 1.0))).xy;
+	vec2 pos0 = (viewport * toNDC(camera * warpWorld(transform * vec4(aPosition0 + offset, 1.0)))).xy;
+	vec2 pos1 = (viewport * toNDC(camera * warpWorld(transform * vec4(aPosition1 + offset, 1.0)))).xy;
+	vec2 pos2 = (viewport * toNDC(camera * warpWorld(transform * vec4(aPosition2 + offset, 1.0)))).xy;
 
 	// Identify the lowest vertex
 	vec2 a, b, c;
@@ -151,7 +165,6 @@ void vert() {
 	vBottomScanline = createScanline(a, b);
 	vTopScanline = createScanline(b, c);
 	vScanlineCut = b.y;
-
 
 #endif
 }

@@ -1,20 +1,10 @@
-Spherical distortion in vertex shader ("trick to fake a sphere")
-	Alan Wright added it to Populous: The Beginning
-	How do PtB / Topia do it?
-		A similar effect appears in Tetrisphere
-		"Warped through like a fisheye lens"
-
-Revisit flowchart
-
 ATI TruForm type tesselation option, aka NPatches
 	N for Normals
 	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
 
-Try adding a carpet, obviously
+Revisit flowchart
 
-Indexed colors demo (extends color palette image)
-	Mousing over or tapping the pixels in a test image highlight the pixel in the color palette
-		(with Excel 97's version of the marching ants marquee)
+Try adding a carpet, obviously
 
 Custom palette support
 	indexed color BMP file (color table)
