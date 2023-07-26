@@ -48,7 +48,11 @@ uniform vec2 repeatOffset;
 
 uniform sampler2D dunesTexture;
 uniform sampler2D cairnTexture;
+#ifdef CURSED
+uniform sampler2D cursedCreditsTexture;
+#else
 uniform sampler2D creditsTexture;
+#endif
 uniform float quadBorder;
 uniform vec2 screenSize;
 uniform vec2 dunesTextureDistort;
@@ -154,21 +158,22 @@ void vert() {
 #endif
 
 // Maps the texture coordinates, time and time offset to the crawling credits texture coordinates
-highp vec2 getCreditTexCoord() {
+highp vec2 getCreditTexCoord(float numColumns, float crawlSpeed, float verticalScale, float verticalOffset, float coveragePercent, float coverageOffset) {
 	highp vec2 texCoord = vTexCoord;
-	texCoord.y = fract((time + timeOffset.y) * -0.006 + texCoord.y * 0.03 - 0.0225);
 
-	texCoord.y *= 0.92;
-	texCoord.y += 0.076;
+	texCoord.y = fract(
+		(time + timeOffset.y) * crawlSpeed +
+		texCoord.y * verticalScale +
+		verticalOffset
+	);
 
-	texCoord.y *= 5.0;
-	texCoord.x = texCoord.x * 0.2 + (1.0 - 1.0 * 0.2);
-	texCoord.x += 1.0 * 0.2 * (1.0 + floor(texCoord.y));
-	texCoord.y = fract(texCoord.y);
+	texCoord.y = (texCoord.y - 1.0) * coveragePercent + 1.0 + coverageOffset;
+
+	texCoord.y *= numColumns;
+	texCoord.x = (texCoord.x + floor(texCoord.y)) / numColumns + 1.0;
 
 	texCoord = vec2(1.0) - texCoord;
 	texCoord = fract(texCoord);
-
 	return texCoord;
 }
 
@@ -189,7 +194,12 @@ void frag() {
 		src = texture2D(cairnTexture, vTexCoord).r;
 	} else if (whichTexture == 2) {
 		// The credits texture is mapped in a special way,
-		src = texture2D(creditsTexture, getCreditTexCoord()).r;
+#ifdef CURSED
+		src = texture2D(cursedCreditsTexture, getCreditTexCoord(2.0, -0.0125, 0.06, -0.0225, 1.0, -0.035)).r;
+#else
+		src = texture2D(creditsTexture, getCreditTexCoord(5.0, -0.006, 0.03, -0.0225, 0.92, -0.004)).r;
+#endif
+
 		// and contains text in its green and blue channels
 		// with different color gradients applied with indexed colors
 		float credit = 1.0 - abs(vTexCoord.y - 0.5) * 2.0;
@@ -277,7 +287,13 @@ void frag() {
 		color = texture2D(cairnTexture, vTexCoord).rgb;
 	} else if (whichTexture == 2) {
 		// The credits texture is mapped in a special way,
-		vec4 credits = texture2D(creditsTexture, fract(getCreditTexCoord()));
+		vec4 credits;
+#ifdef CURSED
+		credits = texture2D(cursedCreditsTexture, fract(getCreditTexCoord(2.0, -0.010, 0.05, -0.0225, 0.42, -0.035)));
+#else
+		credits = texture2D(creditsTexture, fract(getCreditTexCoord(5.0, -0.006, 0.03, -0.0225, 0.92, -0.004)));
+#endif
+
 		// and contains SDFs in its green and blue channels
 		// with different color gradients applied with indexed colors
 		float scroll = 1.0 - abs(vTexCoord.y - 0.5) * 2.0;

@@ -71,6 +71,10 @@
 					"creditsTexture": {
 						"url": "assets/textures/credits_wrapped.bmp",
 						"type": "indexed_color"
+					},
+					"cursedCreditsTexture": {
+						"url": "assets/textures/cursed_credits_wrapped.bmp",
+						"type": "indexed_color"
 					}
 				}
 			},
