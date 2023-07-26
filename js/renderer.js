@@ -1,7 +1,12 @@
 import Model from "./model.js";
 import GUI from "./gui.js";
 import Controls from "./controls.js";
-import { loadShaderSet, loadColorTable, loadTexturePack } from "./utils.js";
+import {
+	loadShaderSet,
+	loadBase64Shader,
+	loadColorTable,
+	loadTexturePack,
+} from "./utils.js";
 const { vec2, mat3, mat4 } = glMatrix;
 
 export default (async () => {
@@ -28,7 +33,26 @@ export default (async () => {
 		extensions: ["OES_standard_derivatives", "EXT_texture_filter_anisotropic"],
 	});
 
-	const framebuffer = settings.cursed ? regl.framebuffer() : null;
+	const sceneTex = regl.texture({
+		width: 1,
+		height: 1,
+	});
+
+	const base64TableTex = regl.texture({
+		data: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+			.split("")
+			.map((c) => c.charCodeAt(0)),
+		width: 64,
+		height: 1,
+		format: "luminance",
+	});
+
+	const sceneFBO = settings.cursed
+		? regl.framebuffer({
+				color: sceneTex,
+		  })
+		: null;
+	const base64FBO = regl.framebuffer();
 
 	const deferredTrueColorLoad = async () => {
 		const shouldLoad = settings.trueColorTextures && trueColorTextures == null;
@@ -79,6 +103,16 @@ export default (async () => {
 	const viewport = mat3.create();
 	const repeatOffset = vec2.create();
 
+	const resolution = data.rendering.resolution;
+
+	if (settings.cursed) {
+		vec2.set(screenSize, ...resolution);
+		[canvas.width, canvas.height] = resolution;
+		sceneTex.resize(...resolution);
+		sceneFBO.resize(...resolution);
+		base64FBO.resize(...resolution);
+	}
+
 	const demoProps = {
 		DEMO_ID: data.rendering.supported_demos.indexOf(settings.demo),
 	};
@@ -92,6 +126,8 @@ export default (async () => {
 		["TRUE_COLOR", ...cursedFlag],
 		demoProps
 	);
+
+	const base64Shader = settings.cursed ? await loadBase64Shader() : {};
 
 	const state = {
 		time: 0,
@@ -156,7 +192,7 @@ export default (async () => {
 		},
 		count: 6,
 		uniforms,
-		framebuffer,
+		framebuffer: sceneFBO,
 	});
 
 	const drawTerrain = regl({
@@ -169,15 +205,25 @@ export default (async () => {
 		attributes: terrain.attributes,
 		count: terrain.numVertices,
 		uniforms,
-		framebuffer,
+		framebuffer: sceneFBO,
+	});
+
+	const encodeBase64 = regl({
+		depth: { enable: false },
+		...base64Shader,
+		attributes: {
+			aPosition: [tl, bl, tr, br, tr, bl],
+		},
+		count: 6,
+		uniforms: {
+			tex: sceneTex,
+			base64Table: base64TableTex,
+		},
+		framebuffer: base64FBO,
 	});
 
 	const resize = () => {
 		if (settings.cursed) {
-			const resolution = data.rendering.resolution;
-			vec2.set(screenSize, ...resolution);
-			[canvas.width, canvas.height] = resolution;
-			framebuffer.resize(...resolution);
 			return;
 		}
 
@@ -241,20 +287,12 @@ export default (async () => {
 		pixelArrayLength
 	);
 
-	const cursedDataUint8 = new Uint8Array(1228800);
-	const cursedDataUint32 = new Uint32Array(cursedDataUint8.buffer);
-	const cursedData = new Uint8Array(1228800 / 4);
-
-	const charactersByCharCode = Object.fromEntries(
-		Array(256)
-			.fill()
-			.map((_, i) => i)
-			.map((i) => [i, String.fromCharCode(i)])
-	);
+	const cursedData = new Uint8Array(resolution[0] * resolution[1] * 4);
+	const decoder = new TextDecoder("ascii");
 
 	const draw = () => {
 		regl.poll();
-		regl.clear({ depth: 1, framebuffer });
+		regl.clear({ depth: 1, framebuffer: sceneFBO });
 
 		if (!settings.birdsEyeView) {
 			drawHorizon(state);
@@ -266,14 +304,9 @@ export default (async () => {
 		}
 
 		if (settings.cursed) {
-			regl.read({ data: cursedDataUint8, framebuffer });
-			cursedData.set(cursedDataUint32);
-			let s = "";
-			const n = 1228800 / 4;
-			for (let i = 0; i < n; i++) {
-				s += charactersByCharCode[cursedData[i]];
-			}
-			bmpBody = btoa(s);
+			encodeBase64();
+			regl.read({ data: cursedData, framebuffer: base64FBO });
+			bmpBody = decoder.decode(cursedData);
 			viewscreenImage.src = bmpPrefix + bmpBody + bmpSuffix;
 		}
 	};

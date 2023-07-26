@@ -20,6 +20,18 @@ const loadShaderSet = async (flags, props) => {
 	};
 };
 
+const loadBase64Shader = async () => {
+	const defineVert = `#define VERTEX_SHADER\n`;
+	const defineFrag = `#define FRAGMENT_SHADER\n`;
+	const shader = await fetch(`glsl/base64.glsl`).then((response) =>
+		response.text()
+	);
+	return {
+		vert: defineVert + shader,
+		frag: defineFrag + shader,
+	};
+};
+
 const loadImage = async (url, isSDF, anisotropicLevels) => {
 	const image = new Image();
 	image.crossOrigin = "anonymous";
@@ -137,4 +149,10 @@ const loadTerrainBitmap = async ({ url, offset }) =>
 		row.map((x) => x + offset)
 	);
 
-export { loadShaderSet, loadColorTable, loadTexturePack, loadTerrainBitmap };
+export {
+	loadShaderSet,
+	loadBase64Shader,
+	loadColorTable,
+	loadTexturePack,
+	loadTerrainBitmap,
+};

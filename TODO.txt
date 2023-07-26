@@ -1,11 +1,3 @@
-Cursed mode
-	GPU base 64
-	Move the BMP stuff to utils
-	Fun changes to textures, terrain data, palette?
-		"#DIV/0!" for credits
-		Horizon row as lava maybe?
-		Weird regions and heights?
-
 Spherical distortion in vertex shader ("trick to fake a sphere")
 	Alan Wright added it to Populous: The Beginning
 	How do PtB / Topia do it?
