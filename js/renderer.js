@@ -227,7 +227,9 @@ export default (async () => {
 	});
 
 	window.addEventListener("resize", (event) => resize());
-	screen.orientation.addEventListener("change", (event) => resize());
+	if (screen.orientation != null) {
+		screen.orientation.addEventListener("change", (event) => resize());
+	}
 
 	await interpretSettings();
 
