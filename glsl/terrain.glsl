@@ -193,7 +193,7 @@ highp vec2 getCreditTexCoord(float numColumns, float crawlSpeed, float verticalS
 #if defined(FRAGMENT_SHADER)
 void frag() {
 
-	int whichTexture = int(vWhichTexture + 0.1);
+	int whichTexture = int(vWhichTexture + 0.1); // +0.1 to fix precision issues on legacy plat
 	vec3 color;
 
 #if defined(INDEXED_COLOR)
