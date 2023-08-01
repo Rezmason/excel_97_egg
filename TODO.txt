@@ -1,6 +1,3 @@
-Base64 bug
-	No rendering at all on iPhone?
-
 ATI TruForm type tesselation option, aka NPatches
 	N for Normals
 	https://www.gamedeveloper.com/programming/b-zier-triangles-and-n-patches
