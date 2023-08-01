@@ -1,7 +1,7 @@
 #ifdef VERTEX_SHADER
 attribute vec2 aPos; void main(){gl_Position=vec4(aPos,0,1);}
 #else
-precision lowp float;
+precision highp float;
 uniform vec2 sz;
 uniform sampler2D source,base64Table;
 void main(){

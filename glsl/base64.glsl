@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 #if defined(FRAGMENT_SHADER)
 #define attribute //
@@ -19,7 +19,7 @@ void main() { vUV = 0.5 * (aPos + 1.0), gl_Position = vec4(aPos, 0.0, 1.0); }
 float getByte(float index) {
 	float y = floor(index / sourceSize.x);
 	vec2 coord = vec2(index - y * sourceSize.x, y);
-	return texture2D(source, coord / sourceSize).r * 255.0;
+	return floor(texture2D(source, coord / sourceSize).r * 255.0);
 }
 
 float encode(float leftOct, float leftShift, float rightOct, float rightShift) {
@@ -40,7 +40,7 @@ float encode(float leftOct, float leftShift, float rightOct, float rightShift) {
 void main() {
 
 	vec2 coord = floor(vUV * sourceSize);
-	float byteIndex = (coord.y * sourceSize.x + coord.x) * 3.0;
+	float byteIndex = coord.y * sourceSize.x + coord.x * 3.0;
 
 	float o0 =   getByte( byteIndex + 0.0       );
 	float o1 =   getByte                        ( byteIndex + 1.0       );

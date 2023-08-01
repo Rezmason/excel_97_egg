@@ -160,7 +160,9 @@ export default (async () => {
 	const bmpPrefix = settings.cursed ? data.cursed.prefix.join("") : null;
 	const bmpSuffix = settings.cursed ? data.cursed.suffix.join("") : null;
 	const cursedData = settings.cursed
-		? new Uint8Array(data.cursed.resolution[0] * data.cursed.resolution[1] * 4)
+		? new Uint8Array(
+				(data.cursed.resolution[0] * data.cursed.resolution[1] * 4) / 3
+		  )
 		: null;
 	const decoder = settings.cursed ? new TextDecoder("ascii") : null;
 
@@ -169,7 +171,7 @@ export default (async () => {
 		vec2.set(screenSize, ...cursedResolution);
 		[canvas.width, canvas.height] = cursedResolution;
 		sceneFBO.resize(...cursedResolution);
-		base64FBO.resize(...cursedResolution);
+		base64FBO.resize(cursedResolution[0], cursedResolution[1] / 3);
 	}
 
 	const encodeBase64 = settings.cursed
