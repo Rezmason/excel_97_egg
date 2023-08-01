@@ -183,10 +183,9 @@ export default (async () => {
 				},
 				count: 6,
 				uniforms: {
-					sourceSize: data.cursed.resolution,
-					sz: data.cursed.resolution,
-					source: sceneFBO,
-					base64Table: regl.texture({
+					size: data.cursed.resolution,
+					src: sceneFBO,
+					tab: regl.texture({
 						data: data.cursed.base64Table,
 						width: 64,
 						height: 1,

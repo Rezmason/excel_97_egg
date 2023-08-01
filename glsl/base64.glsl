@@ -5,21 +5,20 @@ precision highp float;
 #endif
 
 attribute vec2 aPos;
-varying vec2 vUV;
 
-uniform vec2 sourceSize;
-uniform sampler2D source, base64Table;
+uniform vec2 size;
+uniform sampler2D src, tab;
 
 #if defined(VERTEX_SHADER)
 
-void main() { vUV = 0.5 * (aPos + 1.0), gl_Position = vec4(aPos, 0.0, 1.0); }
+void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
 
 #elif defined(FRAGMENT_SHADER)
 
 float getByte(float index) {
-	float y = floor(index / sourceSize.x);
-	vec2 coord = vec2(index - y * sourceSize.x, y);
-	return floor(texture2D(source, coord / sourceSize).r * 255.0);
+	float y = floor(index / size.x);
+	vec2 coord = vec2(index - y * size.x, y);
+	return floor(texture2D(src, coord / size).r * 255.0);
 }
 
 float encode(float leftOct, float leftShift, float rightOct, float rightShift) {
@@ -34,13 +33,13 @@ float encode(float leftOct, float leftShift, float rightOct, float rightShift) {
 	float sextet = left + right;
 
 	// look up sextet's base64 encoding
-	return texture2D(base64Table, vec2(sextet / 64.0, 0.0)).r;
+	return texture2D(tab, vec2(sextet / 64.0, 0.0)).r;
 }
 
 void main() {
 
-	vec2 coord = floor(vUV * sourceSize);
-	float byteIndex = coord.y * sourceSize.x + coord.x * 3.0;
+	vec2 coord = gl_FragCoord.xy - 0.5;
+	float byteIndex = (coord.y * size.x + coord.x) * 3.0;
 
 	float o0 =   getByte( byteIndex + 0.0       );
 	float o1 =   getByte                        ( byteIndex + 1.0       );
