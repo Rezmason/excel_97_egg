@@ -1,8 +1,8 @@
-![excel_97_egg screenshot](/readme_assets/monolith_screenshot.png?raw=true "The Excel 97 credits monolith at dusk.")
+[![excel_97_egg screenshot](/readme_assets/monolith_screenshot.png?raw=true "The Excel 97 credits monolith at dusk.")](https://rezmason.github.io/excel_97_egg)
 
-# excel_97_egg
+# [excel_97_egg](https://rezmason.github.io/excel_97_egg)
 
-[__Explore it here.__](https://rezmason.github.io/excel_97_egg)
+### Explore it [here.](https://rezmason.github.io/excel_97_egg)
 
 ### How to Fly
 
