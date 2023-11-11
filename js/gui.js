@@ -29,7 +29,6 @@ export default (async () => {
 	const settingsChangedEvent = new Event("settingsChanged");
 
 	const toolbar = document.querySelector("command-bar");
-	const music = document.querySelector("audio#music");
 	const aboutButton = toolbar.querySelector(".mso-button#about");
 	const aboutBox = document.querySelector("#about-box");
 	const screenshot = document.querySelector("screenshot");
@@ -95,12 +94,6 @@ export default (async () => {
 					document.webkitExitFullscreen();
 				}
 			}
-		}
-
-		if (settings.music && music.paused) {
-			music.play();
-		} else if (!settings.music && !music.paused) {
-			music.pause();
 		}
 
 		events.dispatchEvent(settingsChangedEvent);

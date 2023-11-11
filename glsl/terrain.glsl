@@ -9,6 +9,7 @@ precision mediump float;
 #define DEMO_SHADING 0
 #define DEMO_SCANLINES 1
 #define DEMO_SPHERE 2
+#define DEMO_AUDIOVIZ 3
 
 #if defined(FRAGMENT_SHADER)
 #define attribute //attribute
@@ -31,6 +32,7 @@ varying vec2 vTexCoord;
 varying vec3 vBarycentrics;
 varying float vDepth, vBrightness, vSpotlight;
 varying float vPointyQuad;
+varying float vVolume;
 
 varying mat3 vBottomScanline, vTopScanline;
 varying float vScanlineCut;
@@ -46,6 +48,9 @@ uniform float currentQuadID;
 uniform float birdsEyeView, lightingCutoff, limitDrawResolution;
 uniform float fogNear, fogFar;
 uniform vec2 repeatOffset;
+
+uniform float minDecibels, maxDecibels, binCount, audioStartTime;
+uniform float decibels[128];
 
 uniform sampler2D dunesTexture;
 uniform sampler2D cairnTexture;
@@ -133,8 +138,30 @@ void vert() {
 	float wave = aWaveAmplitude * -10.0 * sin((time * 1.75 + aWavePhase) * PI * 2.0);
 	vec3 offset = vec3(quadCentroidLocalPosition - position.xy, wave);
 
+#if defined(DEMO_ID) && DEMO_ID == DEMO_AUDIOVIZ
+	float dist = length(-(aPosition.xy + offset.xy) - position.xy);
+	int i = int(dist * 0.01 + 1.0);
+
+	float audioTimeOffset = mix(1.5, 1.1, birdsEyeView);
+	dist = cos(dist * 0.003 - (time - audioStartTime + audioTimeOffset) * 0.605 * 4.0) * 0.5 + 0.5;
+	float strength = 40.0 / (dist + 0.0001);
+	strength = min(15000.0, strength);
+
+	float volume = (decibels[i] - minDecibels) / (maxDecibels - minDecibels);
+	// volume += 0.2;
+	volume = pow(volume, 3.0);
+	vVolume = volume;
+
+	vSpotlight += strength * volume * 0.0008;
+#endif
+
 	// Project position from local to world to screen
 	vec4 localPosition = vec4(aPosition + offset, 1.0);
+
+#if defined(DEMO_ID) && DEMO_ID == DEMO_AUDIOVIZ
+	localPosition.z += volume * -1.0 * (strength * 0.001 + 5.0);
+#endif
+
 	vec4 worldPosition = warpWorld(transform * localPosition);
 	vec4 screenPosition = camera * worldPosition;
 
@@ -359,7 +386,9 @@ void frag() {
 	// The quad border is smaller in birds' eye view
 	float quadBorder = quadBorder;
 	if (birdsEyeView == 1.0) {
-		quadBorder *= 2.0;
+		quadBorder *= 2.0 * (1.0 + vVolume * 4.0);
+	} else {
+		quadBorder *= (1.0 + max(0.0, (vVolume - 0.3) * 60.0));
 	}
 
 	if (quadBorder == 0.0) {
@@ -389,7 +418,7 @@ void frag() {
 		}
 
 		vec3 borderColor;
-		if (vSpotlight == 1.0) {
+		if (vSpotlight >= 1.0) {
 			// The quad beneath the camera gets a solid border color
 			borderColor = vec3(1.0, 0.8, 0.0);
 		} else {

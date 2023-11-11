@@ -1,6 +1,7 @@
 import Model from "./model.js";
 import GUI from "./gui.js";
 import Controls from "./controls.js";
+import AudioAnalyser from "./audioanalyser.js";
 import {
 	loadShaderSet,
 	loadBase64Shader,
@@ -13,6 +14,8 @@ export default (async () => {
 	const { events, settings } = await GUI;
 	const { data, terrain } = await Model;
 	const { update, controlData } = await Controls;
+
+	const audioAnalyser = new AudioAnalyser("assets/audio/lumbus_van_rees1.mp3");
 
 	const viewscreenCanvas = document.querySelector("viewscreen canvas");
 	const viewscreenImage = document.querySelector("viewscreen img");
@@ -94,6 +97,12 @@ export default (async () => {
 		...indexedColorTextures,
 		...indexedShaderSet,
 
+		minDecibels: audioAnalyser.minDecibels,
+		maxDecibels: audioAnalyser.maxDecibels,
+		binCount: audioAnalyser.binCount,
+		decibels: audioAnalyser.data,
+		audioStartTime: 0,
+
 		colorTable,
 		linearColorTable,
 		colorTableWidth: colorTable.width,
@@ -131,6 +140,13 @@ export default (async () => {
 
 		for (const key in settings) {
 			state[key] = settings[key] ? 1 : 0;
+		}
+
+		if (settings.music && !audioAnalyser.playing) {
+			audioAnalyser.play();
+			state.audioStartTime = (Date.now() - startTime) / 1000;
+		} else if (!settings.music && audioAnalyser.playing) {
+			audioAnalyser.stop();
 		}
 
 		state.fogFar = data.rendering.fogFar * (settings.lightingCutoff ? 1 : 3);
@@ -262,6 +278,10 @@ export default (async () => {
 	const animate = () => {
 		const time = (Date.now() - startTime) / 1000;
 		const frameTime = time - lastTime;
+
+		if (settings.demo === "audioviz") {
+			audioAnalyser.update();
+		}
 
 		const mustResize = !vec2.equals(lastScreenSize, screenSize);
 		const mustDraw =

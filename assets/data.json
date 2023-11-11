@@ -51,7 +51,7 @@
 		"dunesTextureDistort": [0.98828125, 1],
 		"titleCreditColor": 13,
 		"bodyCreditColor": 15,
-		"supported_demos": ["shading", "scanlines", "sphere"],
+		"supported_demos": ["shading", "scanlines", "sphere", "audioviz"],
 		"texture_packs": {
 			"indexed_color": {
 				"anisotropicLevels": 0,
