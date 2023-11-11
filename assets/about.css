@@ -154,7 +154,7 @@ legend-icon {
 
 	--button-state: 1;
 
-	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
+	background-size: calc(100% * 250 / 23) calc(100% * 144 / 22);
 	background-image: url("ui/icon_spritesheet_with_margin.png");
 	background-position: calc(2rem * (-25 * var(--icon) - 1))
 	calc(2rem * (-24 * var(--button-state) - 1));

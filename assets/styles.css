@@ -138,7 +138,7 @@ deadzone {
 	height: 22em;
 	cursor: pointer;
 
-	background-size: calc(100% * 225 / 23) calc(100% * 144 / 22);
+	background-size: calc(100% * 250 / 23) calc(100% * 144 / 22);
 	background-image: url("ui/icon_spritesheet_with_margin.png");
 	background-position: calc(1em * (-25 * var(--icon) - 1))
 		calc(1em * (-24 * var(--button-state) - 1));
