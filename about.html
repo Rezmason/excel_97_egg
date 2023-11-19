@@ -44,6 +44,8 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
 		<link rel="manifest" href="site.webmanifest" />
 		<link rel="preload" href="assets/ui/self_portrait_grin.bmp" as="image" />
+		<link rel="preload" href="assets/ui/self_portrait_bop_left.bmp" as="image" />
+		<link rel="preload" href="assets/ui/self_portrait_bop_right.bmp" as="image" />
 
 		<link rel="stylesheet" type="text/css" href="assets/98/relative.css" />
 		<link rel="stylesheet" type="text/css" href="assets/98/fixes.css" />
@@ -726,5 +728,19 @@
 				</main>
 			</div>
 		</div>
+		<script type="module">
+			const portrait = document.querySelector("#self-portrait");
+			let isBoppin = false;
+
+			window.addEventListener('message', (event) => {
+				const settings = event.data;
+				if (settings == null || settings.id !== "excel_97_egg_settings") return;
+
+				if (isBoppin != settings.music) {
+					isBoppin = settings.music;
+					portrait.classList.toggle("boppin", isBoppin);
+				}
+			});
+		</script>
 	</body>
 </html>

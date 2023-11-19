@@ -292,12 +292,30 @@ button.ok.standalone {
 	}
 }
 
+@keyframes boppin-portrait {
+	0%,
+	100% {
+		content: url("ui/self_portrait_bop_left.bmp");
+	}
+	25%,
+	75% {
+		content: url("ui/self_portrait.bmp");
+	}
+	50% {
+		content: url("ui/self_portrait_bop_right.bmp");
+	}
+}
+
 div#self-portrait {
 	content: url("ui/self_portrait.bmp");
 }
 
 div#self-portrait:hover {
 	animation: animated-portrait 1.75s linear infinite alternate;
+}
+
+div#self-portrait.boppin {
+	animation: boppin-portrait 1.3053061224489795s linear infinite;
 }
 
 @keyframes animated-heightmap {

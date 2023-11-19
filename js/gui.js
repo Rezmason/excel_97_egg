@@ -19,6 +19,7 @@ const checkBooleanFlag = (params, id, defaultValue = true) => {
 export default (async () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const settings = {
+		id: "excel_97_egg_settings",
 		location: urlParams.get("l"),
 		demo: urlParams.get("demo"),
 		sanitizePosition: checkBooleanFlag(urlParams, "sanitizePosition"),
@@ -95,6 +96,8 @@ export default (async () => {
 				}
 			}
 		}
+
+		aboutBox.contentWindow.postMessage(settings, "*");
 
 		events.dispatchEvent(settingsChangedEvent);
 	};
